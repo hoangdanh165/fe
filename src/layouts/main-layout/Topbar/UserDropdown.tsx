@@ -1,6 +1,6 @@
 import { Menu, Avatar, Button, Tooltip, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
-import IconifyIcon from 'components/base/IconifyIcon';
-import profile from 'assets/images/account/Profile.png';
+import IconifyIcon from '../../../components/base/IconifyIcon';
+import profile from '../../../assets/images/account/Profile.png';
 import { useState, MouseEvent, useCallback, ReactElement } from 'react';
 import userMenuItems from 'data/usermenu-items';
 

@@ -1,5 +1,5 @@
 import { Link, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import IconifyIcon from 'components/base/IconifyIcon';
+import IconifyIcon from '../../../components/base/IconifyIcon';
 import { NavItem as NavItemProps } from 'data/nav-items';
 import { useLocation } from 'react-router-dom';
 

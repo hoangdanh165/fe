@@ -8,15 +8,16 @@ import paths from './paths';
 
 const App = lazy(() => import('../App'));
 
-const MainLayout = lazy(() => import('../layouts/main-layout'));
 const AuthLayout = lazy(() => import('../layouts/auth-layout'));
 
 const Login = lazy(() => import('../pages/Login'));
+const Home = lazy(() => import('../pages/Home'));
 const SignUp = lazy(() => import('../pages/SignUp'));
 const ErrorPage = lazy(() => import('../pages/error/ErrorPage'));
 
 const routes = [
   {
+    path: '/',
     element: (
       <Suspense fallback={<Splash />}>
         <App />
@@ -26,13 +27,11 @@ const routes = [
       {
         path: paths.home,
         element: (
-          <MainLayout>
             <Suspense fallback={<PageLoader />}>
-              <Outlet />
+            <Home />
             </Suspense>
-          </MainLayout>
         ),
-       
+        
       },
       {
         path: rootPaths.authRoot,
