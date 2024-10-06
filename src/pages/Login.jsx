@@ -39,7 +39,10 @@ const Login = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   const [errMsg, setErrMsg] = useState('');
+  const [errors, setErrors] = useState({});
+
 
   useEffect(() => {
       userRef.current.focus();
@@ -49,9 +52,45 @@ const Login = () => {
       setErrMsg('');
   }, [email, password])
 
+  const validateEmail = (email) => {
+    const gmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return gmailRegex.test(email);
+  };
+
+  const handleEmailChange = (e) => {
+    const email = e.target.value;
+    setEmail(email); 
+  
+    if (!validateEmail(email)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        email: 'Email không đúng định dạng!',
+      }));
+    } else {
+      setErrors((prevErrors) => {
+        const { email, ...rest } = prevErrors; 
+        return rest;
+      });
+    }
+  };
+  
+
   const handleSubmit = async (e) => {
       e.preventDefault();
-      console.log(JSON.stringify( {email, password }));
+      let newErrors = {}; 
+
+      if (!email) {
+        newErrors.email = 'Email không được để trống!';
+      }
+
+      if (!password) {
+        newErrors.password = 'Mật khẩu không được để trống!';
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return; 
+      }
 
       try {
           const response = await axios.post(LOGIN_URL,
@@ -116,10 +155,12 @@ const Login = () => {
           <TextField
             variant="filled"
             ref={userRef}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange}
             value={email}
             label="Email"
             type="email"
+            error={!!errors.email} 
+            helperText={errors.email} 
             sx={{
               '.MuiFilledInput-root': {
                 bgcolor: 'grey.A100',
@@ -142,6 +183,8 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             value={password}
             type={showPassword ? 'text' : 'password'}
+            error={!!errors.password} 
+            helperText={errors.password} 
             sx={{
               '.MuiFilledInput-root': {
                 bgcolor: 'grey.A100',
