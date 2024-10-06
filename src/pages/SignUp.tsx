@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import Image from '../components/base/Image';
 import logoWithText from '/Logo-with-text.png';
 import { rootPaths } from '../routes/paths';
+import React from 'react';
 
 const SignUp = (): ReactElement => {
   const navigate = useNavigate();

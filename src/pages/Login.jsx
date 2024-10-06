@@ -12,15 +12,15 @@ import {
   FormControlLabel,
 } from '@mui/material';
 
-import { useState, ReactElement } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { rootPaths } from '../routes/paths';
 import Image from '../components/base/Image';
 import React from 'react';
 
-const Login = (): ReactElement => {
+const Login = () => {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = () => {
     navigate(rootPaths.homeRoot);
@@ -92,7 +92,6 @@ const Login = (): ReactElement => {
               },
               borderRadius: 2,
             }}
-            
           />
           <FormGroup sx={{ ml: 1, width: 'fit-content' }}>
             <FormControlLabel
