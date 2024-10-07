@@ -1,6 +1,8 @@
 import { Box, Link, Stack, Typography } from '@mui/material';
-import { useBreakpoints } from 'providers/BreakpointsProvider';
+import { useBreakpoints } from '../../../providers/BreakpointsProvider';
 import { ReactElement } from 'react';
+import React from 'react';
+
 
 const Footer = ({ open }: { open: boolean }): ReactElement => {
   const { down } = useBreakpoints();
@@ -24,13 +26,13 @@ const Footer = ({ open }: { open: boolean }): ReactElement => {
         </Box>{' '}
         by{' '}
         <Link
-          href="https://themewagon.com/"
+          href="#"
           target="_blank"
           rel="noopener"
-          aria-label="Explore ThemeWagon Website"
+          aria-label="More About KienOS"
           sx={{ color: 'text.primary', '&:hover': { color: 'primary.main' } }}
         >
-          ThemeWagon
+          KIEN OS
         </Link>
       </Typography>
     </Stack>

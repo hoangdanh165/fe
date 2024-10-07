@@ -7,6 +7,8 @@ import Image from '../../../components/base/Image';
 import logoWithText from '/Logo-with-text.png';
 import logo from '/LOGO.png';
 import { rootPaths } from '../../../routes/paths';
+import navItems from '../../../data/nav-items'
+import React from 'react';
 
 const Sidebar = ({ open }: { open: boolean }): ReactElement => {
   return (

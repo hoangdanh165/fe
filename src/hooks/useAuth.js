@@ -1,15 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from '../services/axios'; 
+import { useNavigate } from 'react-router-dom';
 
 const LOGIN_URL = 'auth/token/obtain/';
 
 const useAuth = () => {
     const [user, setUser] = useState(null);
-    const [accessToken, setAccessToken] = useState(null); // Thêm state cho accessToken
+    const accessTokenRef = useRef(null);
     const [errMsg, setErrMsg] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate(); 
 
-    const login = async (email, password) => {
+    const getAccessToken = useCallback(() => accessTokenRef.current, []);
+
+    const setAccessToken = useCallback((token) => {
+        accessTokenRef.current = token;
+        if (token) {
+            localStorage.setItem('accessToken', token);
+        } else {
+            localStorage.removeItem('accessToken');
+        }
+    }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            setAccessToken(token);
+        }
+    }, [setAccessToken]);
+
+    const login = useCallback(async (email, password) => {
         setLoading(true);
         setErrMsg('');
         try {
@@ -17,35 +37,36 @@ const useAuth = () => {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });
-            const token = response?.data?.accessToken;
-
-            // Lưu accessToken vào state
+            const token = response?.data?.access;
+            console.log('Token received:', token);
+            
             setAccessToken(token);
-            document.cookie = `accessToken=${token}; HttpOnly; Secure; SameSite=Lax`;
-
+            console.log('Token set:', getAccessToken());
+            
             setUser({ email, roles: response.data.roles }); 
         } catch (err) {
+            console.error('Login error:', err);
             if (!err?.response) {
-                setErrMsg('No Server Response');
+                setErrMsg('Không có phản hồi từ máy chủ');
             } else if (err.response?.status === 400) {
-                setErrMsg('Missing Username or Password');
+                setErrMsg('Thiếu tên đăng nhập hoặc mật khẩu');
             } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
+                setErrMsg('Không được phép truy cập');
             } else {
-                setErrMsg('Login Failed');
+                setErrMsg('Đăng nhập thất bại');
             }
         } finally {
             setLoading(false);
         }
-    };
+    }, [setAccessToken, getAccessToken]);
 
-    const logout = () => {
-        document.cookie = 'accessToken=; Max-Age=0; path=/'; // Xóa cookie
+    const logout = useCallback(() => {
+        setAccessToken(null);
         setUser(null);
-        setAccessToken(null); // Reset accessToken khi logout
-    };
+        navigate('/auth/login');
+    }, [navigate, setAccessToken]);
 
-    return { user, accessToken, login, logout, errMsg, loading }; // Trả về accessToken
+    return { user, getAccessToken, login, logout, errMsg, loading }; 
 };
 
 export default useAuth;

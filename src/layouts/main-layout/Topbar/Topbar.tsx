@@ -12,6 +12,7 @@ import { ReactElement } from 'react';
 import { drawerCloseWidth, drawerOpenWidth } from '..';
 import UserDropdown from './UserDropdown';
 import { useBreakpoints } from '../../../providers/BreakpointsProvider';
+import React from 'react';
 
 const Topbar = ({
   open,

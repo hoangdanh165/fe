@@ -2,11 +2,14 @@ import { Menu, Avatar, Button, Tooltip, MenuItem, ListItemIcon, ListItemText } f
 import IconifyIcon from '../../../components/base/IconifyIcon';
 import profile from '../../../assets/images/account/Profile.png';
 import { useState, MouseEvent, useCallback, ReactElement } from 'react';
-import userMenuItems from 'data/usermenu-items';
+import userMenuItems from '../../../data/usermenu-items';
+import useAuth from '../../../hooks/useAuth';  
+import React from 'react';  
 
 const UserDropdown = (): ReactElement => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
+  const { logout } = useAuth();  
 
   const handleUserClick = useCallback((event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -15,6 +18,16 @@ const UserDropdown = (): ReactElement => {
   const handleUserClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
+
+  const handleMenuItemClick = useCallback(
+    (userMenuItemId: number) => {
+      handleUserClose();
+      if (userMenuItemId === 5) {
+        logout();
+      }
+    },
+    [handleUserClose, logout]
+  );
 
   return (
     <>
@@ -66,7 +79,7 @@ const UserDropdown = (): ReactElement => {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         {userMenuItems.map((userMenuItem) => (
-          <MenuItem key={userMenuItem.id} onClick={handleUserClose}>
+          <MenuItem key={userMenuItem.id} onClick={() => handleMenuItemClick(userMenuItem.id)}>
             <ListItemIcon
               sx={{
                 minWidth: `0 !important`,

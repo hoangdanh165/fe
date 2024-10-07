@@ -26,18 +26,12 @@ const userMenuItems: UserMenuItem[] = [
   },
   {
     id: 4,
-    title: 'Switch Account',
-    icon: 'material-symbols:switch-account',
-    color: 'text.primary',
-  },
-  {
-    id: 5,
-    title: 'Help Center',
+    title: 'Service Center',
     icon: 'material-symbols:live-help',
     color: 'text.primary',
   },
   {
-    id: 6,
+    id: 5,
     title: 'Logout',
     icon: 'material-symbols:logout',
     color: 'error.main',

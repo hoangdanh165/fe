@@ -1,17 +1,20 @@
 import { axiosPrivate } from "../services/axios";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import useRefreshToken from "./useRefreshToken";
 import useAuth from "./useAuth";
 
 const useAxiosPrivate = () => {
     const refresh = useRefreshToken();
-    const { accessToken } = useAuth(); 
+    const { getAccessToken } = useAuth();
 
     useEffect(() => {
         const requestIntercept = axiosPrivate.interceptors.request.use(
             config => {
-                if (accessToken && !config.headers['Authorization']) {
-                    config.headers['Authorization'] = `Bearer ${accessToken}`;
+                if (!config.headers['Authorization']) {
+                    const token = getAccessToken();
+                    if (token) {
+                        config.headers['Authorization'] = `Bearer ${token}`;
+                    }
                 }
                 return config;
             }, 
@@ -24,9 +27,15 @@ const useAxiosPrivate = () => {
                 const prevRequest = error?.config;
                 if (error?.response?.status === 403 && !prevRequest?.sent) {
                     prevRequest.sent = true;
-                    const newAccessToken = await refresh();
-                    prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-                    return axiosPrivate(prevRequest);
+                    try {
+                        const newAccessToken = await refresh();
+                        prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                        return axiosPrivate(prevRequest);
+                    } catch (refreshError) {
+                        console.error('Không thể refresh token:', refreshError);
+                        // Xử lý lỗi refresh token ở đây (ví dụ: đăng xuất người dùng)
+                        return Promise.reject(refreshError);
+                    }
                 }
                 return Promise.reject(error);
             }
@@ -36,7 +45,7 @@ const useAxiosPrivate = () => {
             axiosPrivate.interceptors.request.eject(requestIntercept);
             axiosPrivate.interceptors.response.eject(responseIntercept);
         };
-    }, [accessToken, refresh]);
+    }, [getAccessToken, refresh]);
 
     return axiosPrivate;
 };

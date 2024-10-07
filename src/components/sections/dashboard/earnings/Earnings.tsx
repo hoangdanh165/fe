@@ -2,7 +2,6 @@ import { Box, Paper, Typography } from '@mui/material';
 import EarningsChart from './EarningsChart';
 import { ReactElement, useEffect, useRef } from 'react';
 import EChartsReactCore from 'echarts-for-react/lib/core';
-import { currencyFormat } from 'helpers/format-functions';
 
 const Earnings = (): ReactElement => {
   const chartRef = useRef<EChartsReactCore | null>(null);
@@ -34,7 +33,6 @@ const Earnings = (): ReactElement => {
         mb={4.5}
         fontSize={{ xs: 'h2.fontSize', sm: 'h1.fontSize' }}
       >
-        {currencyFormat(6078.76, { useGrouping: false })}
       </Typography>
       <Typography variant="body1" color="text.primary" mb={15}>
         Profit is 48% More than last Month

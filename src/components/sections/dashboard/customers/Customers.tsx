@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, useCallback, ReactElement } from 'react';
 import { Box, Paper, Stack, TextField, Typography, InputAdornment } from '@mui/material';
-import IconifyIcon from 'components/base/IconifyIcon';
-import CustomerTable from './CustomerTable';
+import IconifyIcon from '../../../base/IconifyIcon';
+import React from 'react';
 
 const Customers = (): ReactElement => {
   const [search, setSearch] = useState<string>('');
@@ -54,7 +54,6 @@ const Customers = (): ReactElement => {
         />
       </Stack>
       <Box width={1} flexGrow={1} minHeight={325}>
-        <CustomerTable searchText={search} />
       </Box>
     </Paper>
   );

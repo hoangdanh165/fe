@@ -1,14 +1,5 @@
 import { ReactElement, useMemo } from 'react';
-import * as echarts from 'echarts';
-import { LineSeriesOption } from 'echarts';
-import ReactEChart from 'components/base/ReactEChart';
-import EChartsReactCore from 'echarts-for-react/lib/core';
 import { alpha, SxProps, useTheme } from '@mui/material';
-import {
-  GridComponentOption,
-  LegendComponentOption,
-  TooltipComponentOption,
-} from 'echarts/components';
 
 type CustomerFulfillmentChartProps = {
   chartRef: React.MutableRefObject<EChartsReactCore | null>;

@@ -10,12 +10,11 @@ import {
   GridRenderCellParams,
   GridTreeNodeWithRender,
 } from '@mui/x-data-grid';
-import { rows } from 'data/customer-data';
-import { stringAvatar } from 'helpers/string-avatar';
-import IconifyIcon from 'components/base/IconifyIcon';
-import { currencyFormat } from 'helpers/format-functions';
-import CustomPagination from 'components/common/CustomPagination';
-import CustomNoResultsOverlay from 'components/common/CustomNoResultsOverlay';
+import { rows } from '../../../../data/customer-data';
+import { stringAvatar } from '../../../../helpers/string-avatar';
+import IconifyIcon from '../../../base/IconifyIcon';
+import CustomPagination from '../../../../components/common/CustomPagination';
+import CustomNoResultsOverlay from '../../../../components/common/CustomNoResultsOverlay';
 
 const columns: GridColDef<any>[] = [
   {

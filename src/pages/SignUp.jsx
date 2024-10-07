@@ -149,6 +149,8 @@ const SignUp = () => {
       emptyErrors.confirmPassword = 'Mật khẩu không được để trống!';
     }
     
+    setErrors((prevErrors) => ({ ...prevErrors, ...emptyErrors }));
+    
     if (Object.keys(emptyErrors).length > 0) {
       return
     }
@@ -169,6 +171,7 @@ const SignUp = () => {
       );
       
     } catch (err) {
+      console.log(err?.response)
         if (!err?.response) {
             setErrMsg('No Server Response');
             return;

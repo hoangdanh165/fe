@@ -9,12 +9,13 @@ import paths from './paths';
 const App = lazy(() => import('../App'));
 
 const AuthLayout = lazy(() => import('../layouts/auth-layout'));
+const MainLayout = lazy(() => import('../layouts/main-layout'))
 
 const Login = lazy(() => import('../pages/Login'));
 const Home = lazy(() => import('../pages/Home'));
 const SignUp = lazy(() => import('../pages/SignUp'));
 const ErrorPage = lazy(() => import('../pages/error/ErrorPage'));
-
+const Dashboard = lazy(() => import('../pages/Dashboard'));
 const routes = [
   {
     path: '/',
@@ -27,11 +28,18 @@ const routes = [
       {
         path: paths.home,
         element: (
+          <MainLayout>
             <Suspense fallback={<PageLoader />}>
-            <Home />
+              <Outlet />
             </Suspense>
+          </MainLayout>
         ),
-        
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+        ],
       },
       {
         path: rootPaths.authRoot,

@@ -1,24 +1,14 @@
 import { Box, Button, Divider, Paper, Stack, Typography, alpha, useTheme } from '@mui/material';
-import EChartsReactCore from 'echarts-for-react/lib/core';
 import { ReactElement, useEffect, useRef } from 'react';
 import LevelChart from './LevelChart';
-import { levelData } from 'data/chart-data/level';
+import React from 'react';
 
 const Level = (): ReactElement => {
   const theme = useTheme();
-  const chartRef = useRef<EChartsReactCore | null>(null);
-
+  const userRef = useRef()
   useEffect(() => {
-    const handleResize = () => {
-      if (chartRef.current) {
-        chartRef.current.getEchartsInstance().resize();
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [chartRef]);
+    
+  }, []);
 
   return (
     <Paper sx={{ p: { xs: 4, sm: 8 }, height: 1 }}>
@@ -26,8 +16,8 @@ const Level = (): ReactElement => {
         Level
       </Typography>
       <LevelChart
-        chartRef={chartRef}
-        data={levelData}
+        chartRef={userRef}
+        data={userRef}
         sx={{ height: '181px !important', flexGrow: 1 }}
       />
       <Stack
