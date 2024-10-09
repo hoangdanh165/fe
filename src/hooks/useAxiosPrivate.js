@@ -12,6 +12,8 @@ const useAxiosPrivate = () => {
             config => {
                 if (!config.headers['Authorization']) {
                     const token = getAccessToken();
+                    console.log("RECEIVED TOKEN:", token)
+                    
                     if (token) {
                         config.headers['Authorization'] = `Bearer ${token}`;
                     }
@@ -25,15 +27,17 @@ const useAxiosPrivate = () => {
             response => response,
             async (error) => {
                 const prevRequest = error?.config;
-                if (error?.response?.status === 403 && !prevRequest?.sent) {
+                if (error?.response?.status === 401 && !prevRequest?.sent) {
                     prevRequest.sent = true;
                     try {
                         const newAccessToken = await refresh();
+                        console.log("NEW ACCESSTOKEN", newAccessToken)
+
                         prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
                         return axiosPrivate(prevRequest);
                     } catch (refreshError) {
                         console.error('Không thể refresh token:', refreshError);
-                        // Xử lý lỗi refresh token ở đây (ví dụ: đăng xuất người dùng)
                         return Promise.reject(refreshError);
                     }
                 }

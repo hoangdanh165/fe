@@ -1,20 +1,36 @@
-import axios from '../services/axios';
+import axios from '../services/axios'; // Sử dụng axios đã cấu hình sẵn
 import useAuth from './useAuth';
 
+const REFRESH_URL = '/auth/token/refresh/'; // Đường dẫn endpoint để refresh token
+
 const useRefreshToken = () => {
-    const { setAuth } = useAuth();
+    const { getRefreshToken, setAccessToken } = useAuth();
 
     const refresh = async () => {
-        const response = await axios.get('/refresh', {
-            withCredentials: true
-        });
-        setAuth(prev => {
-            console.log(JSON.stringify(prev));
-            console.log(response.data.accessToken);
-            return { ...prev, accessToken: response.data.accessToken }
-        });
-        return response.data.accessToken;
-    }
+        try {
+            const refreshToken = getRefreshToken();
+            console.log("OLD REFRESH TOKEN: ", refreshToken)
+            const response = await axios.post(REFRESH_URL, 
+                {
+                    refresh: refreshToken
+                }, 
+                {
+                    withCredentials: true, 
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    }, 
+                }
+            );
+            const newAccessToken = response?.data?.access;
+            setAccessToken(newAccessToken);
+            console.log("NEW TOKEN: ", newAccessToken)
+            return newAccessToken;
+        } catch (error) {
+            console.error('Lỗi refresh token:', error);
+            throw error; 
+        }
+    };
+
     return refresh;
 };
 

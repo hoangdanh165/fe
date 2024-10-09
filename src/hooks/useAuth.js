@@ -7,11 +7,15 @@ const LOGIN_URL = 'auth/token/obtain/';
 const useAuth = () => {
     const [user, setUser] = useState(null);
     const accessTokenRef = useRef(null);
+    const refreshTokenRef = useRef(null);
+
     const [errMsg, setErrMsg] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate(); 
 
     const getAccessToken = useCallback(() => accessTokenRef.current, []);
+    const getRefreshToken = useCallback(() => refreshTokenRef.current, []);
+
 
     const setAccessToken = useCallback((token) => {
         accessTokenRef.current = token;
@@ -22,12 +26,24 @@ const useAuth = () => {
         }
     }, []);
 
+    const setRefreshToken = useCallback((refreshToken) => {
+        refreshTokenRef.current = refreshToken;
+        if (refreshToken) {
+            localStorage.setItem('refreshToken', refreshToken);
+        } else {
+            localStorage.removeItem('refreshToken');
+        }
+    }, []);
+
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
-        if (token) {
+        const refreshToken = localStorage.getItem('refreshToken');
+
+        if (token && refreshToken) {
             setAccessToken(token);
+            setRefreshToken(refreshToken);
         }
-    }, [setAccessToken]);
+    }, [setAccessToken, setRefreshToken]);
 
     const login = useCallback(async (email, password) => {
         setLoading(true);
@@ -38,10 +54,17 @@ const useAuth = () => {
                 withCredentials: true
             });
             const token = response?.data?.access;
+            const refreshToken = response?.data?.refresh;
             console.log('Token received:', token);
+            console.log('RefreshToken received:', refreshToken);
             
             setAccessToken(token);
+            setRefreshToken(refreshToken);
+
             console.log('Token set:', getAccessToken());
+            console.log('RefreshToken set:', getRefreshToken());
+
+            
             
             setUser({ email, roles: response.data.roles }); 
         } catch (err) {
@@ -58,7 +81,7 @@ const useAuth = () => {
         } finally {
             setLoading(false);
         }
-    }, [setAccessToken, getAccessToken]);
+    }, [setAccessToken, getAccessToken, setRefreshToken, getRefreshToken]);
 
     const logout = useCallback(() => {
         setAccessToken(null);
@@ -66,7 +89,7 @@ const useAuth = () => {
         navigate('/auth/login');
     }, [navigate, setAccessToken]);
 
-    return { user, getAccessToken, login, logout, errMsg, loading }; 
+    return { user, getAccessToken, setAccessToken, getRefreshToken, login, logout, errMsg, loading }; 
 };
 
 export default useAuth;

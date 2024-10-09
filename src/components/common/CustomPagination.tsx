@@ -8,6 +8,7 @@ import {
   gridPaginationRowRangeSelector,
 } from '@mui/x-data-grid';
 import { ReactElement } from 'react';
+import React from 'react';
 
 const CustomPagination = (): ReactElement => {
   const apiRef = useGridApiContext();
@@ -16,6 +17,7 @@ const CustomPagination = (): ReactElement => {
   const available = useGridSelector(apiRef, gridExpandedRowCountSelector);
   const paginationRowRange = useGridSelector(apiRef, gridPaginationRowRangeSelector);
 
+  console.log()
   return (
     <Stack
       width={1}

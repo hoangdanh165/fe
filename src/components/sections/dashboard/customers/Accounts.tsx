@@ -1,9 +1,10 @@
 import { useState, ChangeEvent, useCallback, ReactElement } from 'react';
 import { Box, Paper, Stack, TextField, Typography, InputAdornment } from '@mui/material';
 import IconifyIcon from '../../../base/IconifyIcon';
+import AccountTable from './AccountTable';
 import React from 'react';
 
-const Customers = (): ReactElement => {
+const Accounts = (): ReactElement => {
   const [search, setSearch] = useState<string>('');
 
   const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -21,7 +22,7 @@ const Customers = (): ReactElement => {
         gap={3}
       >
         <Typography variant="h4" color="common.white">
-          Customers
+          Accounts
         </Typography>
         <TextField
           variant="filled"
@@ -54,9 +55,10 @@ const Customers = (): ReactElement => {
         />
       </Stack>
       <Box width={1} flexGrow={1} minHeight={325}>
+        <AccountTable searchText={search} />
       </Box>
     </Paper>
   );
 };
 
-export default Customers;
+export default Accounts;
