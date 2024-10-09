@@ -1,7 +1,7 @@
-import axios from '../services/axios'; // Sử dụng axios đã cấu hình sẵn
+import axios from '../services/axios'; 
 import useAuth from './useAuth';
 
-const REFRESH_URL = '/auth/token/refresh/'; // Đường dẫn endpoint để refresh token
+const REFRESH_URL = '/auth/token/refresh/'; 
 
 const useRefreshToken = () => {
     const { getRefreshToken, setAccessToken } = useAuth();

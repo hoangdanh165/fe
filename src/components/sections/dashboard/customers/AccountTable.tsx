@@ -22,6 +22,7 @@ import {
   InputLabel, 
   Select, 
   MenuItem,
+  Alert,
 } from '@mui/material';
 
 import {
@@ -40,6 +41,7 @@ interface User {
   email: string;
   status: string;
   email_verified: boolean;
+  password: string,
 
 }
 
@@ -50,8 +52,10 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isEditMode, setEditMode] = useState(!!editingUser);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const axiosPrivate = useAxiosPrivate()
-  console.log(rows)
+  console.log("CCCCC", rows)
 
   const handleEdit = (id: string) => {
     setEditMode(true)
@@ -63,16 +67,41 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
   };
   
   const handleAdd = () => {
-    setEditMode(false)
+    setEditMode(false);
+    setEditingUser({
+      id: '',           
+      email: '',        
+      status: 'Active', 
+      email_verified: false,  
+      password: '12345678',    
+  });
     setEditModalOpen(true);
   }
   
   const handleCloseEditModal = () => {
     setEditModalOpen(false);
     setEditingUser(null);
+    setEmailError('');
+    setPasswordError('');
   };
 
   const handleSave = async () => {
+    setEmailError(''); 
+    setPasswordError('');
+
+    if (!editingUser) return;
+
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(editingUser.email)) {
+      setEmailError('Email phải có dạng: email_name@provider_name.domain');
+      return;
+    }
+
+    if (editingUser.password && editingUser.password.length < 8) {
+      setPasswordError('Mật khẩu phải có ít nhất 8 kí tự!');
+      return;
+    }
+
     if (isEditMode) {
       await handleSaveEdit();
     } else {
@@ -97,27 +126,28 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
           }
         }
       );
-      console.log('User data for edit:', response.data);
 
-      console.log('Đã cập nhật người dùng:', editingUser);
       setReloadTrigger(prev => prev + 1);
       handleCloseEditModal();
     } catch (error) {
-      console.error('Lỗi khi cập nhật:', error);
-      // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi)
+      if (error) {
+        setEmailError('Tài khoản với email này đã tồn tại!');
+        return;
+      }
     }
   };
 
   const handleSaveAdd = async () => {
     if (!editingUser) return;
-    console.log("BỐ MÀY ĐANG THÊM THẰNG...", editingUser.email_verified)
+
     try {
       const response = await axiosPrivate.post(
-        `/api/v1/users/`, 
+        `/api/v1/users/`,
         {
           email: editingUser.email,
           status: editingUser.status,
-          email_verified: editingUser.email_verified ? true : false
+          email_verified: editingUser.email_verified,
+          password: editingUser.password
         }, 
         {
           headers: {
@@ -125,14 +155,15 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
           }
         }
       );
-      console.log('User data for edit:', response.data);
 
       console.log('Đã thêm người dùng:', editingUser);
       setReloadTrigger(prev => prev + 1);
       handleCloseEditModal();
     } catch (error) {
-      console.error('Lỗi khi thêm:', error);
-      // Xử lý lỗi (ví dụ: hiển thị thông báo lỗi)
+      if (error) {
+        setEmailError('Tài khoản với email này đã tồn tại!');
+        return;
+      }
     }
   };
 
@@ -311,8 +342,10 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
         {isEditMode ? 'Cập nhật tài khoản' : 'Thêm tài khoản'}
       </DialogTitle>
       <DialogContent>
-        {true && (
+        {editingUser && (
           <>
+            {emailError && <Alert severity="error">{emailError}</Alert>}
+            {passwordError && <Alert severity="error">{passwordError}</Alert>}
             <TextField
               autoFocus
               margin="dense"
@@ -323,14 +356,32 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
               value={editingUser? editingUser.email : ''}
               onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
             />
+  
             <TextField
+              autoFocus
               margin="dense"
-              label="Trạng thái"
+              label="Password"
+              type="text"
               fullWidth
               variant="standard"
-              value={editingUser? editingUser.status : ''}
-              onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value })}
+              disabled={isEditMode}
+              value={editingUser.password ?? '*********'}
+              onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
             />
+            <FormControl fullWidth margin="dense">
+              <InputLabel id="role-label">Trạng thái tài khoản</InputLabel>
+              <Select
+                labelId="role-label"
+                id="role-select"
+                value={editingUser?.status ?? 'Active'}
+                onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value })}>
+
+                <MenuItem value='Active'>Active</MenuItem>
+                <MenuItem value='Blocked'>Blocked</MenuItem>
+                <MenuItem value='Invited'>Invited</MenuItem>
+                
+              </Select>
+            </FormControl>
       
             <FormControl fullWidth margin="dense">
               <InputLabel id="role-label">Trạng thái Email</InputLabel>
