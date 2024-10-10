@@ -9,6 +9,8 @@ export const rootPaths = {
     login: `/${rootPaths.authRoot}/login`,
     signup: `/${rootPaths.authRoot}/sign-up`,
     dashboard: `/${rootPaths.homeRoot}/dashboard`,
+    profile:`/${rootPaths.homeRoot}/profile`,
+    product:`/${rootPaths.homeRoot}/product`,
     404: `/${rootPaths.errorRoot}/404`,
   };
   
