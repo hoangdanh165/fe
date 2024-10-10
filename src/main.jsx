@@ -6,13 +6,17 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 import BreakpointsProvider from './providers/BreakpointsProvider';
 import router from './routes/router';
 import './index.css';
+import { AuthProvider } from './providers/AuthProvider';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <BreakpointsProvider>
         <CssBaseline />
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+
+        </AuthProvider>
       </BreakpointsProvider>
     </ThemeProvider>
   </React.StrictMode>

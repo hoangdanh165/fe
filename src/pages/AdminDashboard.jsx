@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 
 import Accounts from '../components/sections/dashboard/customers/Accounts';
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   return (
     <>
         <Box gridColumn={{ xs: 'span 12', '2xl': 'span 6' }} order={{ xs: 7 }}>
@@ -13,4 +13,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

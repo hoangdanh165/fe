@@ -2,14 +2,16 @@ import { Menu, Avatar, Button, Tooltip, MenuItem, ListItemIcon, ListItemText } f
 import IconifyIcon from '../../../components/base/IconifyIcon';
 import profile from '../../../assets/images/account/Profile.png';
 import { useState, MouseEvent, useCallback, ReactElement } from 'react';
+import { useNavigate } from 'react-router-dom';
 import userMenuItems from '../../../data/usermenu-items';
-import useAuth from '../../../hooks/useAuth';  
+import useLogout from '../../../hooks/useLogout';
 import React from 'react';  
 
 const UserDropdown = (): ReactElement => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
-  const { logout } = useAuth();  
+  const logout = useLogout();  
+  const navigate = useNavigate();
 
   const handleUserClick = useCallback((event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -23,7 +25,9 @@ const UserDropdown = (): ReactElement => {
     (userMenuItemId: number) => {
       handleUserClose();
       if (userMenuItemId === 5) {
-        logout();
+          logout();
+          navigate('/auth/login');
+        
       }
     },
     [handleUserClose, logout]

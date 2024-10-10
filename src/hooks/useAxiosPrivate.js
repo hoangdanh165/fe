@@ -1,17 +1,17 @@
 import { axiosPrivate } from "../services/axios";
 import { useEffect, useCallback } from "react";
 import useRefreshToken from "./useRefreshToken";
-import useAuth from "./useAuth";
+import useAuth2 from "./useAuth2";
 
 const useAxiosPrivate = () => {
     const refresh = useRefreshToken();
-    const { getAccessToken } = useAuth();
+    const { auth } = useAuth2();
 
     useEffect(() => {
         const requestIntercept = axiosPrivate.interceptors.request.use(
             config => {
                 if (!config.headers['Authorization']) {
-                    const token = getAccessToken();
+                    const token = auth?.accessToken;
                     console.log("RECEIVED TOKEN:", token)
                     
                     if (token) {
@@ -49,7 +49,7 @@ const useAxiosPrivate = () => {
             axiosPrivate.interceptors.request.eject(requestIntercept);
             axiosPrivate.interceptors.response.eject(responseIntercept);
         };
-    }, [getAccessToken, refresh]);
+    }, [auth, refresh]);
 
     return axiosPrivate;
 };

@@ -1,21 +1,37 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, createBrowserRouter } from 'react-router-dom';
-
+import PrivateRoute from '../components/PrivateRoute';
 import PageLoader from '../components/loading/PageLoader';
 import Splash from '../components/loading/Splash';
 import { rootPaths } from './paths';
 import paths from './paths';
 
 const App = lazy(() => import('../App'));
-
 const AuthLayout = lazy(() => import('../layouts/auth-layout'));
 const MainLayout = lazy(() => import('../layouts/main-layout'))
-
 const Login = lazy(() => import('../pages/Login'));
 const Home = lazy(() => import('../pages/Home'));
 const SignUp = lazy(() => import('../pages/SignUp'));
 const ErrorPage = lazy(() => import('../pages/error/ErrorPage'));
-const Dashboard = lazy(() => import('../pages/Dashboard'));
+const AdminDashboard = lazy(() => import('../pages/AdminDashboard'));
+const PersistLogin = lazy(() => import('../components/PersistLogin'))
+
+
+const createMainLayoutRoutes = () => (
+  <MainLayout>
+    <Suspense fallback={<PageLoader />}>
+      <Outlet />
+    </Suspense>
+  </MainLayout>
+);
+
+const createAuthLayoutRoutes = () => (
+  <AuthLayout>
+    <Suspense fallback={<PageLoader />}>
+      <Outlet />
+    </Suspense>
+  </AuthLayout>
+);
 const routes = [
   {
     path: '/',
@@ -27,29 +43,45 @@ const routes = [
     children: [
       {
         path: paths.home,
-        element: (
-          <MainLayout>
-            <Suspense fallback={<PageLoader />}>
-              <Outlet />
-            </Suspense>
-          </MainLayout>
-        ),
+        element: createMainLayoutRoutes(),
         children: [
           {
             index: true,
-            element: <Dashboard />,
+            element: (
+              <PersistLogin>
+                <PrivateRoute allowedRoles={['admin']}>
+                  <AdminDashboard />
+                </PrivateRoute>
+              </PersistLogin>
+              
+            ),
+
           },
+          {
+            index: true, /* đường dẫn mặc định cho customer/coach */ 
+            element: (
+              <PersistLogin>
+                <PrivateRoute allowedRoles={['customer', 'coach', 'admin', 'sale']}> 
+                    
+                </PrivateRoute>
+              </PersistLogin>
+              
+            ),
+          },
+
         ],
       },
       {
-        path: rootPaths.authRoot,
+        path: '',
         element: (
-          <AuthLayout>
-            <Suspense fallback={<PageLoader />}>
-              <Outlet />
-            </Suspense>
-          </AuthLayout>
+          <PrivateRoute allowedRoles={['admin']}>
+            
+          </PrivateRoute>
         ),
+      },
+      {
+        path: rootPaths.authRoot,
+        element: createAuthLayoutRoutes(),
         children: [
           {
             path: paths.login,

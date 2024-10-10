@@ -55,7 +55,6 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const axiosPrivate = useAxiosPrivate()
-  console.log("CCCCC", rows)
 
   const handleEdit = (id: string) => {
     setEditMode(true)

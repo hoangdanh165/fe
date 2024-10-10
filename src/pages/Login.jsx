@@ -21,15 +21,15 @@ import { rootPaths } from '../routes/paths';
 import Image from '../components/base/Image';
 import React from 'react';
 import axios from '../services/axios';
-import useAuth from '../hooks/useAuth';
-
+import useAuth2 from '../hooks/useAuth2';
+import Cookies from 'js-cookie';
 const LOGIN_URL = 'auth/token/obtain/'
 
 
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const { login, user, loading } = useAuth();
+  const { auth, setAuth, persist, setPersist } = useAuth2();
 
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -74,7 +74,6 @@ const Login = () => {
     }
   };
   
-
   const handleSubmit = async (e) => {
       e.preventDefault();
       let newErrors = {}; 
@@ -91,36 +90,49 @@ const Login = () => {
         setErrors(newErrors);
         return; 
       }
-
       try {
-          const response = await axios.post(LOGIN_URL,
-              JSON.stringify({ email, password }),
-              {
-                  headers: { 'Content-Type': 'application/json' },
-                  withCredentials: true
-              }
-          );
-          console.log(JSON.stringify(response?.data));
-          const accessToken = response?.data?.access;
-          const roles = response?.data?.roles;
-          await login(email, password);
-          
-          setEmail('');
-          setPassword('');
-          navigate(rootPaths.homeRoot, { replace: true });
-      } catch (err) {
-          console.log(err)
-          if (!err?.response) {
-              setErrMsg('No Server Response');
-          } else if (err.response?.status === 400) {
-              setErrMsg('Missing Username or Password');
-          } else if (err.response?.status === 401) {
-              setErrMsg('Unauthorized');
-          } else {
-              setErrMsg('Login Failed');
-          }
-          errRef.current?.focus();
-      }
+        const response = await axios.post(LOGIN_URL,
+            JSON.stringify({ email, password }),
+            {
+                headers: { 'Content-Type': 'application/json' },
+                withCredentials: true
+            }
+        );
+        console.log(JSON.stringify(response?.data));
+        //console.log(JSON.stringify(response));
+        const accessToken = response?.data?.access;
+        const refreshToken = response?.data?.refresh;
+        Cookies.set('refresh_token', refreshToken, {
+          path: '/', 
+          secure: true,
+          sameSite: 'Strict',
+        });
+        
+        axios.get('/api/v1/users/identity', 
+          { 
+              headers: { Authorization: `Bearer ${accessToken}` } 
+          })
+          .then(response => {
+            const role = response.data.role.name
+            setAuth({ email, accessToken, role });
+          })
+          .catch(error => console.error('Failed to fetch user:', error));
+
+        navigate(rootPaths.homeRoot);
+        
+    } catch (err) {
+        if (!err?.response) {
+            setErrMsg('No Server Response');
+        } else if (err.response?.status === 400) {
+            setErrMsg('Missing Username or Password');
+        } else if (err.response?.status === 401) {
+            setErrMsg('Unauthorized');
+        } else {
+            setErrMsg('Login Failed');
+        }
+        // errRef.current.focus();
+    }
+      navigate(rootPaths.homeRoot, { replace: true });
   }
 
   const handleClickShowPassword = () => {
@@ -152,6 +164,9 @@ const Login = () => {
               Sign up
             </Link>
           </Typography>
+          {/* {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}  */}
+          {/* Hiển thị errMsg nếu có */}
+
           <TextField
             variant="filled"
             ref={userRef}
