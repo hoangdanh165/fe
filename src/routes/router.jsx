@@ -5,6 +5,8 @@ import PageLoader from "../components/loading/PageLoader";
 import Splash from "../components/loading/Splash";
 import { rootPaths } from "./paths";
 import paths from "./paths";
+import Unauthorized from "../components/Unauthorized";
+import Root from "../pages/Root";
 
 const App = lazy(() => import("../App"));
 const AuthLayout = lazy(() => import("../layouts/auth-layout"));
@@ -12,12 +14,14 @@ const MainLayout = lazy(() => import("../layouts/main-layout"));
 const Login = lazy(() => import("../pages/Login"));
 const Home = lazy(() => import("../pages/Home"));
 const SignUp = lazy(() => import("../pages/SignUp"));
-const ErrorPage = lazy(() => import("../pages/error/ErrorPage"));
+const NotFound = lazy(() => import("../pages/error/NotFound"));
 const AdminDashboard = lazy(() => import("../pages/AdminDashboard"));
 const UserProfile = lazy(() => import("../pages/UserProfile"));
 const ProductList = lazy(() => import("../pages/ProductList"));
+const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
 
 const PersistLogin = lazy(() => import('../components/PersistLogin'))
+const HomeRedirect = lazy(() => import('../components/HomeRedirect'))
 
 
 const createMainLayoutRoutes = () => (
@@ -45,55 +49,62 @@ const routes = [
     ),
     children: [
       {
-        path: paths.home,
-        element: createMainLayoutRoutes(),
+        path: rootPaths.homeRoot,
+        element: (
+          <PersistLogin>
+            {createMainLayoutRoutes()}
+          </PersistLogin>
+        ),
+
         children: [
-          {
-            index: true,
-            element: <Home />,
-          },
+
           {
             path: paths.dashboard,
             element: (
-              <PersistLogin>
                 <PrivateRoute allowedRoles={['admin']}>
                   <AdminDashboard />
-                </PrivateRoute>
-              </PersistLogin>
-              
+                </PrivateRoute>          
             ),
 
           },
+
           {
-            index: true, /* đường dẫn mặc định cho customer/coach */ 
+            path: paths.home,
             element: (
-              <PersistLogin>
-                <PrivateRoute allowedRoles={['customer', 'coach', 'admin', 'sale']}> 
-                    
-                </PrivateRoute>
-              </PersistLogin>
-              
+              <HomeRedirect />
             ),
           },
 
           {
             path: paths.profile,
-            element: <UserProfile />,
+            element: (
+              <PrivateRoute allowedRoles={['customer']}>
+                <UserProfile />
+              </PrivateRoute>          
+            ),
           },
+
           {
             path: paths.product,
-            element: <ProductList />,
+            element: (
+              <PrivateRoute allowedRoles={['customer']}>
+                <ProductList />
+              </PrivateRoute>          
+            ),
           },
+          
         ],
       },
+
       {
-        path: '',
+        path: rootPaths.root,
         element: (
-          <PrivateRoute allowedRoles={['admin']}>
-            
-          </PrivateRoute>
-        ),
+          <PersistLogin>
+            <Root />
+          </PersistLogin>
+        )
       },
+      
       {
         path: rootPaths.authRoot,
         element: createAuthLayoutRoutes(),
@@ -106,13 +117,21 @@ const routes = [
             path: paths.signup,
             element: <SignUp />,
           },
+          {
+            path: paths.forgot_password,
+            element: <ForgotPassword />,
+          },
         ],
       },
     ],
   },
   {
     path: "*",
-    element: <ErrorPage />,
+    element: <NotFound />,
+  },
+  {
+    path: "/unauthorized",
+    element: <Unauthorized />,
   },
 ];
 

@@ -13,7 +13,7 @@ const MainLayout = ({ children }: PropsWithChildren): ReactElement => {
 
   return (
     <>
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Box sx={{ display: 'flex', minHeight: '100vh',bgcolor: 'background.default' }}>
         <Topbar open={open} handleDrawerToggle={handleDrawerToggle} />
         {/* Mobile Drawer */}
         <Drawer

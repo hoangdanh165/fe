@@ -19,17 +19,17 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Form } from 'react-router-dom';
 import { rootPaths } from '../routes/paths';
 import Image from '../components/base/Image';
+import logo from '/kienos-logo1.png'
 import React from 'react';
 import axios from '../services/axios';
-import useAuth2 from '../hooks/useAuth2';
-import Cookies from 'js-cookie';
-const LOGIN_URL = 'auth/token/obtain/'
-
+import useAuth from '../hooks/useAuth';
+const LOGIN_URL = 'api/v1/users/log-in/'
+import paths from '../routes/paths';
 
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const { auth, setAuth, persist, setPersist } = useAuth2();
+  const { setAuth, persist, setPersist } = useAuth();
 
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -98,54 +98,57 @@ const Login = () => {
                 withCredentials: true
             }
         );
-        console.log(JSON.stringify(response?.data));
-        //console.log(JSON.stringify(response));
-        const accessToken = response?.data?.access;
-        const refreshToken = response?.data?.refresh;
-        Cookies.set('refresh_token', refreshToken, {
-          path: '/', 
-          secure: true,
-          sameSite: 'Strict',
-        });
         
-        axios.get('/api/v1/users/identity', 
-          { 
-              headers: { Authorization: `Bearer ${accessToken}` } 
-          })
-          .then(response => {
-            const role = response.data.role.name
-            setAuth({ email, accessToken, role });
-          })
-          .catch(error => console.error('Failed to fetch user:', error));
+        console.log(JSON.stringify(response?.data));
 
-        navigate(rootPaths.homeRoot);
+        const accessToken = response?.data?.accessToken;
+        const role = response?.data?.role;
+        setAuth({ email, role, accessToken });
+
+        setEmail('');
+        setPassword('');
+        
+        if (role === 'admin') {
+          navigate(paths.dashboard); 
+        } else if (role === 'customer') {
+          navigate(paths.home);  
+        } else {
+          navigate(from, { replace: true });
+        }
         
     } catch (err) {
+      console.log(err);
         if (!err?.response) {
-            setErrMsg('No Server Response');
+            setErrMsg('Không có phản hồi từ máy chủ!');
         } else if (err.response?.status === 400) {
-            setErrMsg('Missing Username or Password');
+            setErrMsg('Vui lòng điền email và mật khẩu!');
         } else if (err.response?.status === 401) {
-            setErrMsg('Unauthorized');
+            setErrMsg('Tài khoản hoặc mật khẩu không đúng!');
         } else {
-            setErrMsg('Login Failed');
+            setErrMsg('Đăng nhập thất bại!');
         }
-        // errRef.current.focus();
+        errRef.current.focus();
     }
-      navigate(rootPaths.homeRoot, { replace: true });
   }
 
   const handleClickShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
+  const togglePersist = () => {
+    setPersist(prev => !prev);
+  }
 
+  useEffect(() => {
+    localStorage.setItem("persist", persist);
+  }, [persist])
+  
   return (
     <>
       <Form>
       <Box component="figure" mb={5} mx="auto" textAlign="center">
         <Link href={rootPaths.homeRoot}>
-          <Image src="" alt="logo with text" height={60} />
+          <Image src={ logo } alt="kienos-logo" height={160} />
         </Link>
       </Box>
       <Paper
@@ -156,16 +159,16 @@ const Login = () => {
       >
         <Stack justifyContent="center" gap={5}>
           <Typography variant="h3" textAlign="center" color="text.secondary">
-            Log In
+            Đăng nhập
           </Typography>
           <Typography variant="h6" fontWeight={500} textAlign="center" color="text.primary">
-            Don’t have an account?{' '}
+            Chưa có tài khoản?{' '}
             <Link href="/auth/sign-up" underline="none">
-              Sign up
+              Đăng ký
             </Link>
           </Typography>
-          {/* {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}  */}
-          {/* Hiển thị errMsg nếu có */}
+          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+
 
           <TextField
             variant="filled"
@@ -194,7 +197,7 @@ const Login = () => {
           />
           <TextField
             variant="filled"
-            label="Password"
+            label="Mật khẩu"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
             type={showPassword ? 'text' : 'password'}
@@ -239,22 +242,30 @@ const Login = () => {
             }}
             />
           <FormGroup sx={{ ml: 1, width: 'fit-content' }}>
-            <FormControlLabel
-              control={<Checkbox />}
-              label="Keep me signed in"
-              sx={{
-                color: 'text.secondary',
-              }}
-            />
-          </FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={persist} 
+                    onChange={togglePersist}
+                  />
+                }
+                label="Ghi nhớ đăng nhập"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              />
+            </FormGroup>
           <Button
             onClick={handleSubmit}
             sx={{
               fontWeight: 'fontWeightRegular',
             }}
           >
-            Log In
+            Đăng nhập
           </Button>
+          <Link href={ paths.forgot_password } textAlign="center" underline="none" sx={{ color: 'text.secondary', mt: 2 }}>
+            Quên mật khẩu?
+          </Link>
           <Divider />
         </Stack>
       </Paper>

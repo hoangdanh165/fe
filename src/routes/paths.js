@@ -1,16 +1,21 @@
+import Unauthorized from "../components/Unauthorized";
+
 export const rootPaths = {
-    homeRoot: '/',
-    authRoot: 'auth',
-    errorRoot: 'error',
+    root: '',
+    homeRoot: '/home',
+    authRoot: '/auth',
+    errorRoot: '/error',
   };
   
   export default {
-    home: `/${rootPaths.homeRoot}`,
-    login: `/${rootPaths.authRoot}/login`,
-    signup: `/${rootPaths.authRoot}/sign-up`,
-    dashboard: `/${rootPaths.homeRoot}/dashboard`,
-    profile:`/${rootPaths.homeRoot}/profile`,
-    product:`/${rootPaths.homeRoot}/product`,
-    404: `/${rootPaths.errorRoot}/404`,
+    login: `${rootPaths.authRoot}/login`,
+    signup: `${rootPaths.authRoot}/sign-up`,
+    forgot_password: `${rootPaths.authRoot}/forgot-password`,
+    home: `${rootPaths.homeRoot}`,
+    dashboard: `${rootPaths.homeRoot}/dashboard`,
+    profile:`${rootPaths.homeRoot}/profile`,
+    product:`${rootPaths.homeRoot}/product`,
+    404: `${rootPaths.errorRoot}/404`,
+    unauthorized: `/unauthorized`
   };
   

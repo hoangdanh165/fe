@@ -9,22 +9,22 @@ export interface NavItem {
 const navItems: NavItem[] = [
   {
     id: 1,
-    path: '/dashboard',
+    path: '/home/dashboard',
     title: 'Dashboard',
     icon: 'mingcute:home-1-fill',
     active: true,
   },
   {
     id: 2,
-    path: '#!',
+    path: '/home/workout-schedule',
     title: 'Workout Schedule',
     icon: 'material-symbols-light:leaderboard-outline',
     active: false,
   },
   {
     id: 3,
-    path: '/product',
-    title: 'Product List',
+    path: '/home/product',
+    title: 'Registered Services',
     icon: 'lets-icons:bag-alt-light',
     active: false,
   },
@@ -45,7 +45,7 @@ const navItems: NavItem[] = [
 
   {
     id: 6,
-    path: '/profile',
+    path: '/product',
     title: 'Settings',
     icon: 'mingcute:settings-3-line',
     active: false,

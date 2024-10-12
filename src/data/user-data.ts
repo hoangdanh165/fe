@@ -13,7 +13,11 @@ export const useUsersData = (reloadTrigger: number) => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const response = await axiosPrivate.get('/api/v1/users'); 
+        const response = await axiosPrivate.get('/api/v1/users', 
+          {
+            withCredentials: true,
+          }
+        ); 
         console.log("AAAAAAAAAAA", response.data)
 
         // Nếu backend có pagination thì response.data.results

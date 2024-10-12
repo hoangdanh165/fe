@@ -1,13 +1,13 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useRefreshToken from '../hooks/useRefreshToken';
-import useAuth2 from "../hooks/useAuth2";
+import useAuth from "../hooks/useAuth";
 
 const PersistLogin = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
     const refresh = useRefreshToken();
-    const { auth, persist } = useAuth2();
-
+    const { auth, persist } = useAuth();
+    
     useEffect(() => {
         let isMounted = true;
 
@@ -23,11 +23,10 @@ const PersistLogin = ({ children }) => {
             }
         }
 
-        // Persist logic
         !auth?.accessToken && persist ? verifyRefreshToken() : setIsLoading(false);
 
         return () => isMounted = false;
-    }, [auth, persist, refresh]); // Ensure you include dependencies
+    }, [auth, persist, refresh]); 
 
     useEffect(() => {
         console.log(`isLoading: ${isLoading}`);

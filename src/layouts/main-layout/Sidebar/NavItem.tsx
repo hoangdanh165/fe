@@ -6,18 +6,22 @@ import {
   ListItemText,
 } from "@mui/material";
 import IconifyIcon from "../../../components/base/IconifyIcon";
-import { NavItem as NavItemProps } from "data/nav-items";
+import { NavItem as NavItemProps } from "../../../data/nav-items";
 import { useLocation } from "react-router-dom";
 import React from "react";
 
 const NavItem = ({
   navItem,
   open,
+  onClick,
 }: {
   navItem: NavItemProps;
   open: boolean;
+  onClick: () => void;
 }) => {
+
   const { pathname } = useLocation();
+  
   return (
     <ListItem
       disablePadding
@@ -34,6 +38,7 @@ const NavItem = ({
       <ListItemButton
         LinkComponent={Link}
         href={navItem.path}
+        onClick={onClick}
         sx={{
           opacity: navItem.active ? 1 : 0.5,
           bgcolor:
