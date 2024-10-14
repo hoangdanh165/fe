@@ -1,4 +1,6 @@
 import { Stack, Pagination, Typography, PaginationItem } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'; 
 import {
   useGridSelector,
   gridPageSelector,
@@ -65,8 +67,8 @@ const CustomPagination = (): ReactElement => {
           <PaginationItem
             {...item}
             slots={{
-              previous: () => <>Trước</>,
-              next: () => <>Sau</>,
+              previous: () => <ArrowBackIcon/>,
+              next: () => <ArrowForwardIcon/>,
             }}
           />
         )}
