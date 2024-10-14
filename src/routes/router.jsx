@@ -7,29 +7,41 @@ import { rootPaths } from "./paths";
 import paths from "./paths";
 import Unauthorized from "../components/Unauthorized";
 import Root from "../pages/Root";
+import CheckLogin from "../components/CheckLogin";
+import ServiceManagement from "../pages/ServiceManagement";
 
 const App = lazy(() => import("../App"));
 const AuthLayout = lazy(() => import("../layouts/auth-layout"));
-const MainLayout = lazy(() => import("../layouts/main-layout"));
+const MainLayoutAdmin = lazy(() => import("../layouts/main-layout-admin"))
+const MainLayoutCustomer = lazy(() => import("../layouts/main-layout-customer"));
 const Login = lazy(() => import("../pages/Login"));
 const Home = lazy(() => import("../pages/Home"));
 const SignUp = lazy(() => import("../pages/SignUp"));
 const NotFound = lazy(() => import("../pages/error/NotFound"));
-const AdminDashboard = lazy(() => import("../pages/AdminDashboard"));
+const AccountManagement = lazy(() => import("../pages/AccountManagement"));
 const UserProfile = lazy(() => import("../pages/UserProfile"));
 const ProductList = lazy(() => import("../pages/ProductList"));
 const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
+const Statistic = lazy(() => import("../pages/Statistic"))
 
 const PersistLogin = lazy(() => import('../components/PersistLogin'))
 const HomeRedirect = lazy(() => import('../components/HomeRedirect'))
 
 
-const createMainLayoutRoutes = () => (
-  <MainLayout>
+const createMainLayoutAdminRoutes = () => (
+  <MainLayoutAdmin>
     <Suspense fallback={<PageLoader />}>
       <Outlet />
     </Suspense>
-  </MainLayout>
+  </MainLayoutAdmin>
+);
+
+const createMainLayoutCustomerRoutes = () => (
+  <MainLayoutCustomer>
+    <Suspense fallback={<PageLoader />}>
+      <Outlet />
+    </Suspense>
+  </MainLayoutCustomer>
 );
 
 const createAuthLayoutRoutes = () => (
@@ -52,29 +64,40 @@ const routes = [
         path: rootPaths.homeRoot,
         element: (
           <PersistLogin>
-            {createMainLayoutRoutes()}
+            {createMainLayoutAdminRoutes()}
           </PersistLogin>
         ),
 
         children: [
 
           {
-            path: paths.dashboard,
+            path: paths.accounts,
             element: (
                 <PrivateRoute allowedRoles={['admin']}>
-                  <AdminDashboard />
+                  <AccountManagement />
+                </PrivateRoute>          
+            ),
+
+          },
+          {
+            path: paths.services,
+            element: (
+                <PrivateRoute allowedRoles={['admin']}>
+                  <ServiceManagement />
                 </PrivateRoute>          
             ),
 
           },
 
           {
-            path: paths.home,
+            path: paths.statistics,
             element: (
-              <HomeRedirect />
+                <PrivateRoute allowedRoles={['admin']}>
+                  <Statistic />
+                </PrivateRoute>          
             ),
-          },
 
+          },
           {
             path: paths.profile,
             element: (
@@ -112,6 +135,7 @@ const routes = [
           {
             path: paths.login,
             element: <Login />,
+            
           },
           {
             path: paths.signup,

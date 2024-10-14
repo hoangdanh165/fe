@@ -7,7 +7,7 @@ import React from 'react';
 export const drawerOpenWidth = 240;
 export const drawerCloseWidth = 110;
 
-const MainLayoutCustomer = ({ children }: PropsWithChildren): ReactElement => {
+const MainLayoutAdmin = ({ children }: PropsWithChildren): ReactElement => {
   const [open, setOpen] = useState<boolean>(false);
   const handleDrawerToggle = () => setOpen(!open);
 
@@ -70,4 +70,4 @@ const MainLayoutCustomer = ({ children }: PropsWithChildren): ReactElement => {
   );
 };
 
-export default MainLayoutCustomer;
+export default MainLayoutAdmin;

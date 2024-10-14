@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-import Accounts from '../components/sections/dashboard/customers/Accounts';
+import Accounts from '../components/admin/account/Accounts';
 
-const AdminDashboard = () => {
+const AccountManagement = () => {
   return (
     <>
         <Box gridColumn={{ xs: 'span 12', '2xl': 'span 6' }} order={{ xs: 7 }}>
@@ -13,4 +13,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default AccountManagement;

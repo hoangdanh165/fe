@@ -1,11 +1,11 @@
 import { useMemo, useEffect, ReactElement, useState } from 'react';
-import { useUsersData } from '../../../../data/user-data'
-import { stringAvatar } from '../../../../helpers/string-avatar';
-import IconifyIcon from '../../../../components/base/IconifyIcon';
+import { useUsersData } from '../../../data/user-data';
+import { stringAvatar } from '../../../helpers/string-avatar';
+import IconifyIcon from '../../base/IconifyIcon';
 import React from 'react';
-import CustomPagination from '../../../../components/common/CustomPagination';
-import CustomNoResultsOverlay from '../../../../components/common/CustomNoResultsOverlay';
-import useAxiosPrivate from '../../../../hooks/useAxiosPrivate';
+import CustomPagination from '../../common/CustomPagination';
+import CustomNoResultsOverlay from '../../common/CustomNoResultsOverlay';
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
 import { 
   Stack, 
   Avatar, 

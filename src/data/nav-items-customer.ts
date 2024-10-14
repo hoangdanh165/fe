@@ -1,5 +1,3 @@
-import paths from "../routes/paths";
-
 export interface NavItem {
   id: number;
   path: string;
@@ -11,29 +9,29 @@ export interface NavItem {
 const navItems: NavItem[] = [
   {
     id: 1,
-    path: paths.accounts,
-    title: 'Accounts',
+    path: '/home/dashboard',
+    title: 'Dashboard',
     icon: 'mingcute:home-1-fill',
     active: true,
   },
   {
     id: 2,
-    path: paths.statistics,
-    title: 'Statistics',
+    path: '/home/workout-schedule',
+    title: 'Workout Schedule',
     icon: 'material-symbols-light:leaderboard-outline',
     active: false,
   },
   {
     id: 3,
-    path: paths.services,
-    title: 'Services',
+    path: '/home/product',
+    title: 'Registered Services',
     icon: 'lets-icons:bag-alt-light',
     active: false,
   },
   {
     id: 4,
-    path: paths.service_response,
-    title: 'Service Response',
+    path: '#!',
+    title: 'Message',
     icon: 'bi:chat',
     active: false,
   },
@@ -47,7 +45,7 @@ const navItems: NavItem[] = [
 
   {
     id: 6,
-    path: '/home/settings',
+    path: '/product',
     title: 'Settings',
     icon: 'mingcute:settings-3-line',
     active: false,

@@ -109,9 +109,12 @@ const Login = () => {
         setPassword('');
         
         if (role === 'admin') {
-          navigate(paths.dashboard); 
+          navigate(paths.accounts); 
         } else if (role === 'customer') {
-          navigate(paths.home);  
+          navigate(paths.home);
+        } else if (role === 'coach') {
+          navigate(paths.home);
+
         } else {
           navigate(from, { replace: true });
         }

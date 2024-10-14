@@ -38,8 +38,8 @@ const CustomPagination = (): ReactElement => {
               textWrap: 'wrap',
             }}
           >
-            Showing {(paginationRowRange?.firstRowIndex as number) + 1}-
-            {(paginationRowRange?.lastRowIndex as number) + 1} out of {available} data
+            Hiển thị {(paginationRowRange?.firstRowIndex as number) + 1}-
+            {(paginationRowRange?.lastRowIndex as number) + 1} trên tổng số {available} dữ liệu
           </Typography>
         </>
       ) : (
@@ -51,7 +51,7 @@ const CustomPagination = (): ReactElement => {
               textWrap: 'wrap',
             }}
           >
-            Showing 0-0 out of {available} data
+            Hiển thị 0-0 trên tổng số {available} dữ liệu
           </Typography>
         </>
       )}
@@ -65,8 +65,8 @@ const CustomPagination = (): ReactElement => {
           <PaginationItem
             {...item}
             slots={{
-              previous: () => <>Previous</>,
-              next: () => <>Next</>,
+              previous: () => <>Trước</>,
+              next: () => <>Sau</>,
             }}
           />
         )}
