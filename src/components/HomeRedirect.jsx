@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import useAuth from "../hooks/useAuth"; 
-import paths from "../routes/paths";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useAuth from '../hooks/useAuth'; 
+import paths from '../routes/paths';
 
 const HomeRedirect = () => {
   const { auth } = useAuth(); 
@@ -17,6 +17,7 @@ const HomeRedirect = () => {
       navigate(paths.login); 
     } 
   }, [auth?.role, navigate]);
+
 
   return null;
 };

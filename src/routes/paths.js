@@ -1,3 +1,5 @@
+import Unauthorized from "../components/Unauthorized";
+
 export const rootPaths = {
   root: "",
   homeRoot: "/home",
@@ -20,3 +22,4 @@ export default {
   404: `${rootPaths.errorRoot}/404`,
   unauthorized: `/unauthorized`,
 };
+   

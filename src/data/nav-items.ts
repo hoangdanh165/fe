@@ -16,6 +16,7 @@ const adminNavItems: NavItem[] = [
     path: "/admin/dashboard",
     title: "Dashboard",
     icon: "mingcute:hoe-1-fill",
+
     active: true,
   },
   {

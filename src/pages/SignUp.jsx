@@ -14,7 +14,7 @@ import IconifyIcon from '../components/base/IconifyIcon';
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Form } from 'react-router-dom';
 import Image from '../components/base/Image';
-import logoWithText from '/Logo-with-text.png';
+import logoWithText from '/kienos-logo1.png';
 import { rootPaths } from '../routes/paths';
 import React from 'react';
 import axios from '../services/axios';
@@ -198,8 +198,8 @@ const SignUp = () => {
     <>
     <Form>
     <Box component="figure" mb={5} mx="auto" textAlign="center">
-        <Link href={rootPaths.homeRoot}>
-          <Image src={logoWithText} alt="logo with text" height={60} />
+        <Link href={rootPaths.authRoot}>
+          <Image src={logoWithText} alt="logo with text" height={160} />
         </Link>
       </Box>
       <Paper

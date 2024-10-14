@@ -5,13 +5,14 @@ import useAuth from "./useAuth";
 
 const useAxiosPrivate = () => {
     const refresh = useRefreshToken();
-    const { getAccessToken } = useAuth();
+    const { auth } = useAuth();
+    console.log(auth.accessToken);
 
     useEffect(() => {
         const requestIntercept = axiosPrivate.interceptors.request.use(
             config => {
                 if (!config.headers['Authorization']) {
-                    const token = getAccessToken();
+                    const token = auth?.accessToken;
                     console.log("RECEIVED TOKEN:", token)
                     
                     if (token) {
@@ -49,7 +50,7 @@ const useAxiosPrivate = () => {
             axiosPrivate.interceptors.request.eject(requestIntercept);
             axiosPrivate.interceptors.response.eject(responseIntercept);
         };
-    }, [getAccessToken, refresh]);
+    }, [auth, refresh]);
 
     return axiosPrivate;
 };
