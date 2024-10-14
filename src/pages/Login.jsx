@@ -12,19 +12,20 @@ import {
   FormControlLabel,
   InputAdornment,
   IconButton,
+} from "@mui/material";
+import IconifyIcon from "../components/base/IconifyIcon";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation, Form } from "react-router-dom";
+import { rootPaths } from "../routes/paths";
+import Image from "../components/base/Image";
+import logo from "/kienos-logo1.png";
+import React from "react";
+import axios from "../services/axios";
+import useAuth from "../hooks/useAuth";
+const LOGIN_URL = "api/v1/users/log-in/";
+import paths from "../routes/paths";
+import HomeRedirect from "../components/HomeRedirect";
 
-} from '@mui/material';
-import IconifyIcon from '../components/base/IconifyIcon';
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation, Form } from 'react-router-dom';
-import { rootPaths } from '../routes/paths';
-import Image from '../components/base/Image';
-import logo from '/kienos-logo1.png'
-import React from 'react';
-import axios from '../services/axios';
-import useAuth from '../hooks/useAuth';
-const LOGIN_URL = 'api/v1/users/log-in/'
-import paths from '../routes/paths';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -33,24 +34,23 @@ const Login = () => {
 
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
-  
+
   const userRef = useRef();
   const errRef = useRef();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [errMsg, setErrMsg] = useState('');
+  const [errMsg, setErrMsg] = useState("");
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
 
   useEffect(() => {
-      userRef.current.focus();
-  }, [])
-
-  useEffect(() => {
-      setErrMsg('');
-  }, [email, password])
+    setErrMsg("");
+  }, [email, password]);
 
   const validateEmail = (email) => {
     const gmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,38 +59,38 @@ const Login = () => {
 
   const handleEmailChange = (e) => {
     const email = e.target.value;
-    setEmail(email); 
-  
+    setEmail(email);
+
     if (!validateEmail(email)) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        email: 'Email không đúng định dạng!',
+        email: "Email không đúng định dạng!",
       }));
     } else {
       setErrors((prevErrors) => {
-        const { email, ...rest } = prevErrors; 
+        const { email, ...rest } = prevErrors;
         return rest;
       });
     }
   };
-  
+
   const handleSubmit = async (e) => {
-      e.preventDefault();
-      let newErrors = {}; 
+    e.preventDefault();
+    let newErrors = {};
 
-      if (!email) {
-        newErrors.email = 'Email không được để trống!';
-      }
+    if (!email) {
+      newErrors.email = "Email không được để trống!";
+    }
 
-      if (!password) {
-        newErrors.password = 'Mật khẩu không được để trống!';
-      }
-
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return; 
-      }
-      try {
+    if (!password) {
+      newErrors.password = "Mật khẩu không được để trống!";
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return; 
+    }
+    try {
         const response = await axios.post(LOGIN_URL,
             JSON.stringify({ email, password }),
             {
@@ -139,8 +139,8 @@ const Login = () => {
   };
 
   const togglePersist = () => {
-    setPersist(prev => !prev);
-  }
+    setPersist((prev) => !prev);
+  };
 
   useEffect(() => {
     localStorage.setItem("persist", persist);
@@ -218,31 +218,8 @@ const Login = () => {
                 ':focus-within': {
                   bgcolor: 'background.default',
                 },
-              },
-              borderRadius: 2,
-            }}
-          
-          InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    size="small"
-                    edge="end"
-                    sx={{
-                      mr: 2,
-                    }}
-                  >
-                    {showPassword ? (
-                      <IconifyIcon icon="el:eye-open" color="text.secondary" />
-                    ) : (
-                      <IconifyIcon icon="el:eye-close" color="text.primary" />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+                borderRadius: 2,
+              }}
             />
           <FormGroup sx={{ ml: 1, width: 'fit-content' }}>
               <FormControlLabel
@@ -273,7 +250,7 @@ const Login = () => {
         </Stack>
       </Paper>
       </Form>
-      
+      <HomeRedirect />
     </>
   );
 };

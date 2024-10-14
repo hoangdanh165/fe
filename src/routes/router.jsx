@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
-import { Outlet, createBrowserRouter } from "react-router-dom";
-import PrivateRoute from '../components/PrivateRoute';
+import { Outlet, createBrowserRouter, Navigate } from "react-router-dom";
+import PrivateRoute from "../components/PrivateRoute";
+
 import PageLoader from "../components/loading/PageLoader";
 import Splash from "../components/loading/Splash";
 import { rootPaths } from "./paths";
@@ -9,6 +10,8 @@ import Unauthorized from "../components/Unauthorized";
 import Root from "../pages/Root";
 import CheckLogin from "../components/CheckLogin";
 import ServiceManagement from "../pages/ServiceManagement";
+import { path } from "d3";
+
 
 const App = lazy(() => import("../App"));
 const AuthLayout = lazy(() => import("../layouts/auth-layout"));
@@ -23,9 +26,11 @@ const UserProfile = lazy(() => import("../pages/UserProfile"));
 const ProductList = lazy(() => import("../pages/ProductList"));
 const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
 const Statistic = lazy(() => import("../pages/Statistic"))
+const CoachDashboard = lazy(() => import("../pages/CoachDashboard"));
 
-const PersistLogin = lazy(() => import('../components/PersistLogin'))
-const HomeRedirect = lazy(() => import('../components/HomeRedirect'))
+
+const PersistLogin = lazy(() => import("../components/PersistLogin"));
+const HomeRedirect = lazy(() => import("../components/HomeRedirect"));
 
 
 const createMainLayoutAdminRoutes = () => (
@@ -67,7 +72,6 @@ const routes = [
             {createMainLayoutAdminRoutes()}
           </PersistLogin>
         ),
-
         children: [
 
           {
@@ -82,42 +86,44 @@ const routes = [
           {
             path: paths.services,
             element: (
-                <PrivateRoute allowedRoles={['admin']}>
-                  <ServiceManagement />
-                </PrivateRoute>          
+              <PrivateRoute allowedRoles={["admin"]}>
+                <ServiceManagement />
+              </PrivateRoute>
             ),
-
           },
-
-          {
-            path: paths.statistics,
-            element: (
-                <PrivateRoute allowedRoles={['admin']}>
-                  <Statistic />
-                </PrivateRoute>          
-            ),
-
-          },
+        ],
+       
+      },
+      {
+        paths: rootPaths.coachRoot,
+        element: <PersistLogin>{createMainLayoutRoutes()}</PersistLogin>,
+        children:[
           {
             path: paths.profile,
             element: (
-              <PrivateRoute allowedRoles={['customer']}>
-                <UserProfile />
-              </PrivateRoute>          
-            ),
-          },
-
-          {
-            path: paths.product,
-            element: (
-              <PrivateRoute allowedRoles={['customer']}>
-                <ProductList />
-              </PrivateRoute>          
-            ),
-          },
-          
-        ],
-      },
+              <PrivateRoute allowedRoles={["coach"]}>
+              <UserProfile />
+            </PrivateRoute>
+          )
+        },
+        {
+          path: paths.product,
+          element: (
+            <PrivateRoute allowedRoles={["coach"]}>
+              <ProductList />
+            </PrivateRoute>
+          )
+        },
+        {
+          path: paths.customer,
+          element: (
+            <PrivateRoute allowedRoles={["coach"]}>
+              <CoachDashboard />
+            </PrivateRoute>
+          )
+        }
+      ]
+    },
 
       {
         path: rootPaths.root,
