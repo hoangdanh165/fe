@@ -1,16 +1,22 @@
 export const rootPaths = {
-    homeRoot: '/',
-    authRoot: 'auth',
-    errorRoot: 'error',
-  };
-  
-  export default {
-    home: `/${rootPaths.homeRoot}`,
-    login: `/${rootPaths.authRoot}/login`,
-    signup: `/${rootPaths.authRoot}/sign-up`,
-    dashboard: `/${rootPaths.homeRoot}/dashboard`,
-    profile:`/${rootPaths.homeRoot}/profile`,
-    product:`/${rootPaths.homeRoot}/product`,
-    404: `/${rootPaths.errorRoot}/404`,
-  };
-  
+  root: "",
+  homeRoot: "/home",
+  authRoot: "/auth",
+  errorRoot: "/error",
+  adminRoot: "/admin",
+  coachRoot: "/coach",
+  saleRoot: "/sale",
+};
+
+export default {
+  login: `${rootPaths.authRoot}/login`,
+  signup: `${rootPaths.authRoot}/sign-up`,
+  forgot_password: `${rootPaths.authRoot}/forgot-password`,
+  home: `${rootPaths.homeRoot}`,
+  dashboard: `${rootPaths.adminRoot}/dashboard`,
+  profile: `${rootPaths.coachRoot}/profile`,
+  product: `${rootPaths.coachRoot}/product`,
+  customer: `${rootPaths.coachRoot}/customer`,
+  404: `${rootPaths.errorRoot}/404`,
+  unauthorized: `/unauthorized`,
+};

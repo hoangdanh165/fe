@@ -38,20 +38,18 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axiosPrivate.get(
-          "/api/v1/users/info"
-        );
+        const response = await axiosPrivate.get("/api/v1/users/info");
         console.log(response.data);
         setProfile({
-          firstName: response.data.first_name,
-          lastName: response.data.last_name,
+          firstName: response.data.profile.first_name,
+          lastName: response.data.profile.last_name,
           phone: response.data.phone,
-          address: response.data.address,
-          gender: response.data.gender,
-          birthday: response.data.birthday
-            ? new Date(response.data.birthday)
+          address: response.data.profile.address,
+          gender: response.data.profile.gender === "1" ? "female" : "male",
+          birthday: response.data.profile.birthday
+            ? new Date(response.data.profile.birthday)
             : null,
-          // avatar: response.data.avatar, 
+          // avatar: response.data.avatar,
         });
       } catch (error) {
         console.error("Error fetching profile data:", error);
@@ -105,7 +103,7 @@ const UserProfile = () => {
     e.preventDefault();
     try {
       // API call to update the profile data
-      const response = await axiosPrivate.put("/api/v1/customer-profiles", {
+      const response = await axiosPrivate.put("/api/v1/users/info", {
         first_name: profile.firstName,
         last_name: profile.lastName,
         phone: profile.phone,
