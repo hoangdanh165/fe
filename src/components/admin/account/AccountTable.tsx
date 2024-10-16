@@ -112,7 +112,7 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
     if (!editingUser) return;
     console.log(editingUser)
     try {
-      const response = await axiosPrivate.put(
+      const response = await axiosPrivate.patch(
         `/api/v1/users/${editingUser.id}/`, 
         {
           email: editingUser.email,
@@ -368,27 +368,25 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
               onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
             />
             <FormControl fullWidth margin="dense">
-              <InputLabel id="role-label">Trạng thái tài khoản</InputLabel>
+              <InputLabel id="role-label" sx={{ marginBottom: 3, marginTop: 3 }}>Trạng thái tài khoản</InputLabel>
               <Select
                 labelId="role-label"
                 id="role-select"
-                value={editingUser?.status ?? 'Active'}
+                value={editingUser?.status}
                 onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value })}>
 
-                <MenuItem value='Active'>Active</MenuItem>
-                <MenuItem value='Blocked'>Blocked</MenuItem>
-                <MenuItem value='Invited'>Invited</MenuItem>
-                
+                <MenuItem value='1'>ACTIVE</MenuItem>
+                <MenuItem value='2'>BLOCKED</MenuItem>
               </Select>
             </FormControl>
       
             <FormControl fullWidth margin="dense">
-              <InputLabel id="role-label">Trạng thái Email</InputLabel>
+              <InputLabel id="role-label" sx={{ marginBottom: 3, marginTop: 3 }}>Trạng thái Email</InputLabel>
               <Select
                 labelId="role-label"
                 id="role-select"
                 value={editingUser?.email_verified ?? false}
-                onChange={(e) => setEditingUser({ ...editingUser, email_verified: e.target.value })}>
+                onChange={(e) => setEditingUser({ ...editingUser, email_verified: Boolean(e.target.value) })}>
 
                 <MenuItem value={false}>Chưa xác nhận</MenuItem>
                 <MenuItem value={true}>Đã xác nhận</MenuItem>
@@ -415,6 +413,11 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
             height: '50px', 
             fontSize: '16px', 
             padding: '10px 20px', 
+            color: 'white',
+            backgroundColor: '#4caf50',
+            '&:hover': {
+                  backgroundColor: '#388e3c',
+                },
           }}>        
           {isEditMode ? 'Lưu' : 'Thêm'}
         </Button>

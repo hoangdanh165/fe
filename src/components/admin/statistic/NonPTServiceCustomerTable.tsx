@@ -192,7 +192,7 @@ const NonPTServiceCustomerTable = ({ searchText }: { searchText: string }): Reac
           sx={{ width: '400px', height: '40px' }}
         >
           <MenuItem value="">
-            <p>Chọn giá trị</p>
+            <p>Chọn gói tháng</p>
           </MenuItem>
           {dropdownData.map((item) => (
             <MenuItem key={item.id} value={item.id}>

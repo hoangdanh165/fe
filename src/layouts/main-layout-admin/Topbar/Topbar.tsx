@@ -6,13 +6,15 @@ import {
   TextField,
   IconButton,
   InputAdornment,
+  Box
 } from '@mui/material';
 import IconifyIcon from '../../../components/base/IconifyIcon';
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import { drawerCloseWidth, drawerOpenWidth } from '..';
 import UserDropdown from './UserDropdown';
 import { useBreakpoints } from '../../../providers/BreakpointsProvider';
 import React from 'react';
+import Notification from '../../../components/Notification';
 
 const Topbar = ({
   open,
@@ -24,6 +26,12 @@ const Topbar = ({
   const { down } = useBreakpoints();
 
   const isMobileScreen = down('sm');
+
+  const [showNotifications, setShowNotifications] = useState(false); // Trạng thái hiển thị thông báo
+
+  const handleNotificationClick = () => {
+    setShowNotifications((prev) => !prev); // Chuyển đổi hiển thị thông báo
+  };
 
   return (
     <AppBar
@@ -108,6 +116,7 @@ const Topbar = ({
               sx={{
                 padding: 1,
               }}
+              onClick={handleNotificationClick}
             >
               <IconifyIcon icon="ph:bell-bold" width={29} height={32} />
             </IconButton>
@@ -115,7 +124,18 @@ const Topbar = ({
           <UserDropdown />
         </Stack>
       </Toolbar>
-    </AppBar>
+      {showNotifications && (
+        <Box
+          sx={{
+            position: 'absolute', // Đặt vị trí tuyệt đối
+            top: 80, // Đặt ngay dưới chuông
+            right: 385, // Căn phải
+            zIndex: 10, // Đảm bảo nó nằm trên các thành phần khác
+          }}
+        >
+          <Notification onClose={() => setShowNotifications(false)} />
+        </Box>
+      )}    </AppBar>
   );
 };
 

@@ -20,19 +20,15 @@ const Footer = ({ open }: { open: boolean }): ReactElement => {
       pl={{ xs: 3, sm: 5.25 }}
     >
       <Typography variant="subtitle1" sx={{ textAlign: { xs: 'center', sm: 'right' } }}>
-        Made with{' '}
-        <Box component="span" sx={{ color: 'error.main', verticalAlign: 'middle' }}>
-          &#10084;
-        </Box>{' '}
-        by{' '}
+        
         <Link
-          href="#"
+          href="https://app.kienos.me"
           target="_blank"
           rel="noopener"
           aria-label="More About KienOS"
           sx={{ color: 'text.primary', '&:hover': { color: 'primary.main' } }}
         >
-          KIEN OS
+          KIEN OS GYM
         </Link>
       </Typography>
     </Stack>

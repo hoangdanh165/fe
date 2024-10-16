@@ -465,6 +465,11 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
             height: '50px', 
             fontSize: '16px', 
             padding: '10px 20px', 
+            color: 'white',
+            backgroundColor: '#4caf50',
+            '&:hover': {
+                  backgroundColor: '#388e3c',
+                },
           }}>        
           {isEditMode ? 'Lưu' : 'Thêm'}
         </Button>
