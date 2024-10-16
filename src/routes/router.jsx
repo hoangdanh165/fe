@@ -34,6 +34,7 @@ const ServiceResponse = lazy(() => import("../pages/ServiceResponse"))
 const UserProfile = lazy(() => import("../pages/UserProfile"));
 const ProductList = lazy(() => import("../pages/ProductList"));
 const CoachDashboard = lazy(() => import("../pages/CoachDashboard"));
+const CoachSchedule = lazy(() => import("../pages/CoachSchedule"));
 
 // Other components
 const PersistLogin = lazy(() => import("../components/PersistLogin"));
@@ -71,6 +72,10 @@ const routes = [
       </Suspense>
     ),
     children: [
+      {
+        index: true,
+        element: <Navigate to="/auth/login" />,
+      },
       {
         path: rootPaths.adminRoot,
         element: (
@@ -144,7 +149,15 @@ const routes = [
               <CoachDashboard />
             </PrivateRoute>
           )
-        }
+        },
+        {
+        path: paths.schedule,
+        element: (
+          <PrivateRoute allowedRoles={["coach"]}>
+            <CoachSchedule />
+          </PrivateRoute>
+        )
+      }
       ]
     },
 

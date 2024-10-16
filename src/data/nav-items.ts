@@ -1,3 +1,4 @@
+import paths from "../routes/paths";
 export interface NavItem {
   id: number;
   path: string;
@@ -23,7 +24,7 @@ const navItems: NavItem[] = [
   },
   {
     id: 3,
-    path: "/coach/workout-schedule",
+    path: paths.schedule,
     title: "Lịch tập luyện",
     icon: "material-symbols:fitness-center",
     active: false,
