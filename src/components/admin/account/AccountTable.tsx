@@ -211,6 +211,15 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 0.5,
       minWidth: 145,
+      renderCell: (
+        params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
+      ) => {
+        return (
+          <Typography variant="body2">
+            {params.row.status === 1 ? "Đã kích hoạt" : "Đã bị chặn"}
+          </Typography>
+        );
+      },
     },
     {
       field: 'actions',

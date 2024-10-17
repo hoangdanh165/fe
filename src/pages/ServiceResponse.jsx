@@ -159,12 +159,12 @@ const ServiceResponse = () => {
         <Table sx={{ minWidth: 900 }} aria-label="review table">
           <TableHead>
             <TableRow>
-              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#1976d2', color: 'white', fontWeight: 'bold' }}></TableCell>
-              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#1976d2', color: 'white', fontWeight: 'bold' }}><strong>KHÁCH HÀNG</strong></TableCell>
-              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#1976d2', color: 'white', fontWeight: 'bold' }}><strong>LỜI ĐÁNH GIÁ</strong></TableCell>
-              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#1976d2', color: 'white', fontWeight: 'bold' }}><strong>ĐÁNH GIÁ</strong></TableCell>
-              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#1976d2', color: 'white', fontWeight: 'bold' }}><strong>TỚI</strong></TableCell>
-              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#1976d2', color: 'white', fontWeight: 'bold' }}><strong>PHẢN HỒI</strong></TableCell>
+              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#2C2F38', color: 'white', fontWeight: 'bold' }}></TableCell>
+              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#2C2F38', color: 'white', fontWeight: 'bold' }}><strong>KHÁCH HÀNG</strong></TableCell>
+              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#2C2F38', color: 'white', fontWeight: 'bold' }}><strong>LỜI ĐÁNH GIÁ</strong></TableCell>
+              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#2C2F38', color: 'white', fontWeight: 'bold' }}><strong>ĐÁNH GIÁ</strong></TableCell>
+              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#2C2F38', color: 'white', fontWeight: 'bold' }}><strong>TỚI</strong></TableCell>
+              <TableCell align="center" sx={{ fontSize: 'small', backgroundColor: '#2C2F38', color: 'white', fontWeight: 'bold' }}><strong>PHẢN HỒI</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

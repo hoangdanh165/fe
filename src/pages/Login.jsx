@@ -99,11 +99,10 @@ const Login = () => {
             }
         );
         
-        console.log(JSON.stringify(response?.data));
-
         const accessToken = response?.data?.accessToken;
         const role = response?.data?.role;
-        setAuth({ email, role, accessToken });
+        const status = response?.data?.status;
+        setAuth({ email, role, status, accessToken });
 
         setEmail('');
         setPassword('');

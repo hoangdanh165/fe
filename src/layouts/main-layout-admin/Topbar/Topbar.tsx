@@ -27,10 +27,10 @@ const Topbar = ({
 
   const isMobileScreen = down('sm');
 
-  const [showNotifications, setShowNotifications] = useState(false); // Trạng thái hiển thị thông báo
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const handleNotificationClick = () => {
-    setShowNotifications((prev) => !prev); // Chuyển đổi hiển thị thông báo
+    setShowNotifications((prev) => !prev); 
   };
 
   return (
@@ -101,7 +101,7 @@ const Topbar = ({
           mr={3.75}
           flex="1 1 20%"
         >
-          <Badge
+          <Badge  
             color="error"
             badgeContent=" "
             variant="dot"
@@ -127,10 +127,10 @@ const Topbar = ({
       {showNotifications && (
         <Box
           sx={{
-            position: 'absolute', // Đặt vị trí tuyệt đối
-            top: 80, // Đặt ngay dưới chuông
-            right: 385, // Căn phải
-            zIndex: 10, // Đảm bảo nó nằm trên các thành phần khác
+            position: 'absolute', 
+            top: 85, 
+            right: 430, 
+            zIndex: 10, 
           }}
         >
           <Notification onClose={() => setShowNotifications(false)} />

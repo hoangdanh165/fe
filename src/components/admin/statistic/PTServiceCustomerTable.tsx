@@ -1,31 +1,10 @@
-import { useMemo, useEffect, ReactElement, useState } from 'react';
-import { usePTServiceCustomerData } from '../../../data/ptservice-customer-data';
-import IconifyIcon from '../../base/IconifyIcon';
-import React from 'react';
-import CustomPagination from '../../common/CustomPagination';
-import CustomNoResultsOverlay from '../../common/CustomNoResultsOverlay';
-import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
-import { 
-  Stack, 
-  Avatar, 
-  Tooltip, 
-  Typography, 
-  CircularProgress,
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
-  Button, 
-  Select,
-
-  TextField,
-  FormControl, 
-  InputLabel, 
-  MenuItem,
-  Grid,
-  Alert,
-  InputAdornment,
-} from '@mui/material';
+import { useMemo, useEffect, ReactElement, useState } from "react";
+import { usePTServiceCustomerData } from "../../../data/ptservice-customer-data";
+import React from "react";
+import CustomPagination from "../../common/CustomPagination";
+import CustomNoResultsOverlay from "../../common/CustomNoResultsOverlay";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import { CircularProgress, Select, MenuItem, Typography } from "@mui/material";
 
 import {
   GridApi,
@@ -36,7 +15,7 @@ import {
   GridActionsCellItem,
   GridRenderCellParams,
   GridTreeNodeWithRender,
-} from '@mui/x-data-grid';
+} from "@mui/x-data-grid";
 
 interface NonPTService {
   id: string;
@@ -47,89 +26,100 @@ interface NonPTService {
   birthday: string;
 }
 
-const PTServiceCustomerTable = ({ searchText }: { searchText: string }): ReactElement => {
+const PTServiceCustomerTable = ({
+  searchText,
+}: {
+  searchText: string;
+}): ReactElement => {
   const apiRef = useGridApiRef<GridApi>();
   const [dropdownData, setDropdownData] = useState<string[]>([]);
-  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState("");
 
   const [reloadTrigger, setReloadTrigger] = useState(0);
-  const { rows, loading, error } = usePTServiceCustomerData(reloadTrigger, selectedValue);
+  const { rows, loading, error } = usePTServiceCustomerData(
+    reloadTrigger,
+    selectedValue
+  );
   const axiosPrivate = useAxiosPrivate();
-
-  
-
 
   useEffect(() => {
     const fetchDropdownData = async () => {
-      const response = await axiosPrivate.get('/api/v1/pt-services/all/',
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axiosPrivate.get("/api/v1/pt-services/all/", {
+        withCredentials: true,
+      });
       setDropdownData(response.data);
     };
     fetchDropdownData();
   }, [axiosPrivate]);
-  
 
-  const handleDropdownChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleDropdownChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
     setSelectedValue(event.target.value as string);
-    setReloadTrigger(prev => prev + 1); 
+    setReloadTrigger((prev) => prev + 1);
   };
-
 
   const columns: GridColDef<any>[] = [
     {
-      field: 'id',
-      headerName: 'ID',
+      field: "id",
+      headerName: "ID",
       resizable: false,
       minWidth: 60,
     },
     {
-      field: 'first_name',
-      headerName: 'Họ',
+      field: "first_name",
+      headerName: "Họ",
       resizable: false,
-      flex: 0.5,
-      minWidth: 300,
+      flex: 0,
+      minWidth: 50,
     },
     {
-      field: 'last_name',
-      headerName: 'Tên',
+      field: "last_name",
+      headerName: "Tên",
       resizable: false,
-      flex: 0.5,
-      minWidth: 145,
+      flex: 0,
+      minWidth: 50,
     },
     {
-      field: 'address',
-      headerName: 'Địa chỉ',
+      field: "address",
+      headerName: "Địa chỉ",
       resizable: false,
-      flex: 0.5,
-      minWidth: 150,
+      flex: 1,
+      minWidth: 350,
     },
     {
-      field: 'gender',
-      headerName: 'Giới tính',
+      field: "gender",
+      headerName: "Giới tính",
       resizable: false,
       flex: 0.5,
-      minWidth: 160,
+      minWidth: 50,
+      renderCell: (
+        params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
+      ) => {
+        return (
+          <Typography variant="body2">
+            {params.row.gender === 1 ? "Nam" : "Nữ"}
+          </Typography>
+        );
+      },
     },
     {
-      field: 'birthday',
-      headerName: 'Ngày sinh',
+      field: "birthday",
+      headerName: "Ngày sinh",
       resizable: false,
-      flex: 0.5,
-      minWidth: 145,
+      flex: 0,
+      minWidth: 100,
     },
   ];
 
   const visibleColumns = useMemo(
-    () => columns.filter((column) => column.field !== 'id'),
-    [columns],
+    () => columns.filter((column) => column.field !== "id"),
+    [columns]
   );
 
   useEffect(() => {
     apiRef.current.setQuickFilterValues(
-      searchText.split(/\b\W+\b/).filter((word: string) => word !== ''),
+      searchText.split(/\b\W+\b/).filter((word: string) => word !== "")
     );
   }, [searchText]);
 
@@ -139,9 +129,9 @@ const PTServiceCustomerTable = ({ searchText }: { searchText: string }): ReactEl
         apiRef.current.resize();
       }
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, [apiRef]);
 
@@ -157,7 +147,6 @@ const PTServiceCustomerTable = ({ searchText }: { searchText: string }): ReactEl
         disableColumnMenu
         disableRowSelectionOnClick
         rows={rows}
-        loading={loading}
         onResize={() => {
           apiRef.current.autosizeColumns({
             includeOutliers: true,
@@ -168,9 +157,10 @@ const PTServiceCustomerTable = ({ searchText }: { searchText: string }): ReactEl
           pagination: { paginationModel: { page: 0, pageSize: 4 } },
         }}
         slots={{
-          loadingOverlay: CircularProgress as GridSlots['loadingOverlay'],
-          pagination: CustomPagination as GridSlots['pagination'],
-          noResultsOverlay: CustomNoResultsOverlay as GridSlots['noResultsOverlay'],
+          loadingOverlay: CircularProgress as GridSlots["loadingOverlay"],
+          pagination: CustomPagination as GridSlots["pagination"],
+          noResultsOverlay:
+            CustomNoResultsOverlay as GridSlots["noResultsOverlay"],
         }}
         slotProps={{
           pagination: { labelRowsPerPage: rows.length },
@@ -178,18 +168,23 @@ const PTServiceCustomerTable = ({ searchText }: { searchText: string }): ReactEl
         sx={{
           height: 1,
           width: 1,
-          tableLayout: 'fixed',
-          scrollbarWidth: 'thin',
+          tableLayout: "fixed",
+          scrollbarWidth: "thin",
         }}
-        
       />
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginTop: "10px",
+        }}
+      >
         <Select
           value={selectedValue}
           onChange={handleDropdownChange}
           displayEmpty
-          inputProps={{ 'aria-label': 'Select data' }}
-          sx={{ width: '400px', height: '40px' }}
+          inputProps={{ "aria-label": "Select data" }}
+          sx={{ width: "400px", height: "40px" }}
         >
           <MenuItem value="">
             <p>Chọn gói PT</p>
