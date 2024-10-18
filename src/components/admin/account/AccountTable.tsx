@@ -118,8 +118,9 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
     if (!editingUser) return;
     console.log(editingUser);
     try {
-      const response = await axiosPrivate.put(
-        `/api/v1/users/${editingUser.id}/`,
+
+      const response = await axiosPrivate.patch(
+        `/api/v1/users/${editingUser.id}/`, 
         {
           email: editingUser.email,
           status: editingUser.status,
@@ -227,6 +228,15 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 0.5,
       minWidth: 145,
+      renderCell: (
+        params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
+      ) => {
+        return (
+          <Typography variant="body2">
+            {params.row.status === 1 ? "Đã kích hoạt" : "Đã bị chặn"}
+          </Typography>
+        );
+      },
     },
     {
       field: "actions",
@@ -350,120 +360,104 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
           +
         </Button>
       </div>
-      <Dialog
-        open={editModalOpen}
-        onClose={handleCloseEditModal}
-        maxWidth="md"
-        fullWidth
-        PaperProps={{
-          style: {
-            borderRadius: 10,
-            padding: "30px",
-          },
-        }}
-      >
-        <DialogTitle sx={{ textAlign: "center" }}>
-          {isEditMode ? "Cập nhật tài khoản" : "Thêm tài khoản"}
-        </DialogTitle>
-        <DialogContent>
-          {editingUser && (
-            <>
-              {emailError && <Alert severity="error">{emailError}</Alert>}
-              {passwordError && <Alert severity="error">{passwordError}</Alert>}
-              <TextField
-                autoFocus
-                margin="dense"
-                label="Email"
-                type="email"
-                fullWidth
-                variant="standard"
-                value={editingUser ? editingUser.email : ""}
-                onChange={(e) =>
-                  setEditingUser({ ...editingUser, email: e.target.value })
-                }
-              />
+    <Dialog 
+      open={editModalOpen} 
+      onClose={handleCloseEditModal} 
+      maxWidth="md" 
+      fullWidth
+      PaperProps={{
+        style: {
+          borderRadius: 10, 
+          padding: '30px', 
+        },
+      }}
+    >
+      <DialogTitle sx={{ textAlign: 'center' }}>        
+        {isEditMode ? 'Cập nhật tài khoản' : 'Thêm tài khoản'}
+      </DialogTitle>
+      <DialogContent>
+        {editingUser && (
+          <>
+            {emailError && <Alert severity="error">{emailError}</Alert>}
+            {passwordError && <Alert severity="error">{passwordError}</Alert>}
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Email"
+              type="email"
+              fullWidth
+              variant="standard"
+              value={editingUser? editingUser.email : ''}
+              onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+            />
+  
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Password"
+              type="text"
+              fullWidth
+              variant="standard"
+              disabled={isEditMode}
+              value={editingUser.password ?? '*********'}
+              onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
+            />
+            <FormControl fullWidth margin="dense">
+              <InputLabel id="role-label" sx={{ marginBottom: 3, marginTop: 3 }}>Trạng thái tài khoản</InputLabel>
+              <Select
+                labelId="role-label"
+                id="role-select"
+                value={editingUser?.status}
+                onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value })}>
 
-              <TextField
-                autoFocus
-                margin="dense"
-                label="Password"
-                type="text"
-                fullWidth
-                variant="standard"
-                disabled={isEditMode}
-                value={editingUser.password ?? "*********"}
-                onChange={(e) =>
-                  setEditingUser({ ...editingUser, password: e.target.value })
-                }
-              />
-              <FormControl fullWidth margin="dense">
-                <InputLabel id="role-label">Trạng thái tài khoản</InputLabel>
-                <Select
-                  labelId="role-label"
-                  id="role-select"
-                  value={editingUser?.status ?? "Active"}
-                  onChange={(e) =>
-                    setEditingUser({ ...editingUser, status: e.target.value })
-                  }
-                >
-                  <MenuItem value="Active">Active</MenuItem>
-                  <MenuItem value="Blocked">Blocked</MenuItem>
-                  <MenuItem value="Invited">Invited</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl fullWidth margin="dense">
-                <InputLabel id="role-label">Role</InputLabel>
-                <Select
-                  labelId="role-label"
-                  id="role-select"
-                  value={editingUser?.role?.name ?? "customer"} 
-                  onChange={(e) =>
-                    setEditingUser({
-                      ...editingUser,
-                      role: { name: e.target.value }, 
-                    })
-                  }
-                >
-                  <MenuItem value="customer">Customer</MenuItem>
-                  <MenuItem value="coach">Coach</MenuItem>
-                  <MenuItem value="sale">Sales</MenuItem>
-                </Select>
-              </FormControl>
+                <MenuItem value='1'>ACTIVE</MenuItem>
+                <MenuItem value='2'>BLOCKED</MenuItem>
+              </Select>
+            </FormControl>
+      
+            <FormControl fullWidth margin="dense">
+              <InputLabel id="role-label" sx={{ marginBottom: 3, marginTop: 3 }}>Trạng thái Email</InputLabel>
+              <Select
+                labelId="role-label"
+                id="role-select"
+                value={editingUser?.email_verified ?? false}
+                onChange={(e) => setEditingUser({ ...editingUser, email_verified: Boolean(e.target.value) })}>
 
-              <FormControl fullWidth margin="dense">
-                <InputLabel id="role-label">Trạng thái Email</InputLabel>
-                <Select
-                  labelId="role-label"
-                  id="role-select"
-                  value={editingUser?.email_verified ?? false}
-                  onChange={(e) =>
-                    setEditingUser({
-                      ...editingUser,
-                      email_verified: e.target.value,
-                    })
-                  }
-                >
-                  <MenuItem value={false}>Chưa xác nhận</MenuItem>
-                  <MenuItem value={true}>Đã xác nhận</MenuItem>
-                </Select>
-              </FormControl>
-            </>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleCloseEditModal}
-            color="error"
-            variant="contained"
-            sx={{
-              width: "100px",
-              height: "50px",
-              fontSize: "16px",
-              padding: "10px 20px",
-            }}
-          >
-            Hủy
-          </Button>
+                <MenuItem value={false}>Chưa xác nhận</MenuItem>
+                <MenuItem value={true}>Đã xác nhận</MenuItem>
+                
+              </Select>
+            </FormControl>
+          </>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseEditModal} 
+          color='error' 
+          variant='contained'
+          sx={{ 
+            width: '100px',
+            height: '50px', 
+            fontSize: '16px', 
+            padding: '10px 20px', 
+          }}>Hủy</Button>
+        
+        <Button onClick={handleSave}
+          sx={{ 
+            width: '150px', 
+            height: '50px', 
+            fontSize: '16px', 
+            padding: '10px 20px', 
+            color: 'white',
+            backgroundColor: '#4caf50',
+            '&:hover': {
+                  backgroundColor: '#388e3c',
+                },
+          }}>        
+          {isEditMode ? 'Lưu' : 'Thêm'}
+        </Button>
+      </DialogActions>
+    </Dialog>
 
           <Button
             onClick={handleSave}

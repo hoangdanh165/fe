@@ -37,13 +37,6 @@ const navItems: NavItem[] = [
     icon: 'bi:chat',
     active: false,
   },
-  {
-    id: 5,
-    path: '#!',
-    title: '',
-    icon: 'ic:round-history',
-    active: false,
-  },
 
   {
     id: 6,

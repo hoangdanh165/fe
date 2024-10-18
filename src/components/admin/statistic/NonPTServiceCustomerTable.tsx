@@ -89,22 +89,22 @@ const NonPTServiceCustomerTable = ({ searchText }: { searchText: string }): Reac
       field: 'first_name',
       headerName: 'Họ',
       resizable: false,
-      flex: 0.5,
-      minWidth: 300,
+      flex: 0,
+      minWidth: 50,
     },
     {
       field: 'last_name',
       headerName: 'Tên',
       resizable: false,
-      flex: 0.5,
-      minWidth: 145,
+      flex: 0,
+      minWidth: 50,
     },
     {
       field: 'address',
       headerName: 'Địa chỉ',
       resizable: false,
-      flex: 0.5,
-      minWidth: 150,
+      flex: 1,
+      minWidth: 350,
     },
     {
       field: 'gender',
@@ -112,12 +112,19 @@ const NonPTServiceCustomerTable = ({ searchText }: { searchText: string }): Reac
       resizable: false,
       flex: 0.5,
       minWidth: 160,
+      renderCell: (params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>) => {
+        return (
+          <Typography variant="body2">
+            {params.row.gender === 1 ? 'Nam' : 'Nữ'}
+          </Typography>
+        );
+      },
     },
     {
       field: 'birthday',
       headerName: 'Ngày sinh',
       resizable: false,
-      flex: 0.5,
+      flex: 0,
       minWidth: 145,
     },
   ];
@@ -192,7 +199,7 @@ const NonPTServiceCustomerTable = ({ searchText }: { searchText: string }): Reac
           sx={{ width: '400px', height: '40px' }}
         >
           <MenuItem value="">
-            <p>Chọn giá trị</p>
+            <p>Chọn gói tháng</p>
           </MenuItem>
           {dropdownData.map((item) => (
             <MenuItem key={item.id} value={item.id}>

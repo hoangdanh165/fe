@@ -5,7 +5,6 @@ import PageLoader from "../components/loading/PageLoader";
 import Splash from "../components/loading/Splash";
 import { rootPaths } from "./paths";
 import paths from "./paths";
-import Root from "../pages/Root";
 import ServiceManagement from "../pages/ServiceManagement";
 
 const App = lazy(() => import("../App"));
@@ -38,6 +37,7 @@ const CoachSchedule = lazy(() => import("../pages/CoachSchedule"));
 
 // Other components
 const PersistLogin = lazy(() => import("../components/PersistLogin"));
+const Banned = lazy(() => import("../components/Banned"));
 
 
 const createMainLayoutAdminRoutes = () => (
@@ -88,9 +88,13 @@ const routes = [
           {
             path: paths.accounts,
             element: (
+              <PersistLogin>
+
+              
                 <PrivateRoute allowedRoles={['admin']}>
                   <AccountManagement />
-                </PrivateRoute>          
+                </PrivateRoute>      
+                </PersistLogin>    
             ),
 
           },
@@ -119,8 +123,8 @@ const routes = [
             ),
           },
           
-        ],
        
+        ]
       },
       {
         paths: rootPaths.coachRoot,
@@ -157,18 +161,10 @@ const routes = [
             <CoachSchedule />
           </PrivateRoute>
         )
-      }
+         },
+           
       ]
-    },
-
-      {
-        path: rootPaths.root,
-        element: (
-          <PersistLogin>
-            <Root />
-          </PersistLogin>
-        )
-      },
+     },
       
       {
         path: rootPaths.authRoot,
@@ -198,6 +194,10 @@ const routes = [
   {
     path: "/unauthorized",
     element: <Unauthorized />,
+  },
+  {
+    path: "/banned",
+    element: <Banned />,
   },
 ];
 

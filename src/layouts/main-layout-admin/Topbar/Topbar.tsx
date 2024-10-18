@@ -6,13 +6,15 @@ import {
   TextField,
   IconButton,
   InputAdornment,
+  Box
 } from '@mui/material';
 import IconifyIcon from '../../../components/base/IconifyIcon';
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import { drawerCloseWidth, drawerOpenWidth } from '..';
 import UserDropdown from './UserDropdown';
 import { useBreakpoints } from '../../../providers/BreakpointsProvider';
 import React from 'react';
+import Notification from '../../../components/Notification';
 
 const Topbar = ({
   open,
@@ -24,6 +26,12 @@ const Topbar = ({
   const { down } = useBreakpoints();
 
   const isMobileScreen = down('sm');
+
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  const handleNotificationClick = () => {
+    setShowNotifications((prev) => !prev); 
+  };
 
   return (
     <AppBar
@@ -93,7 +101,7 @@ const Topbar = ({
           mr={3.75}
           flex="1 1 20%"
         >
-          <Badge
+          <Badge  
             color="error"
             badgeContent=" "
             variant="dot"
@@ -108,6 +116,7 @@ const Topbar = ({
               sx={{
                 padding: 1,
               }}
+              onClick={handleNotificationClick}
             >
               <IconifyIcon icon="ph:bell-bold" width={29} height={32} />
             </IconButton>
@@ -115,7 +124,18 @@ const Topbar = ({
           <UserDropdown />
         </Stack>
       </Toolbar>
-    </AppBar>
+      {showNotifications && (
+        <Box
+          sx={{
+            position: 'absolute', 
+            top: 85, 
+            right: 430, 
+            zIndex: 10, 
+          }}
+        >
+          <Notification onClose={() => setShowNotifications(false)} />
+        </Box>
+      )}    </AppBar>
   );
 };
 
