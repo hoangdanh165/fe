@@ -22,6 +22,7 @@ export default {
   profile: `${rootPaths.coachRoot}/profile`,
   product: `${rootPaths.coachRoot}/product`,
   customer: `${rootPaths.coachRoot}/customer`,
+  schedule: `${rootPaths.coachRoot}/schedule`,
 
   // Admin paths
   statistics: `${rootPaths.adminRoot}/statistics`,
@@ -29,9 +30,7 @@ export default {
   services: `${rootPaths.adminRoot}/services`,
   service_response: `${rootPaths.adminRoot}/service-responses`,
 
-
   // Errors paths
   404: `${rootPaths.errorRoot}/404`,
   unauthorized: `/unauthorized`,
 };
-   

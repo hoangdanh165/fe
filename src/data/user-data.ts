@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
-import { GridRowsProp } from '@mui/x-data-grid';
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
-
+import { useState, useEffect } from "react";
+import { GridRowsProp } from "@mui/x-data-grid";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 export const useUsersData = (reloadTrigger: number) => {
   const [rows, setRows] = useState<GridRowsProp>([]);
@@ -13,12 +12,10 @@ export const useUsersData = (reloadTrigger: number) => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const response = await axiosPrivate.get('/api/v1/users', 
-          {
-            withCredentials: true,
-          }
-        ); 
-        console.log("AAAAAAAAAAA", response.data)
+        const response = await axiosPrivate.get("/api/v1/users", {
+          withCredentials: true,
+        });
+        console.log("AAAAAAAAAAA", response.data);
 
         // Nếu backend có pagination thì response.data.results
         const formattedRows = response.data.map((user) => ({
@@ -26,10 +23,10 @@ export const useUsersData = (reloadTrigger: number) => {
           email: user.email,
           status: user.status,
           avatar_url: user.avatar_url,
-          email_verified: user.email_verified, 
+          email_verified: user.email_verified,
+          role: user.role.name,
         }));
 
-        
         setRows(formattedRows);
       } catch (err) {
         setError(err);
@@ -39,7 +36,6 @@ export const useUsersData = (reloadTrigger: number) => {
     };
 
     fetchUsers();
-
   }, [reloadTrigger]);
 
   return { rows, loading, error };

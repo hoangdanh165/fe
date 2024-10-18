@@ -117,18 +117,20 @@ const Login = () => {
         
     } catch (err) {
       console.log(err);
-        if (!err?.response) {
-            setErrMsg('Không có phản hồi từ máy chủ!');
-        } else if (err.response?.status === 400) {
-            setErrMsg('Vui lòng điền email và mật khẩu!');
-        } else if (err.response?.status === 401) {
-            setErrMsg('Tài khoản hoặc mật khẩu không đúng!');
-        } else {
-            setErrMsg('Đăng nhập thất bại!');
-        }
-        errRef.current.focus();
+      if (!err?.response) {
+        setErrMsg("Không có phản hồi từ máy chủ!");
+      } else if (err.response?.status === 400) {
+        setErrMsg("Vui lòng điền email và mật khẩu!");
+      } else if (err.response?.status === 401) {
+        setErrMsg("Tài khoản hoặc mật khẩu không đúng!");
+        console.log("401 Error: ", err.response); // Log the exact 401 error
+
+      } else {
+        setErrMsg("Đăng nhập thất bại!");
+      }
+      errRef.current.focus();
     }
-  }
+  };
 
   const handleClickShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -140,34 +142,44 @@ const Login = () => {
 
   useEffect(() => {
     localStorage.setItem("persist", persist);
-  }, [persist])
-  
+  }, [persist]);
+
   return (
     <>
       <Form>
-      <Box component="figure" mb={5} mx="auto" textAlign="center">
-        <Link href={rootPaths.homeRoot}>
-          <Image src={ logo } alt="kienos-logo" height={160} />
-        </Link>
-      </Box>
-      <Paper
-        sx={{
-          py: 6,
-          px: { xs: 5, sm: 7.5 },
-        }}
-      >
-        <Stack justifyContent="center" gap={5}>
-          <Typography variant="h3" textAlign="center" color="text.secondary">
-            Đăng nhập
-          </Typography>
-          <Typography variant="h6" fontWeight={500} textAlign="center" color="text.primary">
-            Chưa có tài khoản?{' '}
-            <Link href="/auth/sign-up" underline="none">
-              Đăng ký
-            </Link>
-          </Typography>
-          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-
+        <Box component="figure" mb={5} mx="auto" textAlign="center">
+          <Link href={rootPaths.homeRoot}>
+            <Image src={logo} alt="kienos-logo" height={160} />
+          </Link>
+        </Box>
+        <Paper
+          sx={{
+            py: 6,
+            px: { xs: 5, sm: 7.5 },
+          }}
+        >
+          <Stack justifyContent="center" gap={5}>
+            <Typography variant="h3" textAlign="center" color="text.secondary">
+              Đăng nhập
+            </Typography>
+            <Typography
+              variant="h6"
+              fontWeight={500}
+              textAlign="center"
+              color="text.primary"
+            >
+              Chưa có tài khoản?{" "}
+              <Link href="/auth/sign-up" underline="none">
+                Đăng ký
+              </Link>
+            </Typography>
+            <p
+              ref={errRef}
+              className={errMsg ? "errmsg" : "offscreen"}
+              aria-live="assertive"
+            >
+              {errMsg}
+            </p>
 
           <TextField
             variant="filled"
@@ -240,34 +252,36 @@ const Login = () => {
               ),
             }}
             />
-          <FormGroup sx={{ ml: 1, width: 'fit-content' }}>
+            <FormGroup sx={{ ml: 1, width: "fit-content" }}>
               <FormControlLabel
                 control={
-                  <Checkbox
-                    checked={persist} 
-                    onChange={togglePersist}
-                  />
+                  <Checkbox checked={persist} onChange={togglePersist} />
                 }
                 label="Ghi nhớ đăng nhập"
                 sx={{
-                  color: 'text.secondary',
+                  color: "text.secondary",
                 }}
               />
             </FormGroup>
-          <Button
-            onClick={handleSubmit}
-            sx={{
-              fontWeight: 'fontWeightRegular',
-            }}
-          >
-            Đăng nhập
-          </Button>
-          <Link href={ paths.forgot_password } textAlign="center" underline="none" sx={{ color: 'text.secondary', mt: 2 }}>
-            Quên mật khẩu?
-          </Link>
-          <Divider />
-        </Stack>
-      </Paper>
+            <Button
+              onClick={handleSubmit}
+              sx={{
+                fontWeight: "fontWeightRegular",
+              }}
+            >
+              Đăng nhập
+            </Button>
+            <Link
+              href={paths.forgot_password}
+              textAlign="center"
+              underline="none"
+              sx={{ color: "text.secondary", mt: 2 }}
+            >
+              Quên mật khẩu?
+            </Link>
+            <Divider />
+          </Stack>
+        </Paper>
       </Form>
     </>
   );
