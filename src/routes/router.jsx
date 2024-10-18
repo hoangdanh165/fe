@@ -83,13 +83,9 @@ const routes = [
           {
             path: paths.accounts,
             element: (
-              <PersistLogin>
-
-              
-                <PrivateRoute allowedRoles={['admin']}>
-                  <AccountManagement />
-                </PrivateRoute>      
-                </PersistLogin>    
+              <PrivateRoute allowedRoles={['admin']}>
+                <AccountManagement />
+              </PrivateRoute>      
             ),
 
           },
