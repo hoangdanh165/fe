@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 
 import ManageCustomer from '../components/coach/ManageCustomer';
 
-const AdminDashboard = () => {
+const CoachDashboard = () => {
   return (
     <>
         <Box gridColumn={{ xs: 'span 12', '2xl': 'span 6' }} order={{ xs: 7 }}>
@@ -13,4 +13,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default CoachDashboard;
