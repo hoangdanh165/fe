@@ -16,8 +16,6 @@ export default {
   signup: `${rootPaths.authRoot}/sign-up`,
   forgot_password: `${rootPaths.authRoot}/forgot-password`,
 
-  home: `${rootPaths.homeRoot}`,
-
   // Coach paths
   profile: `${rootPaths.coachRoot}/profile`,
   product: `${rootPaths.coachRoot}/product`,

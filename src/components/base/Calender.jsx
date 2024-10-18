@@ -18,9 +18,13 @@ import {
   DialogTitle,
   IconButton,
   TextField,
+  Tooltip
 } from "@mui/material";
 import { useScheduleData } from "../../data/schedule-data"; // Import the hook to get schedules
 import CloseIcon from '@mui/icons-material/Close';
+import './Calender.css'
+
+
 const Calendar = () => {
   const [currentEvents, setCurrentEvents] = useState([]);
   const { rows, loading, error } = useScheduleData(0);
@@ -41,9 +45,10 @@ const Calendar = () => {
       const events = rows.map((row) => ({
         id: row.id,
         title: row.overview,
-        start: `${row.date}T${row.starttime}`,
-        end: `${row.date}T${row.endtime}`,
+        start: `${row.date}T${row.start_time}`,
+        end: `${row.date}T${row.end_time}`,
         allDay: false,
+        classNames: ['fc-event'],
       }));
 
       setCurrentEvents(events);
@@ -97,11 +102,23 @@ const Calendar = () => {
     setOpenEventDialog(false); // Close the dialog after saving
   };
 
+  const renderEventContent = (eventInfo) => {
+    const startTime = eventInfo.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    const endTime = eventInfo.event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    
+    return (
+      <Tooltip title={eventInfo.event.title} arrow>
+        <span className="fc-event">{`${startTime} - ${endTime}`}</span>
+      </Tooltip>
+    );
+  };
+
   return (
     <Box m="20px">
       <Box flex="1 1 100%" ml="15px">
         <FullCalendar
-          height="125vh"
+          locale="vi"
+          height="80vh"
           plugins={[
             dayGridPlugin,
             timeGridPlugin,
@@ -121,6 +138,15 @@ const Calendar = () => {
           select={handleDateClick} // Open dialog on date click
           eventClick={handleEventClick}
           events={currentEvents}
+          eventContent={renderEventContent}
+          buttonText={{
+            today: 'Hôm nay',
+            month: 'Tháng',
+            week: 'Tuần',
+            day: 'Ngày',
+            list: 'Danh sách'
+          }}
+          
         />
       </Box>
 
