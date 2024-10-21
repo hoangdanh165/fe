@@ -76,10 +76,10 @@ const UserProfile = () => {
             weight: response.data.profile.weight,
             body_fat: response.data.profile.body_fat,
             musle_mass: response.data.profile.muscle_mass,
-
-            goal_weight: response.data.profile.workout_goal.weight,
-            goal_muscle_mass: response.data.profile.workout_goal.muscle_mass,
-            goal_body_fat: response.data.profile.workout_goal.body_fat,
+            
+            goal_weight: response.data.profile.workout_goal?.weight,
+            goal_muscle_mass: response.data.profile.workout_goal?.muscle_mass,
+            goal_body_fat: response.data.profile.workout_goal?.body_fat,
           });
         }
         
@@ -252,7 +252,7 @@ const UserProfile = () => {
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" sx={{ color: 'white'}} gutterBottom>
         Hồ sơ cá nhân
       </Typography>
       {error && <Typography color="error">{error}</Typography>} 
@@ -282,7 +282,7 @@ const UserProfile = () => {
                 </IconButton>
               </label>
             </Stack>
-            <Grid container spacing={2}>
+            <Grid container spacing={3}>
               <Grid item xs={6}>
                 <TextField
                   fullWidth
@@ -304,8 +304,8 @@ const UserProfile = () => {
                 />
               </Grid>
             </Grid>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
+            <Grid container spacing={3}>
+              <Grid item xs={8}>
                 <TextField
                   fullWidth
                   label="Địa chỉ"
@@ -315,9 +315,7 @@ const UserProfile = () => {
                   required
                 />
               </Grid>
-            </Grid>
-            <Grid container spacing={2}>
-              <Grid item xs={7}>
+              <Grid item xs={4}>
                 <TextField
                   fullWidth
                   label="Số điện thoại"
@@ -330,38 +328,46 @@ const UserProfile = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={5}>
-                <FormControl fullWidth>
-                  <InputLabel>Giới tính</InputLabel>
-                  <Select
-                    value={profile?.gender || ''}
-                    onChange={handleChange}
-                    name="gender"
-                    required
-                  >
-                    <MenuItem value={0}>Nữ</MenuItem>
-                    <MenuItem value={1}>Nam</MenuItem>
-                    <MenuItem value={2}>Giới tính khác</MenuItem>
-                  </Select>
-                </FormControl>
+            </Grid>
+            
+            <Grid container spacing={3}>
+                <Grid item xs={4}>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="Ngày sinh"
+                      value={profile?.birthday || null}
+                      onChange={handleDateChange}
+                      renderInput={(params) => (
+                        <TextField 
+                          fullWidth 
+                          {...params} 
+                          
+                        />
+                      )}
+                      required
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item xs={8}>
+                  <FormControl fullWidth>
+                    <InputLabel>Giới tính</InputLabel>
+                    <Select
+                      value={profile?.gender ?? ''}
+                      onChange={handleChange}
+                      name="gender"
+                      required
+                      sx={{ 
+                        marginTop: 1,  
+                      }}
+                    >
+                      <MenuItem value={0}>Nữ</MenuItem>
+                      <MenuItem value={1}>Nam</MenuItem>
+                      <MenuItem value={2}>Giới tính khác</MenuItem>
+                    </Select>
+                  </FormControl>
               </Grid>
             </Grid>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="Ngày sinh"
-                    value={profile?.birthday || null}
-                    onChange={handleDateChange}
-                    renderInput={(params) => (
-                      <TextField fullWidth {...params} />
-                    )}
-                    required
-                  />
-                </LocalizationProvider>
-              </Grid>
-            </Grid>
-            <Grid container spacing={2}>
+            <Grid container spacing={3}>
               <Grid item xs={6}>
                 <TextField
                   fullWidth
