@@ -43,6 +43,16 @@ const UserProfile = () => {
     address: '',
     gender: null,
     birthday: '',
+
+    height: null,
+    weight: null,
+
+    body_fat: null,
+    musle_mass: null,
+
+    goal_weight: null,
+    goal_muscle_mass: null,
+    goal_body_fat: null,
   });
 
   useEffect(() => {
@@ -64,6 +74,12 @@ const UserProfile = () => {
               : null,
             height: response.data.profile.height,
             weight: response.data.profile.weight,
+            body_fat: response.data.profile.body_fat,
+            musle_mass: response.data.profile.muscle_mass,
+
+            goal_weight: response.data.profile.workout_goal.weight,
+            goal_muscle_mass: response.data.profile.workout_goal.muscle_mass,
+            goal_body_fat: response.data.profile.workout_goal.body_fat,
           });
         }
         
@@ -145,8 +161,8 @@ const UserProfile = () => {
     formData.append("height", profile.height);
     formData.append("weight", profile.weight);
 
-    if (!profile.id) {
-      if (auth.role === "coach") {
+    if (auth.role === "coach") {
+      if (!profile.id) {
         try {
           const response = await axiosPrivate.post(
             COACH_PROFILE,
@@ -168,27 +184,7 @@ const UserProfile = () => {
         }
       } 
       else {
-        try {
-          const response = await axiosPrivate.post(
-            CUSTOMER_PROFILE, {
-            first_name: profile.first_name,
-            last_name: profile.last_name,
-            phone: profile.phone,
-            address: profile.address,
-            gender: profile.gender,
-            birthday: profile.birthday
-              ? profile.birthday.toISOString().split("T")[0]
-              : null,
-            avatar: profile.avatar,
-          });
-  
-          console.log("Profile updated:", response.data);
-        } catch (error) {
-          console.error("Error updating profile:", error);
-        }
-      }
-    } else {
-      if (auth.role === "coach") {
+
         try {
           const response = await axiosPrivate.patch(
             `${COACH_PROFILE}${profile.id}/`,
@@ -208,22 +204,42 @@ const UserProfile = () => {
         } catch (error) {
           console.error("Error updating profile:", error);
         }
+
+        
+      }
+    } else {
+      if (!profile.id) {
+        formData.append("goal_weight", 55);
+        formData.append("goal_muscle_mass", 15);
+        formData.append("goal_body_fat", 25);
+
+        try {
+          const response = await axiosPrivate.post(
+            CUSTOMER_PROFILE,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data", 
+              },
+            }
+          );
+  
+          console.log("Profile updated:", response.data);
+        } catch (error) {
+          console.error("Error updating profile:", error);
+        }
       } 
       else {
         try {
           const response = await axiosPrivate.patch(
             `${CUSTOMER_PROFILE}${profile.id}/`,
+            formData,
             {
-            first_name: profile.first_name,
-            last_name: profile.last_name,
-            phone: profile.phone,
-            address: profile.address,
-            gender: profile.gender,
-            birthday: profile.birthday
-              ? profile.birthday.toISOString().split("T")[0]
-              : null,
-            avatar: profile.avatar,
-          });
+              headers: {
+                "Content-Type": "multipart/form-data", 
+              },
+            }
+          );
   
           console.log("Profile updated:", response.data);
         } catch (error) {

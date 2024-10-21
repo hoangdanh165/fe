@@ -8,6 +8,7 @@ export const rootPaths = {
   adminRoot: "/admin",
   coachRoot: "/coach",
   saleRoot: "/sale",
+  customerRoot: "/sale",
 };
 
 export default {
@@ -20,6 +21,10 @@ export default {
   profile: `${rootPaths.coachRoot}/profile`,
   product: `${rootPaths.coachRoot}/product`,
   customer: `${rootPaths.coachRoot}/customer`,
+  schedule: `${rootPaths.coachRoot}/schedule`,
+
+  // Customer paths
+  customer_profile: `${rootPaths.customerRoot}/profile`,
   schedule: `${rootPaths.coachRoot}/schedule`,
 
   // Admin paths
