@@ -1,10 +1,10 @@
 import axios from "../services/axios";
 import useAuth from "./useAuth";
-import Cookies from "js-cookie";
 
 const useLogout = () => {
     const { setAuth } = useAuth(); 
     window.localStorage.removeItem('isLoggedIn');
+    
     const logout = async () => {
         setAuth(null);
         localStorage.removeItem('persist')

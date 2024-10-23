@@ -111,7 +111,10 @@ const Login = () => {
           navigate(paths.accounts); 
         } else if (role === 'coach') {
           navigate(paths.profile);  
-        } else {
+        } else if (role === 'sale') {
+          navigate(paths.profile);  
+        } 
+        else {
           navigate(from, { replace: true });
         }
         

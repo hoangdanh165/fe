@@ -1,0 +1,18 @@
+.fc-today {
+    background-color: lightgreen !important; 
+}
+  
+.fc-event {
+    background-color: deepskyblue !important; 
+    border-color: deepskyblue !important; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    max-width: 170px; 
+    
+    display: inline-block; 
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+  

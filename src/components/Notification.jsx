@@ -27,12 +27,11 @@ const Notification = () => {
         setNextUrl(response.data.next);
       } catch (error) {
         console.error("Error fetching notifications:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchNotifications();
+    
   }, []);
 
   const handleMarkAsRead = async (notificationId) => {

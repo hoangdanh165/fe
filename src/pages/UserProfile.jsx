@@ -12,37 +12,56 @@ import {
   Stack,
   Avatar,
   IconButton,
+  Grid,
+  InputAdornment,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import axios from "axios";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAuth from "../hooks/useAuth";
+
+
+const COACH_PROFILE = "/api/v1/coach-profiles/";
+const CUSTOMER_PROFILE = "/api/v1/customer-profiles/";
 
 const UserProfile = () => {
   const axiosPrivate = useAxiosPrivate();
+  const { auth } = useAuth();
+  const [error, setError] = useState("");
 
-  // Initialize profile state
+
   const [profile, setProfile] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    address: "",
-    gender: "",
-    birthday: null,
-    avatar: "",
+    phone: '',
+    avatar: '',
+    avatarPreview: '',
+
+    id: '',
+    first_name: '',
+    last_name: '',
+    address: '',
+    gender: null,
+    birthday: '',
+
+    height: null,
+    weight: null,
+
+    body_fat: null,
+    musle_mass: null,
+
+    goal_weight: null,
+    goal_muscle_mass: null,
+    goal_body_fat: null,
   });
 
-  // Fetch user profile data when the component mounts
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await axiosPrivate.get("/api/v1/users/info/");
-        console.log(response.data.profile);
-        if (response.data.profile !== null && response.data.phone !== null) {
+        if (response.data.profile !== null && response.data.avatar_url !== null && response.data.phone !== null) {
           setProfile({
-            avatar: response.data.avatar_url ? response.data.avatar_url : "",
+            avatar: response.data.avatar_url,
             phone: response.data.phone,
   
             id: response.data.profile.id,
@@ -55,9 +74,15 @@ const UserProfile = () => {
               : null,
             height: response.data.profile.height,
             weight: response.data.profile.weight,
+            body_fat: response.data.profile.body_fat,
+            musle_mass: response.data.profile.muscle_mass,
+            
+            goal_weight: response.data.profile.workout_goal?.weight,
+            goal_muscle_mass: response.data.profile.workout_goal?.muscle_mass,
+            goal_body_fat: response.data.profile.workout_goal?.body_fat,
           });
         }
-       
+        
       } catch (error) {
         console.error("Error fetching profile data:", error);
         console
@@ -67,7 +92,6 @@ const UserProfile = () => {
     fetchProfile();
   }, [axiosPrivate]);
 
-  // Function to handle form changes
   const handleChange = (e) => {
     setProfile({
       ...profile,
@@ -75,15 +99,6 @@ const UserProfile = () => {
     });
   };
 
-  // Function to handle gender change
-  const handleGenderChange = (e) => {
-    setProfile({
-      ...profile,
-      gender: e.target.value,
-    });
-  };
-
-  // Function to handle birthday change
   const handleDateChange = (date) => {
     setProfile({
       ...profile,
@@ -91,57 +106,164 @@ const UserProfile = () => {
     });
   };
 
-  // Function to handle avatar upload and preview
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setProfile({
+        ...profile,
+        avatar: file, 
+        avatarPreview: URL.createObjectURL(file), 
+      });
+
       const reader = new FileReader();
       reader.onload = (event) => {
-        setProfile({
-          ...profile,
-          avatar: event.target.result, // Save the base64 image data
-        });
+        setProfile((prev) => ({
+          ...prev,
+          avatarPreview: event.target.result,
+        }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      // API call to update the profile data
-      const response = await axiosPrivate.put("/api/v1/users/info", {
-        first_name: profile.firstName,
-        last_name: profile.lastName,
-        phone: profile.phone,
-        address: profile.address,
-        gender: profile.gender,
-        birthday: profile.birthday
-          ? profile.birthday.toISOString().split("T")[0]
-          : null, // Format the date as YYYY-MM-DD
-        avatar: profile.avatar, // This should be handled in the backend as base64 or a file upload
-      });
+    setError(""); 
 
-      console.log("Profile updated:", response.data);
-    } catch (error) {
-      console.error("Error updating profile:", error);
+    if (!profile.avatar) {
+      setError("Vui lòng thêm ảnh đại diện!");
+      return; 
     }
+    const formData = new FormData(); 
+
+    console.log(profile.avatar);
+    let phone = profile.phone;
+   
+    if (!profile.id) {
+      if (phone.length < 9 || phone.length > 10) {
+        setError("Vui lòng điền số điện thoại hợp lệ!");
+        return; 
+      }
+  
+      if (phone.length === 10 && phone.startsWith('0')) {
+          phone = '+84' + phone.slice(1); 
+      } else if (phone.length === 9) {
+          phone = '+84' + phone; 
+      } 
+    }
+    
+    formData.append("avatar_url", profile.avatar); 
+    formData.append("phone", phone);
+    formData.append("first_name", profile.first_name);
+    formData.append("last_name", profile.last_name);
+    formData.append("address", profile.address);
+    formData.append("gender", profile.gender);
+    formData.append("birthday", profile.birthday.toISOString().split("T")[0]);
+    formData.append("height", profile.height);
+    formData.append("weight", profile.weight);
+
+    if (auth.role === "coach") {
+      if (!profile.id) {
+        try {
+          const response = await axiosPrivate.post(
+            COACH_PROFILE,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data", 
+              },
+            }
+          );
+  
+          setSuccessMessage("Thêm hồ sơ thành công!");
+          
+          setTimeout(() => {
+            window.location.reload();
+          }, 500); 
+        } catch (error) {
+          console.error("Error updating profile:", error);
+        }
+      } 
+      else {
+
+        try {
+          const response = await axiosPrivate.patch(
+            `${COACH_PROFILE}${profile.id}/`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data", 
+              },
+            }
+          );
+  
+          setError("Cập nhật hồ sơ thành công!");
+          
+          setTimeout(() => {
+            window.location.reload();
+          }, 500); 
+        } catch (error) {
+          console.error("Error updating profile:", error);
+        }
+
+        
+      }
+    } else {
+      if (!profile.id) {
+        formData.append("goal_weight", 55);
+        formData.append("goal_muscle_mass", 15);
+        formData.append("goal_body_fat", 25);
+
+        try {
+          const response = await axiosPrivate.post(
+            CUSTOMER_PROFILE,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data", 
+              },
+            }
+          );
+  
+          console.log("Profile updated:", response.data);
+        } catch (error) {
+          console.error("Error updating profile:", error);
+        }
+      } 
+      else {
+        try {
+          const response = await axiosPrivate.patch(
+            `${CUSTOMER_PROFILE}${profile.id}/`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data", 
+              },
+            }
+          );
+  
+          console.log("Profile updated:", response.data);
+        } catch (error) {
+          console.error("Error updating profile:", error);
+        }
+      }
+    }
+    
   };
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>
-        Profile Management
+      <Typography variant="h4" sx={{ color: 'white'}} gutterBottom>
+        Hồ sơ cá nhân
       </Typography>
+      {error && <Typography color="error">{error}</Typography>} 
       <form onSubmit={handleSubmit}>
         <Box sx={{ mt: 3 }}>
           <Stack spacing={3}>
-            {/* Avatar Section */}
             <Stack spacing={3} alignItems="center" mb={3}>
               <Avatar
                 alt="User Avatar"
-                src={profile.avatar}
+                src={profile.avatarPreview || profile.avatar}
                 sx={{ width: 120, height: 120 }}
               />
               <label htmlFor="avatar-upload">
@@ -161,76 +283,124 @@ const UserProfile = () => {
                 </IconButton>
               </label>
             </Stack>
+            <Grid container spacing={3}>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Họ"
+                  name="first_name"
+                  value={profile?.first_name || ''}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Tên"
+                  name="last_name"
+                  value={profile?.last_name || ''}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={8}>
+                <TextField
+                  fullWidth
+                  label="Địa chỉ"
+                  name="address"
+                  value={profile?.address || ''}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth
+                  label="Số điện thoại"
+                  name="phone"
+                  value={profile.phone ? profile.phone.replace("+84", "") : ""}
+                  onChange={handleChange}
+                  required
+                  InputProps={{
+                    startAdornment: <InputAdornment position="end">+84</InputAdornment>,
+                  }}
+                />
+              </Grid>
+            </Grid>
+            
+            <Grid container spacing={3}>
+                <Grid item xs={4}>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="Ngày sinh"
+                      value={profile?.birthday || null}
+                      onChange={handleDateChange}
+                      renderInput={(params) => (
+                        <TextField 
+                          fullWidth 
+                          {...params} 
+                          
+                        />
+                      )}
+                      required
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item xs={8}>
+                  <FormControl fullWidth>
+                    <InputLabel>Giới tính</InputLabel>
+                    <Select
+                      value={profile?.gender ?? ''}
+                      onChange={handleChange}
+                      name="gender"
+                      required
+                      sx={{ 
+                        marginTop: 1,  
+                      }}
+                    >
+                      <MenuItem value={0}>Nữ</MenuItem>
+                      <MenuItem value={1}>Nam</MenuItem>
+                      <MenuItem value={2}>Giới tính khác</MenuItem>
+                    </Select>
+                  </FormControl>
+              </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Chiều cao"
+                  name="height"
+                  value={profile?.height || null}
+                  onChange={handleChange}
+                  required
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">cm</InputAdornment>, 
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Cân nặng"
+                  name="weight"
+                  value={profile?.weight || null}
+                  onChange={handleChange}
+                  required
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">kg</InputAdornment>, 
+                  }}
+                />
+              </Grid>
+            </Grid>
 
-            {/* First Name */}
-            <TextField
-              fullWidth
-              label="First Name"
-              name="firstName"
-              value={profile.firstName}
-              onChange={handleChange}
-              required
-            />
-
-            {/* Last Name */}
-            <TextField
-              fullWidth
-              label="Last Name"
-              name="lastName"
-              value={profile.lastName}
-              onChange={handleChange}
-              required
-            />
-
-            {/* Phone */}
-            <TextField
-              fullWidth
-              label="Phone"
-              name="phone"
-              value={profile.phone}
-              onChange={handleChange}
-              required
-            />
-
-            {/* Address */}
-            <TextField
-              fullWidth
-              label="Address"
-              name="address"
-              value={profile.address}
-              onChange={handleChange}
-              required
-            />
-
-            {/* Gender */}
-            <FormControl fullWidth>
-              <InputLabel>Gender</InputLabel>
-              <Select
-                value={profile.gender}
-                onChange={handleGenderChange}
-                name="gender"
-                required
-              >
-                <MenuItem value="male">Male</MenuItem>
-                <MenuItem value="female">Female</MenuItem>
-                <MenuItem value="other">Other</MenuItem>
-              </Select>
-            </FormControl>
-
-            {/* Birthday */}
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Birthday"
-                value={profile.birthday}
-                onChange={handleDateChange}
-                renderInput={(params) => <TextField fullWidth {...params} />}
-                required
-              />
-            </LocalizationProvider>
-
-            {/* Save Button */}
-            <Button variant="contained" color="primary" type="submit" fullWidth>
-              Save Profile
+            <Button variant="contained" color="primary" type="submit" 
+              sx={{ marginTop: 5, width: 300, alignSelf: 'center'}}
+            >
+              Lưu
             </Button>
           </Stack>
         </Box>
