@@ -38,21 +38,29 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axiosPrivate.get("/api/v1/users/info");
-        console.log(response.data);
-        setProfile({
-          firstName: response.data.profile.first_name,
-          lastName: response.data.profile.last_name,
-          phone: response.data.phone,
-          address: response.data.profile.address,
-          gender: response.data.profile.gender === "1" ? "female" : "male",
-          birthday: response.data.profile.birthday
-            ? new Date(response.data.profile.birthday)
-            : null,
-          // avatar: response.data.avatar,
-        });
+        const response = await axiosPrivate.get("/api/v1/users/info/");
+        console.log(response.data.profile);
+        if (response.data.profile !== null && response.data.phone !== null) {
+          setProfile({
+            avatar: response.data.avatar_url ? response.data.avatar_url : "",
+            phone: response.data.phone,
+  
+            id: response.data.profile.id,
+            first_name: response.data.profile.first_name,
+            last_name: response.data.profile.last_name,
+            address: response.data.profile.address,
+            gender: response.data.profile.gender,
+            birthday: response.data.profile.birthday
+              ? new Date(response.data.profile.birthday)
+              : null,
+            height: response.data.profile.height,
+            weight: response.data.profile.weight,
+          });
+        }
+       
       } catch (error) {
         console.error("Error fetching profile data:", error);
+        console
       }
     };
 

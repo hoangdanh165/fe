@@ -15,8 +15,7 @@ export const useUsersData = (reloadTrigger: number) => {
         const response = await axiosPrivate.get("/api/v1/users", {
           withCredentials: true,
         });
-        console.log("AAAAAAAAAAA", response.data);
-
+        console.log(response.data);
         // Nếu backend có pagination thì response.data.results
         const formattedRows = response.data.map((user) => ({
           id: user.id,
