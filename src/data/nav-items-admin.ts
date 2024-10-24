@@ -37,6 +37,13 @@ const navItems: NavItem[] = [
     icon: 'bi:chat',
     active: false,
   },
+  {
+    id: 5,
+    path: paths.coachs,
+    title: 'Quản lý HLV',
+    icon: 'ic:baseline-person',
+    active: false,
+  },
 
   {
     id: 6,

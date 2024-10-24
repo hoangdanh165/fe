@@ -14,17 +14,17 @@ import {
   IconButton,
 
 } from '@mui/material';
-import IconifyIcon from '../components/base/IconifyIcon';
+import IconifyIcon from '../../components/base/IconifyIcon';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Form } from 'react-router-dom';
-import { rootPaths } from '../routes/paths';
-import Image from '../components/base/Image';
+import { rootPaths } from '../../routes/paths';
+import Image from '../../components/base/Image';
 import logo from '/kienos-logo1.png'
 import React from 'react';
-import axios from '../services/axios';
-import useAuth from '../hooks/useAuth';
+import axios from '../../services/axios';
+import useAuth from '../../hooks/useAuth';
 const LOGIN_URL = 'api/v1/users/log-in/'
-import paths from '../routes/paths';
+import paths from '../../routes/paths';
 
 const Login = () => {
   const navigate = useNavigate();

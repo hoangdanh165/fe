@@ -29,8 +29,8 @@ import { Rating } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import MessageIcon from "@mui/icons-material/Message";
 import SearchIcon from "@mui/icons-material/Search"; // Biểu tượng kính lúp
-import NotificationService from "../services/notification";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import NotificationService from "../../services/notification";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const ServiceResponse = () => {
   const [responses, setResponses] = useState([]);

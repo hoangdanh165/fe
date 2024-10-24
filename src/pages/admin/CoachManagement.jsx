@@ -1,16 +1,16 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-import Accounts from '../components/admin/account/Accounts';
+import Coachs from '../../components/admin/coach/Coachs';
 
-const AccountManagement = () => {
+const CoachManagement = () => {
   return (
     <>
         <Box gridColumn={{ xs: 'span 12', '2xl': 'span 6' }} order={{ xs: 7 }}>
-          <Accounts />
+          <Coachs />
         </Box>
     </>
   );
 };
 
-export default AccountManagement;
+export default CoachManagement;

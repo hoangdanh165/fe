@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Tabs, Tab } from '@mui/material';
 
-import PTServiceCustomers from '../components/admin/statistic/PTServiceCustomers';
-import NonPTServiceCustomers from '../components/admin/statistic/NonPTServiceCustomers';
+import PTServiceCustomers from '../../components/admin/statistic/PTServiceCustomers';
+import NonPTServiceCustomers from '../../components/admin/statistic/NonPTServiceCustomers';
 
 const ServiceManagement = () => {
   const [value, setValue] = useState(0); 

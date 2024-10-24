@@ -25,13 +25,14 @@ export default {
 
   // Customer paths
   customer_profile: `${rootPaths.customerRoot}/profile`,
-  schedule: `${rootPaths.coachRoot}/schedule`,
+  schedule: `${rootPaths.customerRoot}/schedule`,
 
   // Admin paths
   statistics: `${rootPaths.adminRoot}/statistics`,
   accounts: `${rootPaths.adminRoot}/accounts`,
   services: `${rootPaths.adminRoot}/services`,
   service_response: `${rootPaths.adminRoot}/service-responses`,
+  coachs: `${rootPaths.adminRoot}/coachs`,
 
   // Errors paths
   404: `${rootPaths.errorRoot}/404`,

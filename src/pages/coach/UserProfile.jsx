@@ -18,9 +18,11 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import useAuth from "../../hooks/useAuth";
 
 
 const COACH_PROFILE = "/api/v1/coach-profiles/";
@@ -34,6 +36,8 @@ const UserProfile = () => {
 
   const [profile, setProfile] = useState({
     phone: '',
+    email: '',
+    email_verified: '',
     avatar: '',
     avatarPreview: '',
 
@@ -63,6 +67,8 @@ const UserProfile = () => {
           setProfile({
             avatar: response.data.avatar_url,
             phone: response.data.phone,
+            email: response.data.email,
+            email_verified: response.data.email_verified,
   
             id: response.data.profile.id,
             first_name: response.data.profile.first_name,
@@ -153,6 +159,7 @@ const UserProfile = () => {
     
     formData.append("avatar_url", profile.avatar); 
     formData.append("phone", phone);
+    formData.append("email", email);
     formData.append("first_name", profile.first_name);
     formData.append("last_name", profile.last_name);
     formData.append("address", profile.address);
@@ -305,7 +312,7 @@ const UserProfile = () => {
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-              <Grid item xs={8}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   label="Địa chỉ"
@@ -315,7 +322,31 @@ const UserProfile = () => {
                   required
                 />
               </Grid>
-              <Grid item xs={4}>
+              
+            </Grid>
+            <Grid container spacing={3}>
+            <Grid item xs={7}>
+  <TextField
+    fullWidth
+    label="Email"
+    name="email"
+    value={profile?.email || ''}
+    onChange={handleChange}
+    required
+    InputProps={{
+      endAdornment: (
+        <InputAdornment position="end">
+          {profile?.email_verified ? (
+            <CheckCircleIcon color="success" />
+          ) : (
+            <CancelIcon color="error" />
+          )}
+        </InputAdornment>
+      ),
+    }}
+  />
+</Grid>
+              <Grid item xs={5}>
                 <TextField
                   fullWidth
                   label="Số điện thoại"

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-import ManageCustomer from '../components/coach/ManageCustomer';
+import Accounts from '../../components/admin/account/Accounts';
 
-const CoachDashboard = () => {
+const AccountManagement = () => {
   return (
     <>
         <Box gridColumn={{ xs: 'span 12', '2xl': 'span 6' }} order={{ xs: 7 }}>
-          <ManageCustomer />
+          <Accounts />
         </Box>
     </>
   );
 };
 
-export default CoachDashboard;
+export default AccountManagement;

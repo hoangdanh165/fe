@@ -8,12 +8,12 @@ import {
     Link
   } from '@mui/material';
   import { useState, useRef } from 'react';
-  import axios from '../services/axios';
-  import paths from '../routes/paths';
+  import axios from '../../services/axios';
+  import paths from '../../routes/paths';
   import { useNavigate } from 'react-router-dom';
   import logo from '/kienos-logo1.png';
-  import { rootPaths } from '../routes/paths';
-  import Image from '../components/base/Image';
+  import { rootPaths } from '../../routes/paths';
+  import Image from '../../components/base/Image';
   
   const FORGOT_PASSWORD_URL = '/api/v1/users/forgot-password/';
   

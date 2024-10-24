@@ -10,14 +10,14 @@ import {
   Typography,
   InputAdornment,
 } from '@mui/material';
-import IconifyIcon from '../components/base/IconifyIcon';
+import IconifyIcon from '../../components/base/IconifyIcon';
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Form } from 'react-router-dom';
-import Image from '../components/base/Image';
+import Image from '../../components/base/Image';
 import logoWithText from '/kienos-logo1.png';
-import { rootPaths } from '../routes/paths';
+import { rootPaths } from '../../routes/paths';
 import React from 'react';
-import axios from '../services/axios';
+import axios from '../../services/axios';
 const REGISTER_URL = '/api/v1/users/register/'  
 
 const SignUp = () => {

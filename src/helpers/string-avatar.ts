@@ -23,7 +23,7 @@ const stringToColorAndContrast = (name: string): { hex: string; contrastColor: s
   return { hex, contrastColor };
 };
 
-export const stringAvatar = (name: string) => {
+export const  stringAvatar = (name: string) => {
   const { hex, contrastColor } = stringToColorAndContrast(name);
 
   const firstInitial = name.split(' ').at(0)?.charAt(0);

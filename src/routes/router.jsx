@@ -5,7 +5,7 @@ import PageLoader from "../components/loading/PageLoader";
 import Splash from "../components/loading/Splash";
 import { rootPaths } from "./paths";
 import paths from "./paths";
-import ServiceManagement from "../pages/ServiceManagement";
+import ServiceManagement from "../pages/admin/ServiceManagement";
 
 const App = lazy(() => import("../App"));
 
@@ -15,9 +15,9 @@ const MainLayoutAdmin = lazy(() => import("../layouts/main-layout-admin"))
 const MainLayoutCoach = lazy(() => import("../layouts/main-layout"));
 
 // Auth pages
-const Login = lazy(() => import("../pages/Login"));
-const SignUp = lazy(() => import("../pages/SignUp"));
-const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
+const Login = lazy(() => import("../pages/auth/Login"));
+const SignUp = lazy(() => import("../pages/auth/SignUp"));
+const ForgotPassword = lazy(() => import("../pages/auth/ForgotPassword"));
 
 // Error pages
 const NotFound = lazy(() => import("../pages/error/NotFound"));
@@ -25,15 +25,16 @@ const Unauthorized = lazy(() => import("../components/Unauthorized"));
 
 
 // Admin pages
-const AccountManagement = lazy(() => import("../pages/AccountManagement"));
-const Statistic = lazy(() => import("../pages/Statistic"))
-const ServiceResponse = lazy(() => import("../pages/ServiceResponse"))
+const AccountManagement = lazy(() => import("../pages/admin/AccountManagement"));
+const Statistic = lazy(() => import("../pages/admin/Statistic"));
+const ServiceResponse = lazy(() => import("../pages/admin/ServiceResponse"));
+const CoachManagement = lazy(() => import("../pages/admin/CoachManagement"));
 
 // Coach pages
-const UserProfile = lazy(() => import("../pages/UserProfile"));
+const UserProfile = lazy(() => import("../pages/coach/UserProfile"));
 const ProductList = lazy(() => import("../pages/ProductList"));
-const CoachDashboard = lazy(() => import("../pages/CoachDashboard"));
-const CoachSchedule = lazy(() => import("../pages/CoachSchedule"));
+const CoachDashboard = lazy(() => import("../pages/coach/CoachDashboard"));
+const CoachSchedule = lazy(() => import("../pages/coach/CoachSchedule"));
 
 // Other components
 const PersistLogin = lazy(() => import("../components/PersistLogin"));
@@ -115,6 +116,14 @@ const routes = [
             element: (
               <PrivateRoute allowedRoles={["admin"]}>
                 <ServiceResponse />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: paths.coachs,
+            element: (
+              <PrivateRoute allowedRoles={["admin"]}>
+                <CoachManagement />
               </PrivateRoute>
             ),
           },
