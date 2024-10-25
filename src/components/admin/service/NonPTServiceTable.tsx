@@ -365,6 +365,7 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
                     endAdornment: <InputAdornment position="end">%</InputAdornment>, 
                     sx: { 
                       color: 'yellow', 
+                      width: '100px'
                     },
                   }}
                 />
@@ -372,13 +373,13 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
               <Grid item xs={4}>
                 <TextField
                   margin="dense"
-                  label="Số buổi tập"
+                  label="Số tháng tập"
                   type="text"
                   variant="standard"
-                  value={editingPTService.number_of_session ?? '0'}
-                  onChange={(e) => setEditingPTService({ ...editingPTService, number_of_session: e.target.value })}
+                  value={editingPTService.number_of_month ?? '0'}
+                  onChange={(e) => setEditingPTService({ ...editingPTService, number_of_month: e.target.value })}
                   InputProps={{
-                    endAdornment: <InputAdornment position="end">buổi</InputAdornment>, 
+                    endAdornment: <InputAdornment position="end">tháng</InputAdornment>, 
                     sx: { 
                       color: 'yellow', 
                     },
@@ -389,32 +390,11 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
               <Grid item xs={4}>
                 <TextField
                   margin="dense"
-                  label="Thời lượng mỗi buổi tập"
+                  label="Giá mỗi tháng tập"
                   type="text"
                   variant="standard"
-                  value={editingPTService.session_duration ?? '0'}
-                  onChange={(e) => setEditingPTService({ ...editingPTService, session_duration: e.target.value })}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">phút</InputAdornment>, 
-                    sx: { 
-                      color: 'yellow', 
-                    },
-                  }}
-                  sx={{ width: '100%' }}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={2} marginTop={2}>
-              
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  label="Giá mỗi buổi tập"
-                  type="text"
-                  variant="standard"
-                  value={editingPTService.cost_per_session ?? '0'}
-                  onChange={(e) => setEditingPTService({ ...editingPTService, cost_per_session: e.target.value })}
+                  value={editingPTService.cost_per_month ?? '0'}
+                  onChange={(e) => setEditingPTService({ ...editingPTService, cost_per_month: e.target.value })}
                   InputProps={{
                     endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
                     sx: { 
@@ -424,24 +404,12 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
                   sx={{ width: '70%' }}
                 />
               </Grid>
-              <Grid item xs={6}>
-
-              <TextField
-              margin="dense"
-              label="Thời gian sử dụng"
-              type="text"
-              variant="standard"
-              value={editingPTService.validity_period ?? '0'}
-              onChange={(e) => setEditingPTService({ ...editingPTService, validity_period: e.target.value })}
-              InputProps={{
-                endAdornment: <InputAdornment position="end">ngày</InputAdornment>,
-                sx: { 
-                  color: 'yellow', 
-                },
-              }}
-              sx={{ width: '100%' }}
-            />
             </Grid>
+
+            <Grid container spacing={2} marginTop={2}>
+              
+
+              
             </Grid>
 
             

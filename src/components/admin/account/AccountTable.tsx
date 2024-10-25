@@ -40,7 +40,7 @@ import {
 interface User {
   id: string;
   email: string;
-  status: string;
+  status: number;
   email_verified: boolean;
   password: string;
   role: string;
@@ -71,7 +71,7 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
     setEditingUser({
       id: "",
       email: "",
-      status: "Active",
+      status: 1,
       email_verified: false,
       password: "12345678",
       role: "customer",
@@ -120,7 +120,9 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
           email: editingUser.email,
           status: editingUser.status,
           email_verified: editingUser.email_verified,
-          role: editingUser.role,
+          "role": {
+            name: editingUser.role,
+          }
         },
         {
           headers: {
