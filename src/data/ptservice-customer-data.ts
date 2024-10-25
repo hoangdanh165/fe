@@ -33,6 +33,13 @@ export const usePTServiceCustomerData = (reloadTrigger: number, selectedValue: s
           address: npsc.address,
           gender: npsc.gender,
           birthday: npsc.birthday,
+          email: npsc.email,
+          phone: npsc.phone,
+          avatar: npsc.avatar,
+          height: npsc.height,
+          weight: npsc.weight,
+          workout_goal: npsc.workout_goal,
+          contracts: npsc.customer_contracts,
         }));
 
         

@@ -440,6 +440,7 @@ const NonPTServiceCustomerTable = ({
           </Button>
         </DialogActions>
       </Dialog>
+      
       <Dialog
         open={serviceModalOpen}
         onClose={() => setServiceModalOpen(false)}
