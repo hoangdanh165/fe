@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useCustomerData } from "../../data/customer-data";
-import { stringAvatar } from "../../helpers/string-avatar";
 import IconifyIcon from "../base/IconifyIcon";
 import CustomPagination from "../../components/common/CustomPagination";
 import CustomNoResultsOverlay from "../../components/common/CustomNoResultsOverlay";
@@ -16,6 +15,13 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  Tabs,
+  Tab,
+  Box,
+  Drawer,
+  Divider,
+  Card,
+  CardContent,
 } from "@mui/material";
 
 import { DataGrid, GridActionsCellItem, useGridApiRef } from "@mui/x-data-grid";
@@ -24,17 +30,21 @@ const CustomerTable = ({ searchText }) => {
   const apiRef = useGridApiRef();
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const { rows, loading, error } = useCustomerData(reloadTrigger);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
 
   const handleViewInfo = (userId) => {
     const user = rows.find((user) => user.id === userId);
     if (user) {
       setSelectedUser(user);
-      setOpenDialog(true);
+      setOpenDrawer(true);
     } else {
       console.error(`User with ID ${userId} not found`);
     }
+  };
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
   };
 
   const columns = [
@@ -46,7 +56,7 @@ const CustomerTable = ({ searchText }) => {
     },
     {
       field: "full_name",
-      headerName: "Họ và Tên",
+      headerName: "Họ Tên",
       resizable: false,
       flex: 1,
       minWidth: 200,
@@ -108,63 +118,365 @@ const CustomerTable = ({ searchText }) => {
         }}
       />
 
-      {/* Dialog for Viewing User Info */}
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        maxWidth="md"
-        fullWidth
+      {/* Side Panel for Viewing User Info */}
+      <Drawer
+        anchor="right"
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+        sx={{ width: 600 }}
       >
-        <DialogTitle sx={{ textAlign: "center" }}>Thông tin tài khoản</DialogTitle>
-        <DialogContent>
-          {selectedUser ? (
-            <>
-              {/* Full Name */}
-              <Typography variant="h6" gutterBottom>
-                Họ và Tên: <strong>{selectedUser.first_name} {selectedUser.last_name}</strong>
+        <Box sx={{ width: 600, padding: 5 }}>
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{ textAlign: "center", color: "primary.main" }}
+          >
+            Thông tin tài khoản
+          </Typography>
+          <Divider sx={{ margin: 3, borderColor: "primary.main" }} />
+          {selectedUser && (
+            <Stack direction="row" justifyContent="flex-start" sx={{ mb: 2 }}>
+              <Avatar
+                src="https://placehold.co/100x100"
+                sx={{ width: 100, height: 100, mr: 5 }}
+              />
+              <Typography
+                variant="h6"
+                gutterBottom
+                alignSelf="center"
+                sx={{ color: "white" }}
+              >
+                Họ và Tên:{" "}
+                <strong>
+                  {selectedUser.first_name} {selectedUser.last_name}
+                </strong>
               </Typography>
-
-              {/* Address */}
-              <Typography variant="h6" gutterBottom>
-                Địa chỉ: <strong>{selectedUser.address}</strong>
-              </Typography>
-
-              {/* Gender */}
-              <Typography variant="h6" gutterBottom>
-                Giới tính: <strong>{selectedUser.gender}</strong>
-              </Typography>
-
-              {/* Birthday */}
-              <Typography variant="h6" gutterBottom>
-                Ngày sinh: <strong>{selectedUser.birthday}</strong>
-              </Typography>
-
-              {/* Registered PT Services */}
-              <Typography variant="h6" gutterBottom>
-                Dịch vụ PT đã đăng ký:{" "}
-                <strong>{selectedUser.registered_ptservices.join(", ")}</strong>
-              </Typography>
-
-              {/* Registered Non-PT Services */}
-              <Typography variant="h6" gutterBottom>
-                Dịch vụ không phải PT đã đăng ký:{" "}
-                <strong>{selectedUser.registered_nonptservices.join(", ")}</strong>
-              </Typography>
-            </>
-          ) : (
-            <Typography variant="body1">Không có dữ liệu.</Typography>
+            </Stack>
           )}
-        </DialogContent>
-        <DialogActions>
+
+          {/* Tabs for navigation */}
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+          >
+            <Tab label="Tổng quan" />
+            <Tab label="Gói PT" />
+            <Tab label="Gói non-PT" />
+            <Tab label="Sessions" />
+          </Tabs>
+
+          <Box sx={{ p: 2 }}>
+            {activeTab === 0 && selectedUser && (
+              <>
+                <Card
+                  variant="outlined"
+                  sx={{
+                    minWidth: 275,
+                    borderColor: "white",
+                    minHeight: 200,
+                    overflowY: "auto",
+                    backgroundColor: "background.default",
+                    borderRadius: 2,
+                  }}
+                >
+                  <CardContent sx={{ padding: "20px" }}>
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{ color: "white" }}
+                    >
+                      Họ Tên:{" "}
+                      <strong>
+                        {selectedUser.first_name} {selectedUser.last_name}
+                      </strong>
+                    </Typography>
+
+                    {/* Address */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Địa chỉ:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{selectedUser.address}</strong>
+                      </Typography>
+                    </Box>
+
+                    {/* Gender */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Giới tính:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>
+                          {selectedUser.gender === 1 ? "Nam" : "Nữ"}
+                        </strong>
+                      </Typography>
+                    </Box>
+
+                    {/* Birthday */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Ngày sinh:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{selectedUser.birthday}</strong>
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </>
+            )}
+
+{activeTab === 1 && selectedUser && selectedUser.registered_ptservices.map((service, index) => (
+  <Card
+    key={index} // Unique key for each card
+    variant="outlined"
+    sx={{
+      minWidth: 275,
+      borderColor: "white",
+      minHeight: 350,
+      backgroundColor: "background.default",
+      borderRadius: 2,
+      mb: 10,
+      mt: 10,
+    }}
+  >
+    <CardContent sx={{padding:'20px'}}>
+      <Typography variant="h5" component="div" sx={{ color: "white" }}>
+        {service.name}
+      </Typography>
+    <Divider sx={{borderColor:"white"}}/>
+      {/* Service Name */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Tên gói:</Typography>
+        <Typography variant="body1">
+          <strong>{service.name}</strong>
+        </Typography>
+      </Box>
+
+      {/* Service Cost */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Giá gói:</Typography>
+        <Typography variant="body1">
+          <strong>{service.cost_per_session}</strong>
+        </Typography>
+      </Box>
+
+      {/* Start Date */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Ngày bắt đầu:</Typography>
+        <Typography variant="body1">
+          <strong>{service.start_date}</strong>
+        </Typography>
+      </Box>
+
+      {/* Number of Sessions */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Số buổi:</Typography>
+        <Typography variant="body1">
+          <strong>{service.number_of_session}</strong>
+        </Typography>
+      </Box>
+
+      {/* Session Duration */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Thời gian mỗi buổi:</Typography>
+        <Typography variant="body1">
+          <strong>{service.session_duration}</strong>
+        </Typography>
+      </Box>
+
+      {/* Expire Date */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Ngày hết hạn:</Typography>
+        <Typography variant="body1">
+          <strong>{service.expire_date}</strong>
+        </Typography>
+      </Box>
+
+      {/* Validity Period */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Thời hạn gói:</Typography>
+        <Typography variant="body1">
+          <strong>{service.validity_period}</strong>
+        </Typography>
+      </Box>
+    </CardContent>
+  </Card> 
+))}
+
+
+{activeTab === 2 && selectedUser && selectedUser.registered_nonptservices.map((service, index) => (
+  <Card
+    key={index} // Unique key for each card
+    variant="outlined"
+    sx={{
+      minWidth: 275,
+      borderColor: "white",
+      minHeight: 350,
+      backgroundColor: "background.default",
+      borderRadius: 2,
+      mb: 10,
+      mt: 10,
+    }}
+  >
+    <CardContent sx={{ padding: '20px' }}>
+      <Typography variant="h5" component="div" sx={{ color: "white" }}>
+        {service.name}
+      </Typography>
+      <Divider sx={{ borderColor: "white" }} />
+      
+      {/* Service Name */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Tên gói:</Typography>
+        <Typography variant="body1">
+          <strong>{service.name}</strong>
+        </Typography>
+      </Box>
+
+      {/* Service Cost per Month */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Giá theo tháng:</Typography>
+        <Typography variant="body1">
+          <strong>{service.cost_per_month}</strong>
+        </Typography>
+      </Box>
+
+      {/* Start Date */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Ngày bắt đầu:</Typography>
+        <Typography variant="body1">
+          <strong>{service.start_date}</strong>
+        </Typography>
+      </Box>
+
+      {/* Number of Months */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Số tháng:</Typography>
+        <Typography variant="body1">
+          <strong>{service.number_of_month}</strong>
+        </Typography>
+      </Box>
+
+      {/* Expire Date */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 1,
+        }}
+      >
+        <Typography variant="body1" sx={{ color: "white" }}>Ngày hết hạn:</Typography>
+        <Typography variant="body1">
+          <strong>{service.expire_date}</strong>
+        </Typography>
+      </Box>
+    </CardContent>
+  </Card>
+))}
+
+            {activeTab === 3 && (
+              <Typography variant="body1">Sessions content here...</Typography>
+            )}
+          </Box>
+
           <Button
-            onClick={() => setOpenDialog(false)}
+            onClick={() => setOpenDrawer(false)}
             color="error"
             variant="contained"
+            sx={{ mt: 2 }}
           >
             Đóng
           </Button>
-        </DialogActions>
-      </Dialog>
+        </Box>
+      </Drawer>
     </>
   );
 };

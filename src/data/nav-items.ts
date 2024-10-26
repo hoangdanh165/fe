@@ -8,37 +8,31 @@ export interface NavItem {
 }
 
 const navItems: NavItem[] = [
+
   {
     id: 1,
-    path: "/coach/customer",
-    title: "Dashboard",
-    icon: "mingcute:hoe-1-fill",
-    active: true,
-  },
-  {
-    id: 2,
-    path: "/coach/manage-clients",
+    path: paths.customer,
     title: "Quản lý khách hàng",
     icon: "mdi:account-group-outline",
     active: false,
   },
   {
-    id: 3,
+    id: 2,
     path: paths.schedule,
     title: "Lịch tập luyện",
     icon: "material-symbols:fitness-center",
     active: false,
   },
   {
-    id: 4,
+    id: 3,
     path: "/coach/product",
     title: "Tin nhắn",
     icon: "bi:chat",
     active: false,
   },
   {
-    id: 5,
-    path: "/coach/profile",
+    id: 4,
+    path: paths.profile,
     title: "Cài đặt",
     icon: "mingcute:settings-3-line",
     active: false,

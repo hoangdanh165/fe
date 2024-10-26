@@ -22,7 +22,7 @@ const Accounts = () => {
         gap={3}
       >
         <Typography variant="h4" color="common.white">
-          Accounts
+          Danh sách khách hàng
         </Typography>
         <TextField
           variant="filled"
