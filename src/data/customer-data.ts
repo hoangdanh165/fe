@@ -12,65 +12,46 @@ export const useCustomerData = (reloadTrigger: number) => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        //  MOCK DATA FOR TESTING
-        const mockData = [
-          {
-            id: 1, // Add unique id
-            customer: {
-                first_name: "Nguyen",
-                last_name: "Thi Mai",
-                address: "123 Pham Ngoc Thach, HCMC",
-                gender: "Nữ",
-                birthday: "1990-05-15",
-                registered_ptservices: ["Personal Training", "Yoga"],
-                registered_nonptservices: ["Nutritional Coaching", "Massage Therapy"],
-            },
-          },
-          {
-            id: 2, // Add unique id
-            customer: {
-                first_name: "Nguyen",
-                last_name: "Thi Mai",
-                address: "123 Pham Ngoc Thach, HCMC",
-                gender: "Nữ",
-                birthday: "1990-05-15",
-                registered_ptservices: ["Personal Training", "Yoga"],
-                registered_nonptservices: ["Nutritional Coaching", "Massage Therapy"],
-            },
-          },
-          {
-            id: 3, // Add unique id
-            customer: {
-                first_name: "Nguyen",
-                last_name: "Thi Mai",
-                address: "123 Pham Ngoc Thach, HCMC",
-                gender: "Nữ",
-                birthday: "1990-05-15",
-                registered_ptservices: ["Personal Training", "Yoga"],
-                registered_nonptservices: ["Nutritional Coaching", "Massage Therapy"],
-            },
-          },
-        ];
-        // Instead of fetching data from the API, use mockData
-        const response = { data: mockData }; 
 
         //  {** CALL API HERE !! **}
-        //   console.log(response.data);
-        // const response = await axiosPrivate.get(
-        //   "http://127.0.0.1:8000/api/v1/coach-profiles/details/",
-        //   {
-        //     withCredentials: true,
-        //   }
-        // );
+        const response = await axiosPrivate.get(
+          "http://127.0.0.1:8000/api/v1/coach-profiles/details/",
+          {
+            withCredentials: true,
+          }
+        );
         console.log(response.data);
-        const formattedRows = response.data.map((profile) => ({
+
+        const formattedRows = response.data.customers.map((profile) => ({
             id: profile.id, 
-          first_name: profile.customer.first_name,
-          last_name: profile.customer.last_name,
-          address: profile.customer.address,
-          gender: profile.customer.gender,
-          registered_ptservices: profile.customer.registered_ptservices,
-          registered_nonptservices: profile.customer.registered_nonptservices,
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          address: profile.address,
+          gender: profile.gender,
+          birthday: profile.birthday,
+          registered_ptservices: profile.registered_ptservices.map(service => (
+            {
+              id: service.id,
+              name: service.name,
+              cost_per_session: service.cost_per_session,
+              start_date: service.start_date,
+              number_of_session: service.number_of_session,
+              session_duration: service.session_duration,
+              expire_date: service.expire_date,
+              validity_period: service.validity_period,
+            }
+          )), 
+          
+          registered_nonptservices: profile.registered_nonptservices.map(service => (
+            {
+              id: service.id,
+              name: service.name,
+              cost_per_month: service.cost_per_month,
+              start_date: service.start_date,
+              number_of_month: service.number_of_month,
+              expire_date: service.expire_date,
+            }
+          )),  
         }));
 
         setRows(formattedRows);
