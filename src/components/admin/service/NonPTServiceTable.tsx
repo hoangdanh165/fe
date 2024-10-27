@@ -184,7 +184,7 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
     },
     {
       field: 'discount',
-      headerName: 'Khuyến mãi',
+      headerName: 'Khuyến mãi (%)',
       resizable: false,
       flex: 0.5,
       minWidth: 145,
@@ -198,7 +198,7 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
     },
     {
       field: 'cost_per_month',
-      headerName: 'Giá / tháng',
+      headerName: 'Giá / tháng (VNĐ)',
       resizable: false,
       flex: 0.5,
       minWidth: 145,

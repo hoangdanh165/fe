@@ -1,5 +1,3 @@
-import Unauthorized from "../components/Unauthorized";
-
 export const rootPaths = {
   root: "",
   homeRoot: "/home",
@@ -8,7 +6,7 @@ export const rootPaths = {
   adminRoot: "/admin",
   coachRoot: "/coach",
   saleRoot: "/sale",
-  customerRoot: "/sale",
+  customerRoot: "/customer",
 };
 
 export default {

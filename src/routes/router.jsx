@@ -21,7 +21,7 @@ const ForgotPassword = lazy(() => import("../pages/auth/ForgotPassword"));
 
 // Error pages
 const NotFound = lazy(() => import("../pages/error/NotFound"));
-const Unauthorized = lazy(() => import("../components/Unauthorized")); 
+const Unauthorized = lazy(() => import("../pages/error/Unauthorized")); 
 
 
 // Admin pages

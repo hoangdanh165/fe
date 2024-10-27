@@ -70,7 +70,7 @@ const SignUp = () => {
     const value = e.target.value;
     setOriginalPhone(value);
 
-    if (value.length > 11 || /[a-zA-Z]/.test(value)) {
+    if (value.length < 10 || value.length > 11 || /[a-zA-Z]/.test(value)) {
       setErrors((prevErrors) => ({
         ...prevErrors,
         originalPhone: 'Số điện thoại không đúng định dạng!',

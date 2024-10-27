@@ -20,6 +20,9 @@ import {
   Grid,
   DialogActions,
   Button,
+  Avatar,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 
 import {
@@ -138,6 +141,10 @@ const PTServiceCustomerTable = ({
     setReloadTrigger((prev) => prev + 1);
   };
 
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setEditingUser(null);
+  };
   const columns: GridColDef<any>[] = [
     {
       field: "id",
