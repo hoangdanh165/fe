@@ -134,28 +134,19 @@ const ServiceResponse = () => {
       (coach) => `${coach.first_name} ${coach.last_name}` === selectedCoach
     )?.coach_user_id;
 
-    console.log(coachUserId);
     if (coachId && selectedResponse) {
-      try {
-        const response = await axiosPrivate.patch(
-          `/api/v1/customer-profiles/${selectedResponse.customer.id}/update_fields/`,
-          {
-            coach: coachId,
-          }
-        );
-
-        if (response.status === 200) {
+      try {          
+          const customerData = {
+            coachId,
+            ...selectedResponse.customer,
+          };
           
           await NotificationService.createNotification(
             axiosPrivate,
-            selectedResponse.customer.id,
-            `Dựa vào phản hồi của bạn, huấn luyện viên của bạn đã được đổi thành ${selectedCoach}.`
-          );
-
-          await NotificationService.createNotification(
-            axiosPrivate,
             coachUserId,
-            `Khách hàng mới của bạn là ${selectedResponse.customer.first_name} ${selectedResponse.customer.last_name}`
+            `Bạn được giao nhiệm vụ đảm nhận một khách hàng mới (${selectedResponse.customer.first_name} ${selectedResponse.customer.last_name}). 
+            Hãy kiểm tra lịch dạy, điều kiện hiện tại để phản hồi sớm nhất có thể!`,
+            customerData,
           );
 
           await axiosPrivate.patch(
@@ -165,9 +156,7 @@ const ServiceResponse = () => {
             }
           );
           fetchResponses(`/api/v1/service-responses/?page=${currentPage + 1}`);
-        } else {
-          alert("Cập nhật thất bại");
-        }
+         
       } catch (error) {
         console.error("Error updating coach:", error);
         alert("Có lỗi xảy ra");

@@ -15,6 +15,10 @@ import {
   Grid,
   InputAdornment,
   Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
@@ -24,6 +28,9 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useAuth from "../../hooks/useAuth";
+import KeyIcon from "@mui/icons-material/Key";
+import IconifyIcon from '../../components/base/IconifyIcon';
+
 
 const COACH_PROFILE = "/api/v1/coach-profiles/";
 const CUSTOMER_PROFILE = "/api/v1/customer-profiles/";
@@ -32,7 +39,65 @@ const UserProfile = () => {
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
   const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
+  const handleChangePassword = async () => {
+    setPasswordError("");
+    
+    if (newPassword.length < 8) {
+      setPasswordError("Mật khẩu mới phải có ít nhất 8 ký tự!");
+      return;
+    }
+
+    try {
+      const response = await axiosPrivate.post(
+        "/api/v1/users/change-password/",
+        {
+          current_password: currentPassword,
+          new_password: newPassword,
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Đổi mật khẩu thành công!");
+        handleCloseChangePasswordModal();
+        setCurrentPassword("");
+        setNewPassword("");
+        setShowPassword(false);
+        setShowNewPassword(false);
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        const errors = error.response.data.error;
+        setPasswordError("Mật khẩu hiện tại không đúng!");
+        console.log(errors);
+      } else {
+        console.error("Error changing password:", error);
+        alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+      }
+    }
+  };
+
+  const handleShowPassword = () => {
+    setShowPassword(prev => !prev);
+  };
+
+  const handleShowNewPassword = () => {
+    setShowNewPassword(prev => !prev);
+  };
+
+  const handleOpenChangePasswordModal = () => {
+    setOpen(true);
+  };
+
+  const handleCloseChangePasswordModal = () => {
+    setOpen(false);
+  };
   const [profile, setProfile] = useState({
     phone: "",
     email: "",
@@ -93,7 +158,7 @@ const UserProfile = () => {
         }
       } catch (error) {
         console.error("Error fetching profile data:", error);
-        console
+        console;
       }
     };
 
@@ -136,19 +201,23 @@ const UserProfile = () => {
 
   const handleVerifyEmail = async () => {
     const email = profile.email;
-    
+
     try {
-      const response = await axiosPrivate.post("/api/v1/users/send-verification-email/", {
-        email: email,
-      });
-  
+      const response = await axiosPrivate.post(
+        "/api/v1/users/send-verification-email/",
+        {
+          email: email,
+        }
+      );
+
       if (response.status === 200) {
         alert("Email xác minh đã được gửi. Vui lòng kiểm tra hộp thư của bạn!");
       }
-
     } catch (error) {
       console.error("Error sending verification email:", error);
-      alert("Có lỗi xảy ra trong quá trình gửi email xác minh. Vui lòng thử lại.");
+      alert(
+        "Có lỗi xảy ra trong quá trình gửi email xác minh. Vui lòng thử lại."
+      );
     }
   };
 
@@ -329,7 +398,7 @@ const UserProfile = () => {
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-              <Grid item xs={7}>
+              <Grid item xs={6}>
                 <TextField
                   fullWidth
                   label="Email"
@@ -344,8 +413,8 @@ const UserProfile = () => {
                           title={
                             profile?.email_verified ? (
                               <div style={{ fontSize: "1rem" }}>
-                                  <span>Đã xác minh</span>
-                                </div>
+                                <span>Đã xác minh</span>
+                              </div>
                             ) : (
                               <>
                                 <div style={{ fontSize: "1rem" }}>
@@ -380,6 +449,23 @@ const UserProfile = () => {
                     ),
                   }}
                 />
+              </Grid>
+              <Grid item xs={1}>
+                <Tooltip
+                  title={
+                    <div style={{ fontSize: "1rem" }}>
+                      <span>Đổi mật khẩu</span>
+                    </div>
+                  }
+                >
+                  <IconButton
+                    onClick={handleOpenChangePasswordModal}
+                    size="small"
+                    sx={{ marginTop: 9 }}
+                  >
+                    <KeyIcon />
+                  </IconButton>
+                </Tooltip>
               </Grid>
               <Grid item xs={5}>
                 <TextField
@@ -475,6 +561,128 @@ const UserProfile = () => {
           </Stack>
         </Box>
       </form>
+      <Dialog open={open} onClose={handleCloseChangePasswordModal}>
+        <DialogTitle sx={{ color: "white", marginBottom: 5, marginTop: 5 }}>
+          ĐỔI MẬT KHẨU
+        </DialogTitle>
+        <DialogContent>
+          {passwordError && (
+            <Typography color="error" variant="body2">
+              {passwordError}
+            </Typography>
+          )}
+          <Box
+            display="flex"
+            width="500px"
+            flexDirection="column"
+            gap={2}
+            marginBottom={3}
+          >
+            <TextField
+              label="Mật khẩu hiện tại"
+              type={showPassword ? 'text' : 'password'}
+              fullWidth
+              margin="dense"
+              variant="outlined"
+              autoComplete="new-password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleShowPassword}
+                      size="small"
+                      edge="end"
+                      sx={{
+                        mr: 2,
+                      }}
+                    >
+                      {showPassword ? (
+                        <IconifyIcon
+                          icon="el:eye-open"
+                          color="text.secondary"
+                        />
+                      ) : (
+                        <IconifyIcon icon="el:eye-close" color="text.primary" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              label="Mật khẩu mới"
+              type={showNewPassword ? 'text' : 'password'}
+              fullWidth
+              margin="dense"
+              variant="outlined"
+              autoComplete="new-password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleShowNewPassword}
+                      size="small"
+                      edge="end"
+                      sx={{
+                        mr: 2,
+                      }}
+                    >
+                      {showNewPassword ? (
+                        <IconifyIcon
+                          icon="el:eye-open"
+                          color="text.secondary"
+                        />
+                      ) : (
+                        <IconifyIcon icon="el:eye-close" color="text.primary" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Box
+            display="flex"
+            flexDirection="row"
+            gap={1}
+            width="100%"
+            marginBottom={5}
+          >
+            <Button
+              onClick={handleCloseChangePasswordModal}
+              color="error"
+              variant="contained"
+              sx={{
+                width: "30%",
+                height: "40px",
+                margin: "0 auto",
+              }}
+            >
+              Hủy
+            </Button>
+            <Button
+              color="success"
+              variant="contained"
+              onClick={handleChangePassword}
+              sx={{
+                width: "30%",
+                height: "40px",
+                margin: "0 auto",
+              }}
+            >
+              Đổi mật khẩu
+            </Button>
+          </Box>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

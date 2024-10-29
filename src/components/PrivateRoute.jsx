@@ -4,9 +4,8 @@ import useAuth from "../hooks/useAuth";
 const PrivateRoute = ({ allowedRoles, children }) => {
     const { auth } = useAuth();
     const location = useLocation();
-    console.log(auth?.status)
     
-    if (auth?.status === 2) {
+    if (auth?.status !== 1) {
         return <Navigate to="/banned" state={{ from: location }} replace />;
     }
 

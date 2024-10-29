@@ -102,7 +102,9 @@ const Login = () => {
         const accessToken = response?.data?.accessToken;
         const role = response?.data?.role;
         const status = response?.data?.status;
-        setAuth({ email, role, status, accessToken });
+        const avatar = response?.data?.avatar;
+
+        setAuth({ email, role, status, accessToken, avatar });
 
         setEmail('');
         setPassword('');
@@ -151,7 +153,7 @@ const Login = () => {
     <>
       <Form>
         <Box component="figure" mb={5} mx="auto" textAlign="center">
-          <Link href={rootPaths.homeRoot}>
+          <Link href={import.meta.env.VITE_HOMEPAGE_URL}>
             <Image src={logo} alt="kienos-logo" height={160} />
           </Link>
         </Box>

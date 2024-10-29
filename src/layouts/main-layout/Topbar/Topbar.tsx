@@ -69,29 +69,7 @@ const Topbar = ({
               color="common.white"
             />
           </IconButton>
-          <IconButton
-            color="inherit"
-            sx={{
-              display: { xs: 'flex', sm: 'none' },
-            }}
-          >
-            <IconifyIcon icon="mdi:search" />
-          </IconButton>
-          <TextField
-            variant="filled"
-            fullWidth
-            placeholder="Search here..."
-            sx={{
-              display: { xs: 'none', sm: 'flex' },
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="end">
-                  <IconifyIcon icon="akar-icons:search" width={13} height={13} />
-                </InputAdornment>
-              ),
-            }}
-          />
+          
         </Stack>
         <Stack
           direction="row"

@@ -40,7 +40,7 @@ const Sidebar = ({ open }: { open: boolean }): ReactElement => {
         }}
       >
         <Link
-          href={rootPaths.homeRoot}
+          href={import.meta.env.VITE_HOMEPAGE_URL}
           sx={{
             mt: 3,
           }}

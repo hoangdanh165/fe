@@ -1,17 +1,21 @@
 import { Menu, Avatar, Button, Tooltip, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import IconifyIcon from '../../../components/base/IconifyIcon';
-import profile from '../../../assets/images/account/Profile.png';
 import { useState, MouseEvent, useCallback, ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import userMenuItems from '../../../data/usermenu-items';
 import useLogout from '../../../hooks/useLogout';
 import React from 'react';  
+import useAuth from '../../../hooks/useAuth';
+
 
 const UserDropdown = (): ReactElement => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
   const logout = useLogout();  
   const navigate = useNavigate();
+  const { auth } = useAuth();
+
+  const profile = auth?.avatar;
 
   const handleUserClick = useCallback((event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

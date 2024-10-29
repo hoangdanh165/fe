@@ -1,7 +1,7 @@
-import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useRefreshToken from '../hooks/useRefreshToken';
 import useAuth from "../hooks/useAuth";
+import { CircularProgress } from "@mui/material";
 
 const PersistLogin = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -28,19 +28,22 @@ const PersistLogin = ({ children }) => {
         return () => isMounted = false;
     }, [auth, persist, refresh]); 
 
-    useEffect(() => {
-        console.log(`isLoading: ${isLoading}`);
-        console.log(`aT: ${JSON.stringify(auth?.accessToken)}`);
-    }, [isLoading, auth]);
-
-    // Return children if not loading, else show loading text
     return (
         <>
             {!persist
-                ? children // Return children directly
+                ? children 
                 : isLoading
-                    ? <p>Loading...</p>
-                    : children // Return children when loading is complete
+                    ? (
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100vh',
+                        }}>
+                            <CircularProgress />
+                        </div>
+                    )
+                    : children
             }
         </>
     );
