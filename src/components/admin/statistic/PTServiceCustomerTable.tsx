@@ -155,9 +155,30 @@ const PTServiceCustomerTable = ({
     {
       field: "first_name",
       headerName: "Họ",
+      valueGetter: (params: any) => {
+        return params;
+      },
+      renderCell: (
+        params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
+      ) => {
+        return (
+          <Stack direction="row" gap={6} alignItems="center">
+            <Tooltip title={params.row.first_name} placement="top" arrow>
+              {params.row.avatar ? (
+                <Avatar src={params.row.avatar} alt={params.row.first_name} />
+              ) : (
+                <Avatar>{params.row.first_name?.charAt(0)}</Avatar>
+              )}
+            </Tooltip>
+            <Typography variant="body2">{params.row.first_name}</Typography>
+          </Stack>
+        );
+      },
       resizable: false,
-      flex: 0,
+      flex: 0.5,
       minWidth: 50,
+      headerAlign: 'center',
+      align: 'left',
     },
     {
       field: "last_name",
@@ -165,6 +186,8 @@ const PTServiceCustomerTable = ({
       resizable: false,
       flex: 0,
       minWidth: 50,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: "address",
@@ -172,6 +195,8 @@ const PTServiceCustomerTable = ({
       resizable: false,
       flex: 1,
       minWidth: 350,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: "gender",
@@ -179,6 +204,8 @@ const PTServiceCustomerTable = ({
       resizable: false,
       flex: 0.5,
       minWidth: 50,
+      headerAlign: 'center',
+      align: 'center',
       renderCell: (
         params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
       ) => {
@@ -195,6 +222,8 @@ const PTServiceCustomerTable = ({
       resizable: false,
       flex: 0,
       minWidth: 100,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: "actions",

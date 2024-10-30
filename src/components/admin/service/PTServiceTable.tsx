@@ -58,6 +58,7 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
   const [isEditMode, setEditMode] = useState(!!editingPTService);
   const [emailError, setEmailError] = useState('');
   const axiosPrivate = useAxiosPrivate()
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
   const handleEdit = (id: string) => {
     setEditMode(true)
@@ -166,13 +167,23 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('Xác nhận xoá gói tập này?')) {
+    const idsToDelete = rowSelectionModel.length > 0 ? rowSelectionModel : [id];
+    console.log(idsToDelete);
+
+    if (
+      idsToDelete.length > 0 &&
+      window.confirm("Bạn có muốn xoá (những) gói tập này không?")
+    ) {
       try {
-        await axiosPrivate.delete(`/api/v1/pt-services/${id}/`); 
-        console.log(`User with ID ${id} deleted.`);
-        setReloadTrigger(prev => prev + 1);
+        const response = await axiosPrivate.post('/api/v1/pt-services/delete-multiple/', {
+          ids: idsToDelete,
+        });
+        alert('Xoá thành công!');
+        
+        setReloadTrigger((prev) => prev + 1);
       } catch (error) {
-        console.error('Error deleting user:', error);
+        console.error("Error deleting ptservices:", error);
+        alert(error.response?.data?.error || "An error occurred while deleting ptservices.");
       }
     }
   };
@@ -190,6 +201,8 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
       resizable: false,
       flex: 0.5,
       minWidth: 280,
+      headerAlign: 'center',
+      align: 'left',
     },
     {
       field: 'discount',
@@ -197,6 +210,8 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
       resizable: false,
       flex: 0.5,
       minWidth: 145,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'number_of_session',
@@ -204,6 +219,8 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
       resizable: false,
       flex: 0.5,
       minWidth: 150,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'session_duration',
@@ -211,6 +228,8 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
       resizable: false,
       flex: 1,
       minWidth: 160,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'cost_per_session',
@@ -218,6 +237,8 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
       resizable: false,
       flex: 0.8,
       minWidth: 145,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'actions',
@@ -297,6 +318,10 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
         disableRowSelectionOnClick
         rows={rows}
         loading={loading}
+        onRowSelectionModelChange={(newRowSelectionModel) => {
+          setRowSelectionModel(newRowSelectionModel);
+        }}
+        rowSelectionModel={rowSelectionModel}
         onResize={() => {
           apiRef.current.autosizeColumns({
             includeOutliers: true,

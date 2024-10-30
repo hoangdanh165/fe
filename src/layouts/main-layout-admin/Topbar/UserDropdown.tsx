@@ -1,6 +1,6 @@
 import { Menu, Avatar, Button, Tooltip, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import IconifyIcon from '../../../components/base/IconifyIcon';
-import profile from '../../../assets/images/account/Profile.png';
+import profile from '/kienos-logo1.png';
 import { useState, MouseEvent, useCallback, ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import userMenuItems from '../../../data/usermenu-items';

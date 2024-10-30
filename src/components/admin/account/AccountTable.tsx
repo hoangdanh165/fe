@@ -6,6 +6,7 @@ import React from "react";
 import CustomPagination from "../../common/CustomPagination";
 import CustomNoResultsOverlay from "../../common/CustomNoResultsOverlay";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+
 import {
   Stack,
   Avatar,
@@ -56,6 +57,8 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const axiosPrivate = useAxiosPrivate();
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+
 
   const handleEdit = (id: string) => {
     setEditMode(true);
@@ -172,14 +175,24 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+  const handleDelete = async (id?: number) => {
+    const idsToDelete = rowSelectionModel.length > 0 ? rowSelectionModel : [id];
+    console.log(idsToDelete);
+
+    if (
+      idsToDelete.length > 0 &&
+      window.confirm("Bạn có muốn xoá (những) tài khoản này không?")
+    ) {
       try {
-        await axiosPrivate.delete(`/api/v1/users/${id}/`);
-        console.log(`User with ID ${id} deleted.`);
+        const response = await axiosPrivate.post('/api/v1/users/delete-multiple/', {
+          ids: idsToDelete,
+        });
+        alert('Xoá thành công!');
+        
         setReloadTrigger((prev) => prev + 1);
       } catch (error) {
-        console.error("Error deleting user:", error);
+        console.error("Error deleting users:", error);
+        alert(error.response?.data?.error || "An error occurred while deleting users.");
       }
     }
   };
@@ -201,7 +214,7 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
         params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
       ) => {
         return (
-          <Stack direction="row" gap={1} alignItems="center">
+          <Stack direction="row" gap={6} alignItems="center">
             <Tooltip title={params.row.email} placement="top" arrow>
               <Avatar {...stringAvatar(params.row.email)} />
             </Tooltip>
@@ -212,6 +225,8 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 1,
       minWidth: 155,
+      headerAlign: 'center',
+      align: 'left',
     },
     {
       field: "role",
@@ -219,6 +234,23 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 0.5,
       minWidth: 145,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (
+        params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
+      ) => {
+        return (
+          <Typography variant="body2">
+            {params.row.role === 'admin'
+              ? "Quản trị viên"
+              : params.row.role === 'customer'
+              ? "Khách hàng"
+              : params.row.role === 'sale'
+              ? "Lễ tân"
+              : "HLV"}
+          </Typography>
+        );
+      },
     },
     {
       field: "status",
@@ -226,6 +258,8 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 0.5,
       minWidth: 145,
+      headerAlign: 'center',
+      align: 'center',
       renderCell: (
         params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
       ) => {
@@ -242,6 +276,8 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 0.5,
       minWidth: 145,
+      headerAlign: 'center',
+      align: 'center',
       renderCell: (
         params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
       ) => {
@@ -259,9 +295,10 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 1,
       minWidth: 80,
+      headerAlign: 'center',
       getActions: (params) => {
         return [
-          <Tooltip title="Edit">
+          <Tooltip title="Sửa">
             <GridActionsCellItem
               icon={
                 <IconifyIcon
@@ -270,12 +307,12 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
                   sx={{ fontSize: "body1.fontSize", pointerEvents: "none" }}
                 />
               }
-              label="Edit"
+              label="Sửa"
               size="small"
               onClick={() => handleEdit(params.id)}
             />
           </Tooltip>,
-          <Tooltip title="Delete">
+          <Tooltip title="Xoá">
             <GridActionsCellItem
               icon={
                 <IconifyIcon
@@ -284,7 +321,7 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
                   sx={{ fontSize: "body1.fontSize", pointerEvents: "none" }}
                 />
               }
-              label="Delete"
+              label="Xoá"
               size="small"
               onClick={() => handleDelete(params.id)}
             />
@@ -330,6 +367,10 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
         disableRowSelectionOnClick
         rows={rows}
         loading={loading}
+        onRowSelectionModelChange={(newRowSelectionModel) => {
+          setRowSelectionModel(newRowSelectionModel);
+        }}
+        rowSelectionModel={rowSelectionModel}
         onResize={() => {
           apiRef.current.autosizeColumns({
             includeOutliers: true,

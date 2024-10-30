@@ -56,6 +56,7 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
   const [isEditMode, setEditMode] = useState(!!editingPTService);
   const [emailError, setEmailError] = useState('');
   const axiosPrivate = useAxiosPrivate()
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
   const handleEdit = (id: string) => {
     setEditMode(true)
@@ -158,12 +159,23 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('Xác nhận xoá gói tập này?')) {
+    const idsToDelete = rowSelectionModel.length > 0 ? rowSelectionModel : [id];
+    console.log(idsToDelete);
+
+    if (
+      idsToDelete.length > 0 &&
+      window.confirm("Bạn có muốn xoá (những) gói tập này không?")
+    ) {
       try {
-        await axiosPrivate.delete(`/api/v1/nonpt-services/${id}/`); 
-        setReloadTrigger(prev => prev + 1);
+        const response = await axiosPrivate.post('/api/v1/nonpt-services/delete-multiple/', {
+          ids: idsToDelete,
+        });
+        alert('Xoá thành công!');
+        
+        setReloadTrigger((prev) => prev + 1);
       } catch (error) {
-        console.error('Error deleting user:', error);
+        console.error("Error deleting nonptservices:", error);
+        alert(error.response?.data?.error || "An error occurred while deleting nonptservices.");
       }
     }
   };
@@ -181,6 +193,8 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
       resizable: false,
       flex: 0.5,
       minWidth: 300,
+      headerAlign: 'center',
+      align: 'left',
     },
     {
       field: 'discount',
@@ -188,6 +202,8 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
       resizable: false,
       flex: 0.5,
       minWidth: 145,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'number_of_month',
@@ -195,6 +211,8 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
       resizable: false,
       flex: 0.5,
       minWidth: 150,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'cost_per_month',
@@ -202,6 +220,8 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
       resizable: false,
       flex: 0.5,
       minWidth: 145,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: 'actions',
@@ -281,6 +301,10 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
         disableRowSelectionOnClick
         rows={rows}
         loading={loading}
+        onRowSelectionModelChange={(newRowSelectionModel) => {
+          setRowSelectionModel(newRowSelectionModel);
+        }}
+        rowSelectionModel={rowSelectionModel}
         onResize={() => {
           apiRef.current.autosizeColumns({
             includeOutliers: true,

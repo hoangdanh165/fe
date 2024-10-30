@@ -143,7 +143,7 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
         params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
       ) => {
         return (
-          <Stack direction="row" gap={1} alignItems="center">
+          <Stack direction="row" gap={6} alignItems="center">
             <Tooltip title={params.row.first_name} placement="top" arrow>
               {params.row.avatar ? (
                 <Avatar src={params.row.avatar} alt={params.row.first_name} />
@@ -158,6 +158,8 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 0.5,
       minWidth: 50,
+      headerAlign: 'center',
+      align: 'left',
     },
     {
       field: "last_name",
@@ -165,6 +167,8 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 0.5,
       minWidth: 50,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: "gender",
@@ -172,6 +176,8 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 0.5,
       minWidth: 50,
+      headerAlign: 'center',
+      align: 'center',
       renderCell: (
         params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>
       ) => {
@@ -192,6 +198,8 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 1.5,
       minWidth: 300,
+      headerAlign: 'center',
+      align: 'center',
     },
     {
       field: "birthday",
@@ -199,6 +207,8 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
       resizable: false,
       flex: 0.5,
       minWidth: 100,
+      headerAlign: 'center',
+      align: 'center',
     },
 
     {
