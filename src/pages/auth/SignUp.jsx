@@ -210,12 +210,12 @@ const SignUp = () => {
       >
         <Stack justifyContent="center" gap={5}>
           <Typography variant="h3" textAlign="center" color="text.secondary">
-            Create New Account
+            Đăng ký tài khoản
           </Typography>
           <Typography variant="h6" fontWeight={500} textAlign="center" color="text.primary">
-            Have an account?{' '}
+            Đã có tài khoản?{' '}
             <Link href="/auth/login" underline="none">
-              Log In
+              Đăng nhập
             </Link>
           </Typography>
           {errMsg && (
@@ -230,7 +230,7 @@ const SignUp = () => {
           )}
           <TextField
             variant="filled"
-            label="Phone"
+            label="Số điện thoại"
             ref={userRef}
             onChange={handlePhoneChange}
             value={originalPhone}
@@ -280,7 +280,7 @@ const SignUp = () => {
           />
           <TextField
             variant="filled"
-            label="Password"
+            label="Mật khẩu"
             ref={userRef}
             onChange={handlePasswordChange}
             value={password}
@@ -326,7 +326,7 @@ const SignUp = () => {
           />
           <TextField
             variant="filled"
-            label="Confirm Password"
+            label="Nhập lại mật khẩu"
             ref={userRef}
             onChange={handleConfirmPasswordChange}
             value={confirmPassword}
@@ -377,12 +377,12 @@ const SignUp = () => {
               fontWeight: 'fontWeightRegular',
             }}
           >
-            Sign Up
+            Đăng ký
           </Button>
           <Typography variant="body1" textAlign="center">
-            By creating an account, you agree to our{' '}
+            Đăng ký tài khoản đồng nghĩa với việc bạn chấp nhận{' '}
             <Link href="#!" underline="none">
-              Terms of Service
+              các điều khoản.
             </Link>
           </Typography>
           <Divider />
