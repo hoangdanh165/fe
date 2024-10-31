@@ -3,14 +3,8 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import listPlugin from "@fullcalendar/list";
 import {
   Box,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -18,50 +12,57 @@ import {
   DialogTitle,
   IconButton,
   TextField,
-  Tooltip
+  Tooltip,
+  Button,
+  Typography,
 } from "@mui/material";
-import { useScheduleData } from "../../data/schedule-data"; // Import the hook to get schedules
-import CloseIcon from '@mui/icons-material/Close';
-import './Calender.css'
-
+import { useScheduleData } from "../../data/schedule-data";
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
+import "./Calender.css";
 
 const Calendar = () => {
   const [currentEvents, setCurrentEvents] = useState([]);
   const { rows, loading, error } = useScheduleData(0);
-
   const [openDialog, setOpenDialog] = useState(false);
   const [newEventTitle, setNewEventTitle] = useState("");
+  const [newEventCustomer, setNewEventCustomer] = useState("");
   const [selectedInfo, setSelectedInfo] = useState(null);
   const [openEventDialog, setOpenEventDialog] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [eventTitle, setEventTitle] = useState(""); 
-  const [eventStart, setEventStart] = useState(""); 
-  const [eventEnd, setEventEnd] = useState(""); 
-
-
-
+  const [eventTitle, setEventTitle] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [eventStart, setEventStart] = useState("");
+  const [eventEnd, setEventEnd] = useState("");
+  
+  // State for exercises
+  const [exercises, setExercises] = useState([]); 
+  const [newExercise, setNewExercise] = useState(""); 
+  const [openAddExerciseDialog, setOpenAddExerciseDialog] = useState(false); 
+  
   useEffect(() => {
     if (!loading && !error) {
       const events = rows.map((row) => ({
         id: row.id,
-        title: row.overview,
+        title: `${row.overview}`,
         start: `${row.date}T${row.start_time}`,
         end: `${row.date}T${row.end_time}`,
         allDay: false,
-        classNames: ['fc-event'],
+        classNames: ["fc-event"],
+        extendedProps: {
+          customerName: row.customer,
+          exerciseDetails: row.exerciseDetails || "No details provided",
+        },
       }));
-
       setCurrentEvents(events);
     }
   }, [rows, loading, error]);
 
-  // Handle Date Click (Open Dialog instead of Prompt)
   const handleDateClick = (selected) => {
     setSelectedInfo(selected);
-    setOpenDialog(true); // Open the dialog
+    setOpenDialog(true);
   };
 
-  // Handle Save Event after Dialog submission
   const handleSaveEvent = () => {
     const calendarApi = selectedInfo.view.calendar;
     calendarApi.unselect();
@@ -69,45 +70,77 @@ const Calendar = () => {
     if (newEventTitle) {
       calendarApi.addEvent({
         id: `${selectedInfo.dateStr}-${newEventTitle}`,
-        title: newEventTitle,
+        title: `${newEventTitle} (${newEventCustomer})`,
         start: selectedInfo.startStr,
         end: selectedInfo.endStr,
         allDay: selectedInfo.allDay,
+        extendedProps: { customerName: newEventCustomer },
       });
     }
 
-    // Close the dialog and reset state
     setOpenDialog(false);
     setNewEventTitle("");
+    setNewEventCustomer("");
     setSelectedInfo(null);
   };
 
   const handleEventClick = (selected) => {
-    setSelectedEvent(selected.event); // Save the selected event
-    setEventTitle(selected.event.title); // Set initial event title
-    setEventStart(new Date(selected.event.start).toISOString().slice(0, 16)); // Format for datetime-local input
-    setEventEnd(new Date(selected.event.end).toISOString().slice(0, 16)); // Format for datetime-local input
-    setOpenEventDialog(true); // Open the dialog to show event details
+    const event = selected.event;
+    setSelectedEvent(event);
+    setEventTitle(event.title.split(" (")[0]);
+    setCustomerName(event.extendedProps.customerName || "");
+    setEventStart(new Date(event.start).toISOString().slice(0, 16));
+    setEventEnd(new Date(event.end).toISOString().slice(0, 16));
+    setOpenEventDialog(true);
   };
+
+  const handleSaveEditEvent = () => {
+    selectedEvent.setProp("title", `${eventTitle} (${customerName})`);
+    selectedEvent.setExtendedProp("customerName", customerName);
+    selectedEvent.setStart(eventStart);
+    selectedEvent.setEnd(eventEnd);
+    setOpenEventDialog(false);
+  };
+
   const handleDeleteEvent = () => {
-    if (window.confirm(`Are you sure you want to delete the event '${selectedEvent.title}'?`)) {
-      selectedEvent.remove(); // Remove the event
-      setOpenEventDialog(false); // Close the dialog after deletion
+    if (
+      window.confirm(
+        `Bạn có chắc chắn muốn xóa sự kiện '${selectedEvent.title}' không?`
+      )
+    ) {
+      selectedEvent.remove();
+      setOpenEventDialog(false);
     }
   };
-  const handleSaveEditEvent = () => {
-    selectedEvent.setProp("title", eventTitle); // Update event title
-    selectedEvent.setStart(eventStart); // Update event start time
-    selectedEvent.setEnd(eventEnd); // Update event end time
-    setOpenEventDialog(false); // Close the dialog after saving
+
+  const handleAddExercise = () => {
+    if (newExercise) {
+      setExercises([...exercises, newExercise]);
+      setNewExercise("");
+      setOpenAddExerciseDialog(false);
+    }
   };
 
   const renderEventContent = (eventInfo) => {
-    const startTime = eventInfo.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-    const endTime = eventInfo.event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-    
+    const { title, extendedProps } = eventInfo.event;
+    const startTime = eventInfo.event.start.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    const endTime = eventInfo.event.end.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+
     return (
-      <Tooltip title={eventInfo.event.title} arrow>
+      <Tooltip
+        title={`${title} - ${
+          extendedProps.customerName || "Không có khách hàng"
+        }`}
+        arrow
+      >
         <span className="fc-event">{`${startTime} - ${endTime}`}</span>
       </Tooltip>
     );
@@ -118,121 +151,169 @@ const Calendar = () => {
       <Box flex="1 1 100%" ml="15px">
         <FullCalendar
           locale="vi"
-          height="80vh"
-          plugins={[
-            dayGridPlugin,
-            timeGridPlugin,
-            interactionPlugin,
-            listPlugin,
-          ]}
+          height="100vh"
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
           }}
           initialView="dayGridMonth"
-          editable={true}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          select={handleDateClick} // Open dialog on date click
+          editable
+          selectable
+          selectMirror
+          dayMaxEvents
+          select={handleDateClick}
           eventClick={handleEventClick}
           events={currentEvents}
           eventContent={renderEventContent}
           buttonText={{
-            today: 'Hôm nay',
-            month: 'Tháng',
-            week: 'Tuần',
-            day: 'Ngày',
-            list: 'Danh sách'
+            today: "Hôm nay",
+            month: "Tháng",
+            week: "Tuần",
+            day: "Ngày",
           }}
-          
         />
       </Box>
 
-      {/* Dialog for adding new event */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Add New Event</DialogTitle>
+        <DialogTitle>Thêm sự kiện mới</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Please enter the details for your new event.
+            Vui lòng nhập thông tin cho sự kiện mới.
           </DialogContentText>
           <TextField
             autoFocus
             margin="dense"
-            label="Event Title"
+            label="Tiêu đề"
             fullWidth
             value={newEventTitle}
             onChange={(e) => setNewEventTitle(e.target.value)}
           />
+          <TextField
+            margin="dense"
+            label="Tên khách hàng"
+            fullWidth
+            value={newEventCustomer}
+            onChange={(e) => setNewEventCustomer(e.target.value)}
+          />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button onClick={handleSaveEvent}>Save</Button>
+          <Button onClick={() => setOpenDialog(false)}>Hủy</Button>
+          <Button onClick={handleSaveEvent}>Lưu</Button>
         </DialogActions>
       </Dialog>
+
       <Dialog open={openEventDialog} onClose={() => setOpenEventDialog(false)}>
-        <DialogTitle>
-          Event Details
+        <DialogTitle sx={{ mb: "10px" }}>
+          Chi tiết sự kiện
           <IconButton
             aria-label="close"
             onClick={() => setOpenEventDialog(false)}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
+            sx={{ position: "absolute", right: 8, top: 8 }}
           >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Edit the event details below:
-          </DialogContentText>
+          <DialogContentText>Chỉnh sửa chi tiết sự kiện.</DialogContentText>
           <TextField
-            label="Title"
+            label="Nội dung tổng quát"
             value={eventTitle}
             onChange={(e) => setEventTitle(e.target.value)}
             fullWidth
             margin="normal"
           />
           <TextField
-            label="Start Time"
+            label="Khách hàng"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Thời gian bắt đầu"
             type="datetime-local"
             value={eventStart}
             onChange={(e) => setEventStart(e.target.value)}
             fullWidth
             margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
           <TextField
-            label="End Time"
+            label="Thời gian kết thúc"
             type="datetime-local"
             value={eventEnd}
             onChange={(e) => setEventEnd(e.target.value)}
             fullWidth
             margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                marginTop: 2,
+                alignSelf: "flex-start",
+                color: "white",
+                marginBottom: 2,
+              }}
+            >
+              Danh sách bài tập:
+            </Typography>
+            <IconButton onClick={() => setOpenAddExerciseDialog(true)}>
+              <AddIcon />
+            </IconButton>
+          </Box>
+
+          {/* Render the exercises */}
+          {exercises.length > 0 ? (
+            exercises.map((exercise, index) => (
+              <Typography key={index} color="white" variant="body2">
+                {exercise}
+              </Typography>
+            ))
+          ) : (
+            <Typography color="white" variant="body2">
+              Không có bài tập nào.
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDeleteEvent} color="error">
-            Delete
+            Xóa
           </Button>
           <Button onClick={handleSaveEditEvent} color="primary">
-            Save
+            Lưu
           </Button>
         </DialogActions>
       </Dialog>
-    
+
+      {/* Dialog for adding an exercise */}
+      <Dialog open={openAddExerciseDialog} onClose={() => setOpenAddExerciseDialog(false)}>
+        <DialogTitle>Thêm bài tập mới</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Tên bài tập"
+            fullWidth
+            value={newExercise}
+            onChange={(e) => setNewExercise(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenAddExerciseDialog(false)}>Hủy</Button>
+          <Button onClick={handleAddExercise}>Thêm</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
-    
   );
 };
 

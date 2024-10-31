@@ -135,18 +135,20 @@ const CustomerTable = ({ searchText }) => {
           </Typography>
           <Divider sx={{ margin: 3, borderColor: "primary.main" }} />
           {selectedUser && (
-            <Stack direction="row" justifyContent="flex-start" sx={{ mb: 2 }}>
+            <Stack
+              direction="row"
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              spacing={2}
+              sx={{ mb: 7 }}
+            >
               <Avatar
                 src="https://placehold.co/100x100"
-                sx={{ width: 100, height: 100, mr: 5 }}
+                sx={{ width: 100, height: 100 }}
               />
-              <Typography
-                variant="h6"
-                gutterBottom
-                alignSelf="center"
-                sx={{ color: "white" }}
-              >
-                Họ và Tên:{" "}
+              <Typography variant="h6" gutterBottom sx={{ color: "white" }}>
+                {" "}
                 <strong>
                   {selectedUser.first_name} {selectedUser.last_name}
                 </strong>
@@ -248,219 +250,254 @@ const CustomerTable = ({ searchText }) => {
               </>
             )}
 
-{activeTab === 1 && selectedUser && selectedUser.registered_ptservices.map((service, index) => (
-  <Card
-    key={index} // Unique key for each card
-    variant="outlined"
-    sx={{
-      minWidth: 275,
-      borderColor: "white",
-      minHeight: 350,
-      backgroundColor: "background.default",
-      borderRadius: 2,
-      mb: 10,
-      mt: 10,
-    }}
-  >
-    <CardContent sx={{padding:'20px'}}>
-      <Typography variant="h5" component="div" sx={{ color: "white" }}>
-        {service.name}
-      </Typography>
-    <Divider sx={{borderColor:"white"}}/>
-      {/* Service Name */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Tên gói:</Typography>
-        <Typography variant="body1">
-          <strong>{service.name}</strong>
-        </Typography>
-      </Box>
+            {activeTab === 1 &&
+              selectedUser &&
+              selectedUser.registered_ptservices.map((service, index) => (
+                <Card
+                  key={index} // Unique key for each card
+                  variant="outlined"
+                  sx={{
+                    minWidth: 275,
+                    borderColor: "white",
+                    minHeight: 350,
+                    backgroundColor: "background.default",
+                    borderRadius: 2,
+                    mb: 10,
+                    mt: 10,
+                  }}
+                >
+                  <CardContent sx={{ padding: "20px" }}>
+                    <Typography
+                      variant="h5"
+                      component="div"
+                      sx={{ color: "white" }}
+                    >
+                      {service.name}
+                    </Typography>
+                    <Divider sx={{ borderColor: "white" }} />
+                    {/* Service Name */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Tên gói:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.name}</strong>
+                      </Typography>
+                    </Box>
 
-      {/* Service Cost */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Giá gói:</Typography>
-        <Typography variant="body1">
-          <strong>{service.cost_per_session}</strong>
-        </Typography>
-      </Box>
+                    {/* Service Cost */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Giá gói:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.cost_per_session}</strong>
+                      </Typography>
+                    </Box>
 
-      {/* Start Date */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Ngày bắt đầu:</Typography>
-        <Typography variant="body1">
-          <strong>{service.start_date}</strong>
-        </Typography>
-      </Box>
+                    {/* Start Date */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Ngày bắt đầu:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.start_date}</strong>
+                      </Typography>
+                    </Box>
 
-      {/* Number of Sessions */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Số buổi:</Typography>
-        <Typography variant="body1">
-          <strong>{service.number_of_session}</strong>
-        </Typography>
-      </Box>
+                    {/* Number of Sessions */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Số buổi:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.number_of_session}</strong>
+                      </Typography>
+                    </Box>
 
-      {/* Session Duration */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Thời gian mỗi buổi:</Typography>
-        <Typography variant="body1">
-          <strong>{service.session_duration}</strong>
-        </Typography>
-      </Box>
+                    {/* Session Duration */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Thời gian mỗi buổi:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.session_duration}</strong>
+                      </Typography>
+                    </Box>
 
-      {/* Expire Date */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Ngày hết hạn:</Typography>
-        <Typography variant="body1">
-          <strong>{service.expire_date}</strong>
-        </Typography>
-      </Box>
+                    {/* Expire Date */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Ngày hết hạn:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.expire_date}</strong>
+                      </Typography>
+                    </Box>
 
-      {/* Validity Period */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Thời hạn gói:</Typography>
-        <Typography variant="body1">
-          <strong>{service.validity_period}</strong>
-        </Typography>
-      </Box>
-    </CardContent>
-  </Card> 
-))}
+                    {/* Validity Period */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Thời hạn gói:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.validity_period}</strong>
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))}
 
+            {activeTab === 2 &&
+              selectedUser &&
+              selectedUser.registered_nonptservices.map((service, index) => (
+                <Card
+                  key={index} // Unique key for each card
+                  variant="outlined"
+                  sx={{
+                    minWidth: 275,
+                    borderColor: "white",
+                    minHeight: 350,
+                    backgroundColor: "background.default",
+                    borderRadius: 2,
+                    mb: 10,
+                    mt: 10,
+                  }}
+                >
+                  <CardContent sx={{ padding: "20px" }}>
+                    <Typography
+                      variant="h5"
+                      component="div"
+                      sx={{ color: "white" }}
+                    >
+                      {service.name}
+                    </Typography>
+                    <Divider sx={{ borderColor: "white" }} />
 
-{activeTab === 2 && selectedUser && selectedUser.registered_nonptservices.map((service, index) => (
-  <Card
-    key={index} // Unique key for each card
-    variant="outlined"
-    sx={{
-      minWidth: 275,
-      borderColor: "white",
-      minHeight: 350,
-      backgroundColor: "background.default",
-      borderRadius: 2,
-      mb: 10,
-      mt: 10,
-    }}
-  >
-    <CardContent sx={{ padding: '20px' }}>
-      <Typography variant="h5" component="div" sx={{ color: "white" }}>
-        {service.name}
-      </Typography>
-      <Divider sx={{ borderColor: "white" }} />
-      
-      {/* Service Name */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Tên gói:</Typography>
-        <Typography variant="body1">
-          <strong>{service.name}</strong>
-        </Typography>
-      </Box>
+                    {/* Service Name */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Tên gói:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.name}</strong>
+                      </Typography>
+                    </Box>
 
-      {/* Service Cost per Month */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Giá theo tháng:</Typography>
-        <Typography variant="body1">
-          <strong>{service.cost_per_month}</strong>
-        </Typography>
-      </Box>
+                    {/* Service Cost per Month */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Giá theo tháng:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.cost_per_month}</strong>
+                      </Typography>
+                    </Box>
 
-      {/* Start Date */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Ngày bắt đầu:</Typography>
-        <Typography variant="body1">
-          <strong>{service.start_date}</strong>
-        </Typography>
-      </Box>
+                    {/* Start Date */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Ngày bắt đầu:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.start_date}</strong>
+                      </Typography>
+                    </Box>
 
-      {/* Number of Months */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Số tháng:</Typography>
-        <Typography variant="body1">
-          <strong>{service.number_of_month}</strong>
-        </Typography>
-      </Box>
+                    {/* Number of Months */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Số tháng:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.number_of_month}</strong>
+                      </Typography>
+                    </Box>
 
-      {/* Expire Date */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          mb: 1,
-        }}
-      >
-        <Typography variant="body1" sx={{ color: "white" }}>Ngày hết hạn:</Typography>
-        <Typography variant="body1">
-          <strong>{service.expire_date}</strong>
-        </Typography>
-      </Box>
-    </CardContent>
-  </Card>
-))}
+                    {/* Expire Date */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        mb: 1,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ color: "white" }}>
+                        Ngày hết hạn:
+                      </Typography>
+                      <Typography variant="body1">
+                        <strong>{service.expire_date}</strong>
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))}
 
             {activeTab === 3 && (
               <Typography variant="body1">Sessions content here...</Typography>
