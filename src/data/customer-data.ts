@@ -20,40 +20,54 @@ export const useCustomerData = (reloadTrigger: number) => {
             withCredentials: true,
           }
         );
-        console.log(response.data);
-
-        const formattedRows = response.data.customers.map((profile) => ({
-            id: profile.id, 
-          first_name: profile.first_name,
-          last_name: profile.last_name,
-          address: profile.address,
-          gender: profile.gender,
-          birthday: profile.birthday,
-          registered_ptservices: profile.registered_ptservices.map(service => (
+        const formattedRows = response.data.coach_profile.coach_contracts.map((contract) => ({
+          id: contract.id,
+          start_date: contract.start_date,
+          expire_date: contract.expire_date,
+          used_sessions: contract.used_sessions,
+          customer_profile: [
             {
-              id: service.id,
-              name: service.name,
-              cost_per_session: service.cost_per_session,
-              start_date: service.start_date,
-              number_of_session: service.number_of_session,
-              session_duration: service.session_duration,
-              expire_date: service.expire_date,
-              validity_period: service.validity_period,
+              id: contract.customer.id,
+              first_name: contract.customer.first_name,
+              last_name: contract.customer.last_name,
+              address: contract.customer.address,
+              gender: contract.customer.gender,
+              birthday: contract.customer.birthday,
+              height: contract.customer.height,
+              weight: contract.customer.weight,
+              workout_goal: contract.customer.workout_goal,
+              phone: contract.customer.phone,
             }
-          )), 
-          
-          registered_nonptservices: profile.registered_nonptservices.map(service => (
-            {
-              id: service.id,
-              name: service.name,
-              cost_per_month: service.cost_per_month,
-              start_date: service.start_date,
-              number_of_month: service.number_of_month,
-              expire_date: service.expire_date,
-            }
-          )),  
+          ],
+        
+          // PT Service
+          registered_ptservices: contract.ptservice
+            ? [
+                {
+                  id: contract.ptservice.id,
+                  name: contract.ptservice.name,
+                  cost_per_session: contract.ptservice.cost_per_session,
+                  number_of_session: contract.ptservice.number_of_session,
+                  session_duration: contract.ptservice.session_duration,
+                  validity_period: contract.ptservice.validity_period,
+                }
+              ]
+            : [],
+        
+          // Non-PT Service
+          registered_nonptservices: contract.nonptservice
+            ? [
+                {
+                  id: contract.nonptservice.id,
+                  discount: contract.nonptservice.discount,
+                  cost_per_month: contract.nonptservice.cost_per_month,
+                  number_of_month: contract.nonptservice.number_of_month,
+                 name: contract.nonptservice.name,
+                }
+              ]
+            : [],
         }));
-
+        
         setRows(formattedRows);
       } catch (err) {
         setError(err);
