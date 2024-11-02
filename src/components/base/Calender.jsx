@@ -70,13 +70,13 @@ const Calendar = () => {
         borderColor: row.customer_color,
         extendedProps: {
           customerId: row.customer_id,
-          coachId: row.coach_id,
           customerName: `${row.customer_name}`,
           exercises: row.exercises,
           note: row.note,
         },
       }));
       setCurrentEvents(events);
+      console.log(events);
     }
   }, [rows, loading, error]);
 
@@ -129,7 +129,9 @@ const Calendar = () => {
         birthday: customer.birthday,
         avatar: customer.avatar,
       }));
-
+      
+      setCoachId(response.data.coach_id);
+      console.log(response.data.coach_id);
       setCustomers(formattedRows);
     } catch (err) {
       console.log("Error fetching exercises: ", err);
@@ -203,8 +205,6 @@ const Calendar = () => {
 
     setCurrentExercises(event.extendedProps?.exercises || []);
 
-    setCoachId(event.extendedProps?.coachId || "");
-
     fetchAllExercises();
     setOpenEventDialog(true);
   };
@@ -224,14 +224,38 @@ const Calendar = () => {
       return;
     }
 
+    const startTime = new Date(eventStart);
+    const endTime = new Date(eventEnd);
+
+    if (startTime >= endTime) {
+      alert("Giờ bắt đầu phải nhỏ hơn giờ kết thúc!");
+      return;
+    }
+
+    const isOverlapping = (start, end) => {
+      return currentEvents.some((event) => {
+        const existingStart = new Date(event.start);
+        const existingEnd = new Date(event.end);
+        return (
+          (start >= existingStart && start < existingEnd) ||
+          (end > existingStart && end <= existingEnd) ||
+          (start <= existingStart && end >= existingEnd)
+        );
+      });
+    };
+
+    if (isOverlapping(startTime, endTime)) {
+      alert("Buổi tập trùng giờ với một buổi tập khác. Vui lòng chọn thời gian khác.");
+      return;
+    }
+
     try {
       const eventData = {
         overview: eventTitle,
         customer: customerId,
         coach: coachId,
-        date: eventStart.split('T')[0],
-        start_time: eventStart.split('T')[1],
-        end_time: eventEnd.split('T')[1],
+        start_time: eventStart,
+        end_time: eventEnd,
         note: eventNote,
         exercises: currentExercises.map(exercise => exercise.id)
       };
@@ -243,7 +267,6 @@ const Calendar = () => {
       
       let response;
       if (selectedEvent.id) {
-        // Nếu event đã có id, thực hiện PATCH request
         response = await axiosPrivate.patch(
           `/api/v1/workout-schedules/${selectedEvent.id}/`,
           eventData,
@@ -252,8 +275,6 @@ const Calendar = () => {
           }
         );
       } else {
-        // Nếu event chưa có id, thực hiện POST request
-        
         response = await axiosPrivate.post(
           '/api/v1/workout-schedules/',
           eventData,
@@ -264,7 +285,6 @@ const Calendar = () => {
       }
 
       if (response.data) {
-        // Cập nhật event trên calendar
         const updatedEvent = {
           id: response.data.id,
           title: `${eventTitle}`,
@@ -281,7 +301,6 @@ const Calendar = () => {
         };
 
         if (selectedEvent.id) {
-          // Cập nhật event hiện có
           selectedEvent.setProp('title', updatedEvent.title);
           selectedEvent.setStart(updatedEvent.start);
           selectedEvent.setEnd(updatedEvent.end);
@@ -290,13 +309,11 @@ const Calendar = () => {
           selectedEvent.setExtendedProp('exercises', updatedEvent.extendedProps.exercises);
           selectedEvent.setExtendedProp('note', updatedEvent.extendedProps.note);
         } else {
-          // Thêm event mới vào calendar
           const calendarApi = selectedEvent.view.calendar;
           calendarApi.addEvent(updatedEvent);
         }
 
         setOpenEventDialog(false);
-        // Reset form
         setEventTitle("");
         setCustomerId("");
         setEventStart("");
@@ -310,21 +327,44 @@ const Calendar = () => {
     }
   };
 
-  const handleDeleteEvent = () => {
+  const handleDeleteEvent = async () => {
     if (window.confirm(`Bạn có chắc chắn muốn xóa buổi tập này không?`)) {
-      selectedEvent.remove();
-      setOpenEventDialog(false);
+      try {
+        await axiosPrivate.delete(
+          `/api/v1/workout-schedules/${selectedEvent.id}/`, 
+          { withCredentials: true }  
+        );
+        
+        selectedEvent.remove();
+        setOpenEventDialog(false);
+      }
+      catch (err) {
+        console.error("Error deleting workout schedule:", err);
+      }
+      alert("Xoá buổi tập thành công!");
     }
   };
+  
 
   const handleAddExercise = () => {
     if (selectedExercise) {
       const exerciseToAdd = exercises.find((ex) => ex.id === selectedExercise);
-      setCurrentExercises([...currentExercises, exerciseToAdd]);
-      setSelectedExercise("");
-      setOpenAddExerciseDialog(false);
+      
+      const isExerciseAlreadyAdded = currentExercises.some(
+        (ex) => ex.id === selectedExercise
+      );
+  
+      if (isExerciseAlreadyAdded) {
+        alert("Bài tập này đã có trong danh sách.");
+      } else {
+        setCurrentExercises([...currentExercises, exerciseToAdd]);
+        setSelectedExercise("");
+        setOpenAddExerciseDialog(false);
+        setSelectedCategories([]);
+      }
     }
   };
+  
 
   const renderEventContent = (eventInfo) => {
     const { title, extendedProps } = eventInfo.event;
@@ -360,6 +400,17 @@ const Calendar = () => {
             </Typography>
           </>
         }
+        PopperProps={{
+          modifiers: [
+            {
+              name: "zIndex",
+              enabled: true,
+              options: {
+                zIndex: 1500, 
+              },
+            },
+          ],
+        }}
       >
         <span
           className="fc-event"
