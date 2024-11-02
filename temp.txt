@@ -6,12 +6,13 @@ import Splash from "../components/loading/Splash";
 import { rootPaths } from "./paths";
 import paths from "./paths";
 import ServiceManagement from "../pages/admin/ServiceManagement";
-
+import SaleContracts from "../components/sale/SaleContracts";
 const App = lazy(() => import("../App"));
 
 // Layouts
 const AuthLayout = lazy(() => import("../layouts/auth-layout"));
-const MainLayoutAdmin = lazy(() => import("../layouts/main-layout-admin"))
+const MainLayoutSale = lazy(() => import("../layouts/main-layout-sale"));
+const MainLayoutAdmin = lazy(() => import("../layouts/main-layout-admin"));
 const MainLayoutCoach = lazy(() => import("../layouts/main-layout"));
 
 // Auth pages
@@ -36,15 +37,12 @@ const ProductList = lazy(() => import("../pages/ProductList"));
 const CoachDashboard = lazy(() => import("../pages/coach/CoachDashboard"));
 const CoachSchedule = lazy(() => import("../pages/coach/CoachSchedule"));
 
-//Sale pages
-import SaleContracts from "../components/sale/SaleContracts";
-const MainLayoutSale = lazy(() => import("../layouts/main-layout-sale"));
+// Sale pages
 const SaleHomePage = lazy(() => import("../components/sale/SaleHomePage"));
 
 // Other components
 const PersistLogin = lazy(() => import("../components/PersistLogin"));
 const Banned = lazy(() => import("../components/Banned"));
-
 
 const createMainLayoutAdminRoutes = () => (
   <MainLayoutAdmin>
@@ -77,6 +75,7 @@ const createAuthLayoutRoutes = () => (
     </Suspense>
   </AuthLayout>
 );
+
 const routes = [
   {
     path: "/",
@@ -98,15 +97,13 @@ const routes = [
           </PersistLogin>
         ),
         children: [
-
           {
             path: paths.accounts,
             element: (
               <PrivateRoute allowedRoles={['admin']}>
                 <AccountManagement />
-              </PrivateRoute>      
+              </PrivateRoute>
             ),
-
           },
           {
             path: paths.services,
@@ -145,81 +142,86 @@ const routes = [
         ]
       },
       {
-        paths: rootPaths.coachRoot,
+        path: rootPaths.coachRoot,
         element: <PersistLogin>{createMainLayoutCoachRoutes()}</PersistLogin>,
-        children:[
+        children: [
           {
             path: paths.profile,
             element: (
               <PrivateRoute allowedRoles={["coach"]}>
-              <UserProfile />
-            </PrivateRoute>
-          )
-        },
-        {
-          path: paths.product,
-          element: (
-            <PrivateRoute allowedRoles={["coach"]}>
-              <ProductList />
-            </PrivateRoute>
-          )
-        },
-        {
-          path: paths.customer,
-          element: (
-            <PrivateRoute allowedRoles={["coach"]}>
-              <CoachDashboard />
-            </PrivateRoute>
-          )
-        },
-        {
-        path: paths.schedule,
+                <UserProfile />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: paths.product,
+            element: (
+              <PrivateRoute allowedRoles={["coach"]}>
+                <ProductList />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: paths.customer,
+            element: (
+              <PrivateRoute allowedRoles={["coach"]}>
+                <CoachDashboard />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: paths.schedule,
+            element: (
+              <PrivateRoute allowedRoles={["coach"]}>
+                <CoachSchedule />
+              </PrivateRoute>
+            ),
+          },
+        ],
+      },
+      {
+        path: rootPaths.saleRoot,
+        element: <PersistLogin>{createMainLayoutSaleRoutes()}</PersistLogin>,
+        children: [
+          {
+            path: paths.sale_home,
+            element: <SaleHomePage />,
+          },
+          {
+            path: paths.sale_contracts,
+            element: <SaleContracts />,
+          },
+          {
+            path: '*',
+            element: <SaleHomePage />,
+          },
+        ],
+      },
+      {
+        path: rootPaths.root,
         element: (
           <PrivateRoute allowedRoles={["coach"]}>
             <CoachSchedule />
           </PrivateRoute>
-        )
-         },
-           
-      ]
-     },
-     {
-      path: rootPaths.saleRoot,
-      element: <PersistLogin>{createMainLayoutSaleRoutes()}</PersistLogin>,
-      children: [
-        {
-          path: paths.sale_home,
-          element: <SaleHomePage />,
-        },
-        {
-          path: paths.sale_contracts,
-          element: <SaleContracts />,
-        },
-        {
-          path: '*',
-          element: <SaleHomePage />,
-        },
-      ],
-    },
-      
+        ),
+      },
+    ],
+  },
+  {
+    path: rootPaths.authRoot,
+    element: createAuthLayoutRoutes(),
+    children: [
       {
-        path: rootPaths.authRoot,
-        element: createAuthLayoutRoutes(),
-        children: [
-          {
-            path: paths.login,
-            element: <Login />,
-            
-          },
-          {
-            path: paths.signup,
-            element: <SignUp />,
-          },
-          {
-            path: paths.forgot_password,
-            element: <ForgotPassword />,
-          },
-        ],
+        path: paths.login,
+        element: <Login />,
+      },
+      {
+        path: paths.signup,
+        element: <SignUp />,
+      },
+      {
+        path: paths.forgot_password,
+        element: <ForgotPassword />,
       },
     ],
   },
