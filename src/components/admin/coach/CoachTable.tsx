@@ -413,6 +413,7 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
               >
                 Danh sách khách hàng:
               </Typography>
+              
               {editingUser.contracts.length > 0 ? (
                 <Stack
                   direction="column"

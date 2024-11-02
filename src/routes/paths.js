@@ -22,8 +22,8 @@ export default {
   schedule: `${rootPaths.coachRoot}/schedule`,
 
   // Customer paths
-  customer_profile: `${rootPaths.customerRoot}/profile`,
-  schedule: `${rootPaths.customerRoot}/schedule`,
+  // customer_profile: `${rootPaths.customerRoot}/profile`,
+  // schedule: `${rootPaths.customerRoot}/schedule`,
 
   // Admin paths
   statistics: `${rootPaths.adminRoot}/statistics`,
