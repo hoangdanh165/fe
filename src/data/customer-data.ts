@@ -15,30 +15,33 @@ export const useCustomerData = (reloadTrigger: number) => {
 
         //  {** CALL API HERE !! **}
         const response = await axiosPrivate.get(
-          "http://127.0.0.1:8000/api/v1/coach-profiles/details/",
+          "/api/v1/coach-profiles/details/",
           {
             withCredentials: true,
           }
         );
-        const formattedRows = response.data.coach_profile.coach_contracts.map((contract) => ({
+        const formattedRows = response.data.coach_contracts.map((contract) => ({
           id: contract.id,
           start_date: contract.start_date,
           expire_date: contract.expire_date,
           used_sessions: contract.used_sessions,
-          customer_profile: [
-            {
-              id: contract.customer.id,
-              first_name: contract.customer.first_name,
-              last_name: contract.customer.last_name,
-              address: contract.customer.address,
-              gender: contract.customer.gender,
-              birthday: contract.customer.birthday,
-              height: contract.customer.height,
-              weight: contract.customer.weight,
-              workout_goal: contract.customer.workout_goal,
-              phone: contract.customer.phone,
+          customer_profile: {
+            id: contract.customer.id,
+            first_name: contract.customer.first_name,
+            last_name: contract.customer.last_name,
+            avatar: contract.customer.avatar,
+            address: contract.customer.address,
+            gender: contract.customer.gender,
+            birthday: contract.customer.birthday,
+            height: contract.customer.height,
+            weight: contract.customer.weight,
+            phone: contract.customer.phone,
+            workout_goal: {
+              weight: contract.customer.workout_goal.weight,
+              body_fat: contract.customer.workout_goal.body_fat,
+              muscle_mass: contract.customer.workout_goal.muscle_mass,
             }
-          ],
+          },
         
           // PT Service
           registered_ptservices: contract.ptservice
@@ -55,16 +58,14 @@ export const useCustomerData = (reloadTrigger: number) => {
             : [],
         
           // Non-PT Service
-          registered_nonptservices: contract.nonptservice
-            ? [
-                {
-                  id: contract.nonptservice.id,
-                  discount: contract.nonptservice.discount,
-                  cost_per_month: contract.nonptservice.cost_per_month,
-                  number_of_month: contract.nonptservice.number_of_month,
-                 name: contract.nonptservice.name,
-                }
-              ]
+          registered_nonptservices: contract.customer.customer_contracts_nonpt.length > 0
+            ? contract.customer.customer_contracts_nonpt.map(contract => ({
+                id: contract.nonptservice.id,
+                discount: contract.nonptservice.discount,
+                cost_per_month: contract.nonptservice.cost_per_month,
+                number_of_month: contract.nonptservice.number_of_month,
+                name: contract.nonptservice.name,
+              }))
             : [],
         }));
         

@@ -127,35 +127,31 @@ const UserProfile = () => {
     const fetchProfile = async () => {
       try {
         const response = await axiosPrivate.get("/api/v1/users/info/");
-        if (
-          response.data.profile !== null &&
-          response.data.avatar_url !== null &&
-          response.data.phone !== null
-        ) {
-          setProfile({
-            avatar: response.data.avatar_url,
-            phone: response.data.phone,
-            email: response.data.email,
-            email_verified: response.data.email_verified,
 
-            id: response.data.profile.id,
-            first_name: response.data.profile.first_name,
-            last_name: response.data.profile.last_name,
-            address: response.data.profile.address,
-            gender: response.data.profile.gender,
-            birthday: response.data.profile.birthday
-              ? new Date(response.data.profile.birthday)
-              : null,
-            height: response.data.profile.height,
-            weight: response.data.profile.weight,
-            body_fat: response.data.profile.body_fat,
-            musle_mass: response.data.profile.muscle_mass,
+        const profileData = response.data.profile || {};
 
-            goal_weight: response.data.profile.workout_goal?.weight,
-            goal_muscle_mass: response.data.profile.workout_goal?.muscle_mass,
-            goal_body_fat: response.data.profile.workout_goal?.body_fat,
-          });
-        }
+        setProfile({
+          avatar: response.data.avatar_url ?? null,
+          phone: response.data.phone ?? null,
+          email: response.data.email ?? null,
+          email_verified: response.data.email_verified ?? false,
+
+          id: profileData.id ?? null,
+          first_name: profileData.first_name ?? "",
+          last_name: profileData.last_name ?? "",
+          address: profileData.address ?? "",
+          gender: profileData.gender ?? null,
+          birthday: profileData.birthday ? new Date(profileData.birthday) : null,
+          height: profileData.height ?? null,
+          weight: profileData.weight ?? null,
+          body_fat: profileData.body_fat ?? null,
+          muscle_mass: profileData.muscle_mass ?? null,
+
+          goal_weight: profileData.workout_goal?.weight ?? null,
+          goal_muscle_mass: profileData.workout_goal?.muscle_mass ?? null,
+          goal_body_fat: profileData.workout_goal?.body_fat ?? null,
+        });
+
       } catch (error) {
         console.error("Error fetching profile data:", error);
         console;
@@ -229,23 +225,42 @@ const UserProfile = () => {
       setError("Vui lòng thêm ảnh đại diện!");
       return;
     }
-    const formData = new FormData();
 
-    console.log(profile.avatar);
-    let phone = profile.phone;
-
-    if (!profile.id) {
-      if (phone.length < 9 || phone.length > 10) {
-        setError("Vui lòng điền số điện thoại hợp lệ!");
+    const namePattern = /^[A-Za-zÀ-ỹ\s]+$/;
+    if (!namePattern.test(profile.first_name) || !namePattern.test(profile.last_name)) {
+        setError("Họ và Tên không hợp lệ!");
         return;
-      }
-
-      if (phone.length === 10 && phone.startsWith("0")) {
-        phone = "+84" + phone.slice(1);
-      } else if (phone.length === 9) {
-        phone = "+84" + phone;
-      }
     }
+
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(profile.email)) {
+        setError("Email không hợp lệ!");
+        return;
+    }
+    if (isNaN(profile.height) || profile.height <= 0) {
+      setError("Chiều cao không hợp lệ!");
+      return;
+  }
+
+    if (isNaN(profile.weight) || profile.weight <= 0) {
+        setError("Cân nặng không hợp lệ!");
+        return;
+    }
+
+    let phone = profile.phone;
+    
+    if (phone.length < 9 || phone.length > 10) {
+      setError("Vui lòng điền số điện thoại hợp lệ!");
+      return;
+    }
+
+    if (phone.length === 10 && phone.startsWith("0")) {
+      phone = "+84" + phone.slice(1);
+    } else if (phone.length === 9) {
+      phone = "+84" + phone;
+    }
+
+    const formData = new FormData();
 
     formData.append("avatar_url", profile.avatar);
     formData.append("phone", profile.phone);

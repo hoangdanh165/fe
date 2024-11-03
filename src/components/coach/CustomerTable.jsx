@@ -39,6 +39,7 @@ const CustomerTable = ({ searchText }) => {
     const user = rows.find((user) => user.id === userId);
     if (user) {
       setSelectedUser(user);
+      console.log(user);
       setOpenDrawer(true);
     } else {
       console.error(`User with ID ${userId} not found`);
@@ -60,32 +61,58 @@ const CustomerTable = ({ searchText }) => {
       flex: 1,
       minWidth: 140,
       headerAlign: "center",
+    },
+    {
+      field: "first_name",
+      headerName: "Họ",
+      resizable: false,
+      flex: 0.5,
+      minWidth: 150,
+      headerAlign: "center",
+      align: "center",
       renderCell: (params) => {
-        console.log("Customer Profile in Row:", params.row.customer_profile); // Check if data is passed here
         return (
-          <Typography variant="body1">
-            {params.row.customer_profile
-              .map((customer) => customer.id)
-              .join(", ")}
-          </Typography>
+          <Stack direction="row" gap={6} alignItems="center">
+            <Tooltip
+              title={params.row.customer_profile.first_name}
+              placement="top"
+              arrow
+            >
+              {params.row.customer_profile.avatar ? (
+                <Avatar
+                  src={params.row.customer_profile.avatar}
+                  alt={params.row.customer_profile.first_name}
+                />
+              ) : (
+                <Avatar>
+                  {params.row.customer_profile.first_name?.charAt(0)}
+                </Avatar>
+              )}
+            </Tooltip>
+            <Typography variant="body2">
+              {params.row.customer_profile.first_name}
+            </Typography>
+          </Stack>
         );
       },
     },
     {
-      field: "full_name",
-      headerName: "Họ Tên",
+      field: "last_name",
+      headerName: "Tên",
       resizable: false,
-      flex: 1,
-      minWidth: 140,
+      flex: 0.5,
+      minWidth: 50,
       headerAlign: "center",
       align: "center",
-      renderCell: (params) => (
-        <Typography variant="body1">
-          {params.row.customer_profile
-            .map((customer) => `${customer.first_name} ${customer.last_name}`)
-            .join(", ")}
-        </Typography>
-      ),
+      renderCell: (params) => {
+        return (
+          <Stack direction="row" gap={6} alignItems="center">
+            <Typography variant="body2">
+              {params.row.customer_profile.last_name}
+            </Typography>
+          </Stack>
+        );
+      },
     },
     {
       field: "address",
@@ -93,15 +120,15 @@ const CustomerTable = ({ searchText }) => {
       resizable: false,
       flex: 1,
       minWidth: 200,
-      headerAlign: "center",
-
-      renderCell: (params) => (
-        <Typography variant="body1">
-          {params.row.customer_profile
-            .map((customer) => customer.address)
-            .join(", ")}
-        </Typography>
-      ),
+      renderCell: (params) => {
+        return (
+          <Stack direction="row" gap={6} alignItems="center">
+            <Typography variant="body2">
+              {params.row.customer_profile.address}
+            </Typography>
+          </Stack>
+        );
+      },
     },
     {
       field: "actions",
@@ -162,7 +189,7 @@ const CustomerTable = ({ searchText }) => {
               position: "absolute",
               top: 10,
               left: 20,
-              fontSize: '40px',
+              fontSize: "40px",
             }}
           >
             <IconifyIcon icon="eva:close-fill" />
@@ -175,31 +202,31 @@ const CustomerTable = ({ searchText }) => {
             Thông tin tài khoản
           </Typography>
           <Divider sx={{ margin: 3, borderColor: "primary.main" }} />
-          {selectedUser &&
-            selectedUser.customer_profile.map((customer, index) => (
-              <Stack
-                key={customer.id || index}
-                alignItems="center"
-                sx={{ mb: 7 }}
+          {selectedUser && selectedUser.customer_profile && (
+            <Stack
+              key={selectedUser.customer_profile.id}
+              alignItems="center"
+              sx={{ mb: 7 }}
+            >
+              <Avatar
+                src={
+                  selectedUser.customer_profile.avatar ||
+                  "https://placehold.co/100x100"
+                }
+                sx={{ width: 100, height: 100 }}
+              />
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{ color: "white", mt: 1 }}
               >
-                <Avatar
-                  src={
-                    selectedUser.customer_profile.avatar ||
-                    "https://placehold.co/100x100"
-                  }
-                  sx={{ width: 100, height: 100 }}
-                />
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{ color: "white", mt: 1 }}
-                >
-                  <strong>
-                    {customer.first_name} {customer.last_name}
-                  </strong>
-                </Typography>
-              </Stack>
-            ))}
+                <strong>
+                  {selectedUser.customer_profile.first_name}{" "}
+                  {selectedUser.customer_profile.last_name}
+                </strong>
+              </Typography>
+            </Stack>
+          )}
 
           {/* Tabs for navigation */}
           <Tabs
@@ -218,9 +245,8 @@ const CustomerTable = ({ searchText }) => {
           <Box sx={{ p: 2 }}>
             {activeTab === 0 &&
               selectedUser &&
-              selectedUser.customer_profile.map((customer, index) => (
+              selectedUser.customer_profile && (
                 <Card
-                  key={index}
                   variant="outlined"
                   sx={{
                     minWidth: 275,
@@ -233,8 +259,7 @@ const CustomerTable = ({ searchText }) => {
                 >
                   <CardContent sx={{ padding: "20px" }}>
                     <Stack spacing={3}>
-                      {" "}
-                      {/* Stack for vertical alignment */}
+                      {/* Họ Tên */}
                       <Typography
                         variant="h6"
                         gutterBottom
@@ -242,10 +267,11 @@ const CustomerTable = ({ searchText }) => {
                       >
                         Họ Tên:{" "}
                         <strong>
-                          {customer.first_name} {customer.last_name}
+                          {selectedUser.customer_profile.first_name}{" "}
+                          {selectedUser.customer_profile.last_name}
                         </strong>
                       </Typography>
-                      {/* Address */}
+                      {/* Địa chỉ */}
                       <Box
                         sx={{
                           display: "flex",
@@ -256,10 +282,12 @@ const CustomerTable = ({ searchText }) => {
                           Địa chỉ:
                         </Typography>
                         <Typography variant="body1">
-                          <strong>{customer.address}</strong>
+                          <strong>
+                            {selectedUser.customer_profile.address}
+                          </strong>
                         </Typography>
                       </Box>
-                      {/* Gender */}
+                      {/* Giới tính */}
                       <Box
                         sx={{
                           display: "flex",
@@ -271,11 +299,13 @@ const CustomerTable = ({ searchText }) => {
                         </Typography>
                         <Typography variant="body1">
                           <strong>
-                            {customer.gender === 1 ? "Nam" : "Nữ"}
+                            {selectedUser.customer_profile.gender === 1
+                              ? "Nam"
+                              : "Nữ"}
                           </strong>
                         </Typography>
                       </Box>
-                      {/* Birthday */}
+                      {/* Ngày sinh */}
                       <Box
                         sx={{
                           display: "flex",
@@ -286,10 +316,12 @@ const CustomerTable = ({ searchText }) => {
                           Ngày sinh:
                         </Typography>
                         <Typography variant="body1">
-                          <strong>{customer.birthday}</strong>
+                          <strong>
+                            {selectedUser.customer_profile.birthday}
+                          </strong>
                         </Typography>
                       </Box>
-                      {/* Height */}
+                      {/* Chiều cao */}
                       <Box
                         sx={{
                           display: "flex",
@@ -301,14 +333,14 @@ const CustomerTable = ({ searchText }) => {
                         </Typography>
                         <Typography variant="body1">
                           <strong>
-                            {customer.height !== null &&
-                            customer.height !== undefined
-                              ? `${customer.height} cm`
+                            {selectedUser.customer_profile.height !== null &&
+                            selectedUser.customer_profile.height !== undefined
+                              ? `${selectedUser.customer_profile.height} cm`
                               : "Chưa cập nhật"}
                           </strong>
                         </Typography>
                       </Box>
-                      {/* Weight */}
+                      {/* Cân nặng */}
                       <Box
                         sx={{
                           display: "flex",
@@ -320,14 +352,14 @@ const CustomerTable = ({ searchText }) => {
                         </Typography>
                         <Typography variant="body1">
                           <strong>
-                            {customer.weight !== null &&
-                            customer.weight !== undefined
-                              ? `${customer.weight} kg`
+                            {selectedUser.customer_profile.weight !== null &&
+                            selectedUser.customer_profile.weight !== undefined
+                              ? `${selectedUser.customer_profile.weight} kg`
                               : "Chưa cập nhật"}
                           </strong>
                         </Typography>
                       </Box>
-                      {/* Workout Goal */}
+                      {/* Mục tiêu tập luyện */}
                       <Box
                         sx={{
                           display: "flex",
@@ -339,14 +371,16 @@ const CustomerTable = ({ searchText }) => {
                         </Typography>
                         <Typography variant="body1">
                           <strong>
-                            {customer.workout_goal !== null &&
-                            customer.workout_goal !== undefined
-                              ? customer.workout_goal
+                            {selectedUser.customer_profile.workout_goal !==
+                              null &&
+                            selectedUser.customer_profile.workout_goal !==
+                              undefined
+                              ? `Cân nặng: ${selectedUser.customer_profile.workout_goal.weight}, Cân nặng cơ thể: ${selectedUser.customer_profile.workout_goal.body_fat}, Khối lượng cơ: ${selectedUser.customer_profile.workout_goal.muscle_mass}`
                               : "Chưa cập nhật"}
                           </strong>
                         </Typography>
                       </Box>
-                      {/* Phone */}
+                      {/* Số điện thoại */}
                       <Box
                         sx={{
                           display: "flex",
@@ -357,13 +391,13 @@ const CustomerTable = ({ searchText }) => {
                           Số điện thoại:
                         </Typography>
                         <Typography variant="body1">
-                          <strong>{customer.phone}</strong>
+                          <strong>{selectedUser.customer_profile.phone}</strong>
                         </Typography>
                       </Box>
                     </Stack>
                   </CardContent>
                 </Card>
-              ))}
+              )}
 
             {activeTab === 1 &&
               selectedUser &&
@@ -418,7 +452,7 @@ const CustomerTable = ({ searchText }) => {
                         Giá gói:
                       </Typography>
                       <Typography variant="body1">
-                        <strong>{service.cost_per_session}$</strong>
+                        <strong>{service.cost_per_session} VNĐ</strong>
                       </Typography>
                     </Box>
 
