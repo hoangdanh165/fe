@@ -32,6 +32,13 @@ const navItems: NavItem[] = [
   },
   {
     id: 4,
+    path: paths.training_plans,
+    title: "Giáo án tập luyện",
+    icon: "bi:book",
+    active: false,
+  },
+  {
+    id: 5,
     path: paths.profile,
     title: "Cài đặt",
     icon: "mingcute:settings-3-line",

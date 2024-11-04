@@ -20,6 +20,7 @@ export default {
   product: `${rootPaths.coachRoot}/product`,
   customer: `${rootPaths.coachRoot}/customer`,
   schedule: `${rootPaths.coachRoot}/schedule`,
+  training_plans: `${rootPaths.coachRoot}/training-plans`,
 
   // Customer paths
   // customer_profile: `${rootPaths.customerRoot}/profile`,

@@ -35,6 +35,7 @@ const UserProfile = lazy(() => import("../pages/coach/UserProfile"));
 const ProductList = lazy(() => import("../pages/ProductList"));
 const CoachDashboard = lazy(() => import("../pages/coach/CoachDashboard"));
 const CoachSchedule = lazy(() => import("../pages/coach/CoachSchedule"));
+const TrainingPlanManagement = lazy(() => import("../pages/coach/TrainingPlanManagement"))
 
 //Sale pages
 import SaleContracts from "../components/sale/SaleContracts";
@@ -173,13 +174,21 @@ const routes = [
           )
         },
         {
-        path: paths.schedule,
-        element: (
-          <PrivateRoute allowedRoles={["coach"]}>
-            <CoachSchedule />
-          </PrivateRoute>
-        )
-         },
+          path: paths.schedule,
+          element: (
+            <PrivateRoute allowedRoles={["coach"]}>
+              <CoachSchedule />
+            </PrivateRoute>
+          )
+        },
+        {
+          path: paths.training_plans,
+          element: (
+            <PrivateRoute allowedRoles={["coach"]}>
+              <TrainingPlanManagement />
+            </PrivateRoute>
+          )
+        },
            
       ]
      },

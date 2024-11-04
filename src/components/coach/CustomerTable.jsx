@@ -259,18 +259,6 @@ const CustomerTable = ({ searchText }) => {
                 >
                   <CardContent sx={{ padding: "20px" }}>
                     <Stack spacing={3}>
-                      {/* Họ Tên */}
-                      <Typography
-                        variant="h6"
-                        gutterBottom
-                        sx={{ color: "white" }}
-                      >
-                        Họ Tên:{" "}
-                        <strong>
-                          {selectedUser.customer_profile.first_name}{" "}
-                          {selectedUser.customer_profile.last_name}
-                        </strong>
-                      </Typography>
                       {/* Địa chỉ */}
                       <Box
                         sx={{
@@ -355,6 +343,25 @@ const CustomerTable = ({ searchText }) => {
                             {selectedUser.customer_profile.weight !== null &&
                             selectedUser.customer_profile.weight !== undefined
                               ? `${selectedUser.customer_profile.weight} kg`
+                              : "Chưa cập nhật"}
+                          </strong>
+                        </Typography>
+                      </Box>
+                      {/* Tình trạng sức khoẻ */}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Typography variant="body1" sx={{ color: "white" }}>
+                          Tình trạng sức khoẻ:
+                        </Typography>
+                        <Typography variant="body1">
+                          <strong>
+                            {selectedUser.customer_profile.health_condition !== null &&
+                            selectedUser.customer_profile.health_condition !== undefined
+                              ? `${selectedUser.customer_profile.health_condition}`
                               : "Chưa cập nhật"}
                           </strong>
                         </Typography>

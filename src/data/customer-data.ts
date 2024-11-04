@@ -36,6 +36,7 @@ export const useCustomerData = (reloadTrigger: number) => {
             height: contract.customer.height,
             weight: contract.customer.weight,
             phone: contract.customer.phone,
+            health_condition: contract.customer.health_condition,
             workout_goal: {
               weight: contract.customer.workout_goal.weight,
               body_fat: contract.customer.workout_goal.body_fat,
@@ -58,15 +59,17 @@ export const useCustomerData = (reloadTrigger: number) => {
             : [],
         
           // Non-PT Service
-          registered_nonptservices: contract.customer.customer_contracts_nonpt.length > 0
-            ? contract.customer.customer_contracts_nonpt.map(contract => ({
-                id: contract.nonptservice.id,
-                discount: contract.nonptservice.discount,
-                cost_per_month: contract.nonptservice.cost_per_month,
-                number_of_month: contract.nonptservice.number_of_month,
-                name: contract.nonptservice.name,
-              }))
-            : [],
+          registered_nonptservices: [],
+
+          // registered_nonptservices: contract.customer.customer_contracts_nonpt.length > 0
+          //   ? contract.customer.customer_contracts_nonpt.map(nonpt_contract => ({
+          //       id: nonpt_contract.nonptservice.id,
+          //       discount: nonpt_contract.nonptservice.discount,
+          //       cost_per_month: nonpt_contract.nonptservice.cost_per_month,
+          //       number_of_month: nonpt_contract.nonptservice.number_of_month,
+          //       name: nonpt_contract.nonptservice.name,
+          //     }))
+          //   : [],
         }));
         
         setRows(formattedRows);

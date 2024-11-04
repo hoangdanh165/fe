@@ -472,15 +472,7 @@ const Calendar = () => {
         <DialogTitle sx={{ alignSelf: 'center'}}>THÊM BUỔI TẬP MỚI</DialogTitle>
         <DialogContent>
           <Box display="flex" flexDirection="column" gap={2}>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Tổng quan buổi tập"
-              fullWidth
-              value={newEventTitle}
-              onChange={(e) => setNewEventTitle(e.target.value)}
-            />
-            <FormControl
+          <FormControl
               sx={{
                 width: "350px",
               }}
@@ -499,6 +491,16 @@ const Calendar = () => {
                 ))}
               </Select>
             </FormControl>
+
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Tổng quan buổi tập"
+              fullWidth
+              value={newEventTitle}
+              onChange={(e) => setNewEventTitle(e.target.value)}
+            />
+            
           </Box>
         </DialogContent>
         <DialogActions>
@@ -519,13 +521,6 @@ const Calendar = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <TextField
-            label="Tổng quan buổi tập"
-            value={eventTitle}
-            onChange={(e) => setEventTitle(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
           <FormControl fullWidth margin="dense">
             <InputLabel sx={{ marginBottom: 2 }}>Khách hàng</InputLabel>
             <Select
@@ -540,6 +535,13 @@ const Calendar = () => {
               ))}
             </Select>
           </FormControl>
+          <TextField
+            label="Tổng quan buổi tập"
+            value={eventTitle}
+            onChange={(e) => setEventTitle(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
           <TextField
             label="Thời gian bắt đầu"
             type="datetime-local"

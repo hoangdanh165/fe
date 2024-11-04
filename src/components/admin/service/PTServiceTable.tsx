@@ -1,30 +1,30 @@
-import { useMemo, useEffect, ReactElement, useState } from 'react';
-import { usePTServicesData } from '../../../data/ptservice-data';
-import IconifyIcon from '../../base/IconifyIcon';
-import React from 'react';
-import CustomPagination from '../../common/CustomPagination';
-import CustomNoResultsOverlay from '../../common/CustomNoResultsOverlay';
-import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
-import { 
-  Stack, 
-  Avatar, 
-  Tooltip, 
-  Typography, 
+import { useMemo, useEffect, ReactElement, useState } from "react";
+import { usePTServicesData } from "../../../data/ptservice-data";
+import IconifyIcon from "../../base/IconifyIcon";
+import React from "react";
+import CustomPagination from "../../common/CustomPagination";
+import CustomNoResultsOverlay from "../../common/CustomNoResultsOverlay";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import {
+  Stack,
+  Avatar,
+  Tooltip,
+  Typography,
   CircularProgress,
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
-  Button, 
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
   TextField,
-  FormControl, 
-  InputLabel, 
-  Select, 
+  FormControl,
+  InputLabel,
+  Select,
   MenuItem,
   Grid,
   Alert,
   InputAdornment,
-} from '@mui/material';
+} from "@mui/material";
 
 import {
   GridApi,
@@ -35,7 +35,7 @@ import {
   GridActionsCellItem,
   GridRenderCellParams,
   GridTreeNodeWithRender,
-} from '@mui/x-data-grid';
+} from "@mui/x-data-grid";
 
 interface CustomerStatistic {
   id: string;
@@ -43,56 +43,61 @@ interface CustomerStatistic {
   start_date: string;
   expire_date: string;
   discount: string;
-  number_of_session: string; 
-  session_duration: string; 
+  number_of_session: string;
+  session_duration: string;
   cost_per_session: string;
   validity_period: string;
 }
 
-const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement => {
+const PTServiceTable = ({
+  searchText,
+}: {
+  searchText: string;
+}): ReactElement => {
   const apiRef = useGridApiRef<GridApi>();
   const [reloadTrigger, setReloadTrigger] = useState(0);
   const { rows, loading, error } = usePTServicesData(reloadTrigger);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [editingPTService, setEditingPTService] = useState<CustomerStatistic | null>(null);
+  const [editingPTService, setEditingPTService] =
+    useState<CustomerStatistic | null>(null);
   const [isEditMode, setEditMode] = useState(!!editingPTService);
-  const [emailError, setEmailError] = useState('');
-  const axiosPrivate = useAxiosPrivate()
+  const [emailError, setEmailError] = useState("");
+  const axiosPrivate = useAxiosPrivate();
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
   const handleEdit = (id: string) => {
-    setEditMode(true)
-    const ptservice = rows.find(row => row.id === id);
+    setEditMode(true);
+    const ptservice = rows.find((row) => row.id === id);
     if (ptservice) {
       setEditingPTService(ptservice);
       setEditModalOpen(true);
     }
   };
-  
+
   const handleAdd = () => {
     setEditMode(false);
     setEditingPTService({
-      id: '',         
-      name: '',  
-      start_date: '',
-      expire_date: '',
-      discount: '0',
-      number_of_session: '0', 
-      session_duration: '0', 
-      cost_per_session: '0',
-      validity_period: '0',
-  });
+      id: "",
+      name: "",
+      start_date: "",
+      expire_date: "",
+      discount: "0",
+      number_of_session: "0",
+      session_duration: "0",
+      cost_per_session: "0",
+      validity_period: "0",
+    });
     setEditModalOpen(true);
-  }
-  
+  };
+
   const handleCloseEditModal = () => {
     setEditModalOpen(false);
     setEditingPTService(null);
-    setEmailError('');
+    setEmailError("");
   };
 
   const handleSave = async () => {
-    setEmailError(''); 
+    setEmailError("");
 
     if (!editingPTService) return;
 
@@ -105,10 +110,10 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
 
   const handleSaveEdit = async () => {
     if (!editingPTService) return;
-    console.log(editingPTService)
+    console.log(editingPTService);
     try {
       const response = await axiosPrivate.put(
-        `/api/v1/pt-services/${editingPTService.id}/`, 
+        `/api/v1/pt-services/${editingPTService.id}/`,
         {
           discount: editingPTService.discount,
           name: editingPTService.name,
@@ -116,19 +121,19 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
           session_duration: editingPTService.session_duration,
           cost_per_session: editingPTService.cost_per_session,
           validity_period: editingPTService.validity_period,
-        }, 
+        },
         {
           headers: {
-            'Content-Type': 'application/json',
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
 
-      setReloadTrigger(prev => prev + 1);
+      setReloadTrigger((prev) => prev + 1);
       handleCloseEditModal();
     } catch (error) {
       if (error) {
-        setEmailError('Gói tập với tên này đã tồn tại!');
+        setEmailError("Gói tập với tên này đã tồn tại!");
         return;
       }
     }
@@ -147,20 +152,20 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
           session_duration: editingPTService.session_duration,
           cost_per_session: editingPTService.cost_per_session,
           validity_period: editingPTService.validity_period,
-        }, 
+        },
         {
           headers: {
-            'Content-Type': 'application/json',
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
 
-      console.log('Đã thêm gói tập:', editingPTService);
-      setReloadTrigger(prev => prev + 1);
+      console.log("Đã thêm gói tập:", editingPTService);
+      setReloadTrigger((prev) => prev + 1);
       handleCloseEditModal();
     } catch (error) {
       if (error) {
-        setEmailError('Gói tập với tên này đã tồn tại!');
+        setEmailError("Gói tập với tên này đã tồn tại!");
         return;
       }
     }
@@ -175,75 +180,81 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
       window.confirm("Bạn có muốn xoá (những) gói tập này không?")
     ) {
       try {
-        const response = await axiosPrivate.post('/api/v1/pt-services/delete-multiple/', {
-          ids: idsToDelete,
-        });
-        alert('Xoá thành công!');
-        
+        const response = await axiosPrivate.post(
+          "/api/v1/pt-services/delete-multiple/",
+          {
+            ids: idsToDelete,
+          }
+        );
+        alert("Xoá thành công!");
+
         setReloadTrigger((prev) => prev + 1);
       } catch (error) {
         console.error("Error deleting ptservices:", error);
-        alert(error.response?.data?.error || "An error occurred while deleting ptservices.");
+        alert(
+          error.response?.data?.error ||
+            "An error occurred while deleting ptservices."
+        );
       }
     }
   };
 
   const columns: GridColDef<any>[] = [
     {
-      field: 'id',
-      headerName: 'ID',
+      field: "id",
+      headerName: "ID",
       resizable: false,
       minWidth: 60,
     },
     {
-      field: 'name',
-      headerName: 'Tên gói tập',
+      field: "name",
+      headerName: "Tên gói tập",
       resizable: false,
       flex: 0.5,
       minWidth: 280,
-      headerAlign: 'center',
-      align: 'left',
+      headerAlign: "center",
+      align: "left",
     },
     {
-      field: 'discount',
-      headerName: 'Khuyến mãi (%)',
+      field: "discount",
+      headerName: "Khuyến mãi (%)",
       resizable: false,
       flex: 0.5,
       minWidth: 145,
-      headerAlign: 'center',
-      align: 'center',
+      headerAlign: "center",
+      align: "center",
     },
     {
-      field: 'number_of_session',
-      headerName: 'Số buổi tập',
+      field: "number_of_session",
+      headerName: "Số buổi tập",
       resizable: false,
       flex: 0.5,
       minWidth: 150,
-      headerAlign: 'center',
-      align: 'center',
+      headerAlign: "center",
+      align: "center",
     },
     {
-      field: 'session_duration',
-      headerName: 'Thời gian tập (phút / buổi)',
+      field: "session_duration",
+      headerName: "Thời gian tập (phút / buổi)",
       resizable: false,
       flex: 1,
       minWidth: 160,
-      headerAlign: 'center',
-      align: 'center',
+      headerAlign: "center",
+      align: "center",
     },
     {
-      field: 'cost_per_session',
-      headerName: 'Giá / buổi (VNĐ)',
+      field: "cost_per_session",
+      headerName: "Giá / buổi (VNĐ)",
       resizable: false,
       flex: 0.8,
       minWidth: 145,
-      headerAlign: 'center',
-      align: 'center',
+      headerAlign: "center",
+      align: "center",
     },
     {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Thao tác',
+      field: "actions",
+      type: "actions",
+      headerName: "Thao tác",
       resizable: false,
       flex: 1,
       minWidth: 80,
@@ -255,7 +266,7 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
                 <IconifyIcon
                   icon="fluent:edit-32-filled"
                   color="text.secondary"
-                  sx={{ fontSize: 'body1.fontSize', pointerEvents: 'none' }}
+                  sx={{ fontSize: "body1.fontSize", pointerEvents: "none" }}
                 />
               }
               label="Sửa"
@@ -269,7 +280,7 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
                 <IconifyIcon
                   icon="mingcute:delete-3-fill"
                   color="error.main"
-                  sx={{ fontSize: 'body1.fontSize', pointerEvents: 'none' }}
+                  sx={{ fontSize: "body1.fontSize", pointerEvents: "none" }}
                 />
               }
               label="Xoá"
@@ -283,13 +294,13 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
   ];
 
   const visibleColumns = useMemo(
-    () => columns.filter((column) => column.field !== 'id'),
-    [columns],
+    () => columns.filter((column) => column.field !== "id"),
+    [columns]
   );
 
   useEffect(() => {
     apiRef.current.setQuickFilterValues(
-      searchText.split(/\b\W+\b/).filter((word: string) => word !== ''),
+      searchText.split(/\b\W+\b/).filter((word: string) => word !== "")
     );
   }, [searchText]);
 
@@ -299,9 +310,9 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
         apiRef.current.resize();
       }
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, [apiRef]);
 
@@ -332,9 +343,10 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
           pagination: { paginationModel: { page: 0, pageSize: 4 } },
         }}
         slots={{
-          loadingOverlay: CircularProgress as GridSlots['loadingOverlay'],
-          pagination: CustomPagination as GridSlots['pagination'],
-          noResultsOverlay: CustomNoResultsOverlay as GridSlots['noResultsOverlay'],
+          loadingOverlay: CircularProgress as GridSlots["loadingOverlay"],
+          pagination: CustomPagination as GridSlots["pagination"],
+          noResultsOverlay:
+            CustomNoResultsOverlay as GridSlots["noResultsOverlay"],
         }}
         slotProps={{
           pagination: { labelRowsPerPage: rows.length },
@@ -342,181 +354,230 @@ const PTServiceTable = ({ searchText }: { searchText: string }): ReactElement =>
         sx={{
           height: 1,
           width: 1,
-          tableLayout: 'fixed',
-          scrollbarWidth: 'thin',
+          tableLayout: "fixed",
+          scrollbarWidth: "thin",
         }}
-        
       />
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-        <Button 
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginTop: "10px",
+        }}
+      >
+        <Button
           onClick={handleAdd}
-          sx={{ 
-            width: '40px', 
-            height: '40px', 
-            fontSize: '20px', 
-            padding: '0px 0px', 
-          }}>+</Button>
+          sx={{
+            width: "40px",
+            height: "40px",
+            fontSize: "20px",
+            padding: "0px 0px",
+          }}
+        >
+          +
+        </Button>
       </div>
-    <Dialog 
-      open={editModalOpen} 
-      onClose={handleCloseEditModal} 
-      maxWidth="md" 
-      fullWidth
-      PaperProps={{
-        style: {
-          borderRadius: 10, 
-          padding: '30px', 
-        },
-      }}
-    >
-      <DialogTitle sx={{ textAlign: 'center' }}>        
-        {isEditMode ? 'CẬP NHẬT GÓI TẬP' : 'THÊM GÓI TẬP'}
-      </DialogTitle>
-      <DialogContent>
-        {editingPTService && (
-          <>
-            {emailError && <Alert severity="error">{emailError}</Alert>}
-
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Tên gói tập"
-              type="text"
-              fullWidth
-              variant="standard"
-              value={editingPTService ? editingPTService.name : ''}
-              onChange={(e) => setEditingPTService({ ...editingPTService, name: e.target.value })}
-              InputProps={{
-                sx: { 
-                  color: 'yellow', 
-                },
-              }}
-            />
-
-            <Grid container spacing={2} marginTop={2}>
-              <Grid item xs={4}>
-                <TextField
-                  margin="dense"
-                  label="Khuyến mãi"
-                  type="text"
-                  variant="standard"
-                  value={editingPTService.discount ?? '0'}
-                  onChange={(e) => setEditingPTService({ ...editingPTService, discount: e.target.value })}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">%</InputAdornment>, 
-                    sx: { 
-                      color: 'yellow', 
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  margin="dense"
-                  label="Số buổi tập"
-                  type="text"
-                  variant="standard"
-                  value={editingPTService.number_of_session ?? '0'}
-                  onChange={(e) => setEditingPTService({ ...editingPTService, number_of_session: e.target.value })}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">buổi</InputAdornment>, 
-                    sx: { 
-                      color: 'yellow', 
-                    },
-                  }}
-                  sx={{ width: '50%' }}
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  margin="dense"
-                  label="Thời lượng mỗi buổi tập"
-                  type="text"
-                  variant="standard"
-                  value={editingPTService.session_duration ?? '0'}
-                  onChange={(e) => setEditingPTService({ ...editingPTService, session_duration: e.target.value })}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">phút</InputAdornment>, 
-                    sx: { 
-                      color: 'yellow', 
-                    },
-                  }}
-                  sx={{ width: '100%' }}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={2} marginTop={2}>
-              
-              <Grid item xs={6}>
-                <TextField
-                  margin="dense"
-                  label="Giá mỗi buổi tập"
-                  type="text"
-                  variant="standard"
-                  value={editingPTService.cost_per_session ?? '0'}
-                  onChange={(e) => setEditingPTService({ ...editingPTService, cost_per_session: e.target.value })}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
-                    sx: { 
-                      color: 'yellow', 
-                    },
-                  }}
-                  sx={{ width: '70%' }}
-                />
-              </Grid>
-              <Grid item xs={6}>
+      <Dialog
+        open={editModalOpen}
+        onClose={handleCloseEditModal}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          style: {
+            borderRadius: 10,
+            padding: "30px",
+          },
+        }}
+      >
+        <DialogTitle sx={{ textAlign: "center" }}>
+          {isEditMode ? "CẬP NHẬT GÓI TẬP" : "THÊM GÓI TẬP"}
+        </DialogTitle>
+        <DialogContent>
+          {editingPTService && (
+            <>
+              {emailError && <Alert severity="error">{emailError}</Alert>}
 
               <TextField
-              margin="dense"
-              label="Thời gian sử dụng"
-              type="text"
-              variant="standard"
-              value={editingPTService.validity_period ?? '0'}
-              onChange={(e) => setEditingPTService({ ...editingPTService, validity_period: e.target.value })}
-              InputProps={{
-                endAdornment: <InputAdornment position="end">ngày</InputAdornment>,
-                sx: { 
-                  color: 'yellow', 
-                },
-              }}
-              sx={{ width: '100%' }}
-            />
-            </Grid>
-            </Grid>
+                autoFocus
+                margin="dense"
+                label="Tên gói tập"
+                type="text"
+                fullWidth
+                variant="standard"
+                value={editingPTService ? editingPTService.name : ""}
+                onChange={(e) =>
+                  setEditingPTService({
+                    ...editingPTService,
+                    name: e.target.value,
+                  })
+                }
+                InputProps={{
+                  sx: {
+                    color: "yellow",
+                  },
+                }}
+              />
 
-            
-          </>
-        )}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCloseEditModal} 
-          color='error' 
-          variant='contained'
-          sx={{ 
-            width: '100px',
-            height: '50px', 
-            fontSize: '16px', 
-            padding: '10px 20px', 
-          }}>Hủy</Button>
-        
-        <Button onClick={handleSave}
-          sx={{ 
-            width: '150px', 
-            height: '50px', 
-            fontSize: '16px', 
-            padding: '10px 20px', 
-            color: 'white',
-            backgroundColor: '#4caf50',
-            '&:hover': {
-                  backgroundColor: '#388e3c',
-                },
-          }}>        
-          {isEditMode ? 'Lưu' : 'Thêm'}
-        </Button>
-      </DialogActions>
-    </Dialog>
+              <Grid container spacing={2} marginTop={2}>
+                <Grid item xs={4}>
+                  <TextField
+                    margin="dense"
+                    label="Khuyến mãi"
+                    type="text"
+                    variant="standard"
+                    value={editingPTService.discount ?? "0"}
+                    onChange={(e) =>
+                      setEditingPTService({
+                        ...editingPTService,
+                        discount: e.target.value,
+                      })
+                    }
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">%</InputAdornment>
+                      ),
+                      sx: {
+                        color: "yellow",
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    margin="dense"
+                    label="Số buổi tập"
+                    type="text"
+                    variant="standard"
+                    value={editingPTService.number_of_session ?? "0"}
+                    onChange={(e) =>
+                      setEditingPTService({
+                        ...editingPTService,
+                        number_of_session: e.target.value,
+                      })
+                    }
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">buổi</InputAdornment>
+                      ),
+                      sx: {
+                        color: "yellow",
+                      },
+                    }}
+                    sx={{ width: "50%" }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    margin="dense"
+                    label="Thời lượng mỗi buổi tập"
+                    type="text"
+                    variant="standard"
+                    value={editingPTService.session_duration ?? "0"}
+                    onChange={(e) =>
+                      setEditingPTService({
+                        ...editingPTService,
+                        session_duration: e.target.value,
+                      })
+                    }
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">phút</InputAdornment>
+                      ),
+                      sx: {
+                        color: "yellow",
+                      },
+                    }}
+                    sx={{ width: "100%" }}
+                  />
+                </Grid>
+              </Grid>
 
+              <Grid container spacing={2} marginTop={2}>
+                <Grid item xs={6}>
+                  <TextField
+                    margin="dense"
+                    label="Giá mỗi buổi tập"
+                    type="text"
+                    variant="standard"
+                    value={editingPTService.cost_per_session ?? "0"}
+                    onChange={(e) =>
+                      setEditingPTService({
+                        ...editingPTService,
+                        cost_per_session: e.target.value,
+                      })
+                    }
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">VNĐ</InputAdornment>
+                      ),
+                      sx: {
+                        color: "yellow",
+                      },
+                    }}
+                    sx={{ width: "70%" }}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    margin="dense"
+                    label="Thời gian sử dụng"
+                    type="text"
+                    variant="standard"
+                    value={editingPTService.validity_period ?? "0"}
+                    onChange={(e) =>
+                      setEditingPTService({
+                        ...editingPTService,
+                        validity_period: e.target.value,
+                      })
+                    }
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">ngày</InputAdornment>
+                      ),
+                      sx: {
+                        color: "yellow",
+                      },
+                    }}
+                    sx={{ width: "100%" }}
+                  />
+                </Grid>
+              </Grid>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseEditModal}
+            color="error"
+            variant="contained"
+            sx={{
+              width: "100px",
+              height: "50px",
+              fontSize: "16px",
+              padding: "10px 20px",
+            }}
+          >
+            Hủy
+          </Button>
+
+          <Button
+            onClick={handleSave}
+            sx={{
+              width: "150px",
+              height: "50px",
+              fontSize: "16px",
+              padding: "10px 20px",
+              color: "white",
+              backgroundColor: "#4caf50",
+              "&:hover": {
+                backgroundColor: "#388e3c",
+              },
+            }}
+          >
+            {isEditMode ? "Lưu" : "Thêm"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
