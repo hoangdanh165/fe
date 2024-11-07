@@ -36,6 +36,8 @@ const UserProfile = lazy(() => import("../pages/coach/UserProfile"));
 const ProductList = lazy(() => import("../pages/ProductList"));
 const CoachDashboard = lazy(() => import("../pages/coach/CoachDashboard"));
 const CoachSchedule = lazy(() => import("../pages/coach/CoachSchedule"));
+const CoachHomePage = lazy(() => import("../pages/coach/CoachHomePage"));
+const CoachChat = lazy(() => import("../pages/coach/CoachChat"));
 const TrainingPlanManagement = lazy(() => import("../pages/coach/TrainingPlanManagement"))
 
 //Sale pages
@@ -197,6 +199,21 @@ const routes = [
               <TrainingPlanManagement />
             </PrivateRoute>
           )
+        },
+        {
+          path: paths.chat,
+          element: (
+            <PrivateRoute allowedRoles={["coach"]}>
+              <CoachChat />
+            </PrivateRoute>
+          )
+        },
+        {
+          path: '*',
+          element: 
+          <PrivateRoute allowedRoles={["coach"]}>
+             <CoachHomePage />
+            </PrivateRoute>,
         },
            
       ]

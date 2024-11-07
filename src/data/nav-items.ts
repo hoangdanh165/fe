@@ -26,8 +26,8 @@ const navItems: NavItem[] = [
   {
     id: 3,
     path: "/coach/product",
-    title: "Tin nhắn",
-    icon: "bi:chat",
+    title: "Sản phẩm",
+    icon: "material-symbols:production-quantity-limits",
     active: false,
   },
   {
@@ -39,6 +39,13 @@ const navItems: NavItem[] = [
   },
   {
     id: 5,
+    path: paths.chat,
+    title: "Tin nhắn",
+    icon: "bi:chat",
+    active: false,
+  },
+  {
+    id: 6,
     path: paths.profile,
     title: "Cài đặt",
     icon: "mingcute:settings-3-line",
