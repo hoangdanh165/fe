@@ -25,8 +25,6 @@ import {
   Alert,
   InputAdornment,
   IconButton,
-  List,
-  ListItem,
 } from "@mui/material";
 import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import CloseIcon from "@mui/icons-material/Close";
@@ -38,8 +36,6 @@ import {
   GridColDef,
   useGridApiRef,
   GridActionsCellItem,
-  GridRenderCellParams,
-  GridTreeNodeWithRender,
 } from "@mui/x-data-grid";
 
 interface Category {
@@ -54,6 +50,7 @@ interface Exercise {
   image_url: string;
   image_preview: string;
   rest_period: string;
+  embedded_video_url: string;
   categories: Category[];
 }
 
@@ -123,10 +120,13 @@ const ExerciseTable = ({
   };
 
   useEffect(() => {
+    const ExerciseNames = rows.map((exercise) => exercise.name);
+    setExerciseNames(ExerciseNames);
+  }, [rows, exerciseNames]);
+
+  useEffect(() => {
     fetchAllCategories();
-    const exerciseNames = rows.map((exercise) => exercise.name);
-    setExerciseNames(exerciseNames);
-  }, [rows]);
+  }, []);
 
   const handleAdd = () => {
     setEditMode(false);
@@ -139,8 +139,10 @@ const ExerciseTable = ({
       image_url: "",
       image_preview: "",
       rest_period: "",
+      embedded_video_url: "",
     });
     setEditModalOpen(true);
+    setIsAvailable(true);
   };
 
   const handleCloseEditModal = () => {
@@ -148,8 +150,10 @@ const ExerciseTable = ({
     setEditingExercise(null);
     setSelectedCategories([]);
     setEmailError("");
-    setFilteredNames(null);
+    setFilteredNames([]);
     setIsAvailable(false);
+    setOriginalName(null);
+    setExerciseNames([]);
   };
 
   const handleSave = async () => {
@@ -206,13 +210,13 @@ const ExerciseTable = ({
     formData.append("duration", editingExercise.duration);
     formData.append("repetitions", editingExercise.repetitions);
     formData.append("rest_period", editingExercise.rest_period);
+    formData.append("embedded_video_url", editingExercise.embedded_video_url);
 
     if (editingExercise.image_url) {
       formData.append("image_url", editingExercise.image_url);
     }
 
     formData.append("categories", selectedCategories);
-    console.log([...formData]);
     try {
       const response = await axiosPrivate.put(
         `/api/v1/exercises/${editingExercise.id}/`,
@@ -281,6 +285,7 @@ const ExerciseTable = ({
     formData.append("duration", editingExercise.duration);
     formData.append("repetitions", editingExercise.repetitions);
     formData.append("rest_period", editingExercise.rest_period);
+    formData.append("embedded_video_url", editingExercise.embedded_video_url);
     formData.append("categories", selectedCategories);
 
     if (editingExercise.image_url) {
@@ -587,19 +592,26 @@ const ExerciseTable = ({
                 />
                 {editingExercise?.name && filteredNames?.length > 0 ? (
                   isAvailable && editingExercise?.name === originalName ? (
-                    <>
-                      Hợp lệ
-                      <CheckCircleIcon
-                        style={{
-                          marginRight: 8,
-                          color: "green",
-                          marginLeft: 5,
-                          height: "18px",
-                        }}
-                      />
-                    </>
+                    <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    display="flex"
+                    alignItems="center"
+                    sx={{ marginLeft: 3 }}
+                  >
+                        Hợp lệ
+                        <CheckCircleIcon
+                          style={{
+                            marginRight: 8,
+                            color: "green",
+                            marginLeft: 5,
+                            height: "18px",
+                          }}
+                        />
+                    
+                  </Typography>
                   ) : (
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ marginLeft: 3}}>
                       Các bài tập đã có: {filteredNames.slice(0, 3).join(", ")}
                       {filteredNames.length > 3 && "..."}
                     </Typography>
@@ -612,7 +624,7 @@ const ExerciseTable = ({
                     alignItems="center"
                     sx={{ marginLeft: 3 }}
                   >
-                    {isAvailable && editingExercise?.name === originalName ? (
+                    {isAvailable ? (
                       <>
                         Hợp lệ
                         <CheckCircleIcon
@@ -669,7 +681,7 @@ const ExerciseTable = ({
                   alignItems="center"
                   sx={{ marginLeft: 3 }}
                 >
-                  Có dạng *số hiệp x số lần mỗi hiệp* (vd: 4x12, 3x10, ...)
+                  Có dạng *số hiệp x số lần mỗi hiệp* (vd: 4x12, 3x5m, 5x10 each leg, ...)
                 </Typography>
               </Grid>
               <Grid item xs={12}>
@@ -716,6 +728,20 @@ const ExerciseTable = ({
                     ))}
                   </Select>
                 </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Liên kết nhúng của video hướng dẫn (tuỳ chọn)"
+                  value={editingExercise?.embedded_video_url || ""}
+                  onChange={(e) =>
+                    setEditingExercise({
+                      ...editingExercise,
+                      embedded_video_url: e.target.value,
+                    })
+                  }
+                  fullWidth
+                  margin="normal"
+                />
               </Grid>
             </Grid>
           )}

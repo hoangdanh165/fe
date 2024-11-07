@@ -27,6 +27,7 @@ export const useExercisesData = (reloadTrigger: number) => {
           repetitions: exercise.repetitions,
           image_url: exercise.image_url,
           rest_period: exercise.rest_period,
+          embedded_video_url: exercise.embedded_video_url,
           categories: exercise.categories.map((category) => ({
             id: category.id,
             name: category.name,
