@@ -34,7 +34,7 @@ export const useScheduleData = (reloadTrigger: number) => {
 
           if (new Date(ws.end_time) < now) {
             customerColor = "black";
-            customerColors[customerId] = customerColor;
+            
           } 
           else {
             if (!customerColors[customerId]) {
@@ -68,19 +68,23 @@ export const useScheduleData = (reloadTrigger: number) => {
           
             start_time: ws.start_time,
             end_time: ws.end_time,
-            duration: ws.duration,
-            overview: ws.overview,
-            note: ws.note,
             
-            exercises: ws.exercises.map((e) => ({
-              id: e.id,
-              name: e.name,
-              duration: e.duration,
-              repetitions: e.repetitions,
-              image_url: e.image_url,
-              rest_period: e.rest_period,
-              categories: e.categories
-            })),
+            training_plan: {
+              id: ws.training_plan.id,
+              estimated_duration: ws.training_plan.estimated_duration,
+              overview: ws.training_plan.overview,
+              note: ws.training_plan.note,
+              exercises: ws.training_plan.exercises.map((e) => ({
+                id: e.id,
+                name: e.name,
+                duration: e.duration,
+                repetitions: e.repetitions,
+                image_url: e.image_url,
+                rest_period: e.rest_period,
+                categories: e.categories
+              })),
+            }
+            
           };
         });
         

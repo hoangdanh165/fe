@@ -111,7 +111,7 @@ const TrainingPlanTable = ({
   const [exercises, setExercises] = useState([]); // All exercises in system
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
-  
+  console.log(rows);
   useEffect(() => {
     const fetchDropdownData = async () => {
       const response = await axiosPrivate.get(

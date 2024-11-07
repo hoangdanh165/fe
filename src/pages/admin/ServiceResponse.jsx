@@ -301,8 +301,8 @@ const ServiceResponse = () => {
 
                   <TableCell align="center" sx={{ fontSize: "small" }}>
                     {response.coach
-                      ? `${response.coach.first_name} ${response.coach.last_name}`
-                      : "Other Service"}
+                      ? `HLV ${response.coach.first_name} ${response.coach.last_name}`
+                      : "Dịch vụ"}
                   </TableCell>
 
                   <TableCell align="center" sx={{ fontSize: "small" }}>
@@ -310,21 +310,18 @@ const ServiceResponse = () => {
                   </TableCell>
                   
                   <TableCell align="center" sx={{ fontSize: "small" }}>
-                    {!response.responded && (
+                    {response.coach && !response.responded && (  // Kiểm tra có coach và chưa phản hồi
                       <Button
                         variant="contained"
                         color="primary"
                         sx={{ width: 10, height: 40 }}
                         onClick={() => handleOpenModal(response)}
                       >
-                        {response.coach ? (
-                          <EditIcon fontSize="small" />
-                        ) : (
-                          <MessageIcon fontSize="small" />
-                        )}
+                        <EditIcon fontSize="small" />
                       </Button>
                     )}
                   </TableCell>
+
                 </TableRow>
               ))}
             </TableBody>

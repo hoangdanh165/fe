@@ -3,13 +3,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { formatInTimeZone } from 'date-fns-tz'
+import { formatInTimeZone } from "date-fns-tz";
 import {
   Box,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   IconButton,
   TextField,
@@ -21,6 +20,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  InputAdornment,
 } from "@mui/material";
 import IconifyIcon from "./IconifyIcon";
 import { useScheduleData } from "../../data/schedule-data";
@@ -28,6 +28,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import "./Calender.css";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import NotificationService from "../../services/notification";
 
 const Calendar = () => {
   const [currentEvents, setCurrentEvents] = useState([]);
@@ -42,6 +43,7 @@ const Calendar = () => {
   const [eventStart, setEventStart] = useState("");
   const [eventEnd, setEventEnd] = useState("");
   const [eventNote, setEventNote] = useState("");
+  const [estimatedDuration, setEstimatedDuration] = useState("");
   const [coachId, setCoachId] = useState("");
   const [customerId, setCustomerId] = useState("");
 
@@ -53,15 +55,17 @@ const Calendar = () => {
   const [selectedExercise, setSelectedExercise] = useState(""); // Selected exercise for adding to workout schedule
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [openAddExerciseDialog, setOpenAddExerciseDialog] = useState(false);
+  const [trainingPlans, setTrainingPlans] = useState([]); // Training plans of a specific customer
+  const [selectedTrainingPlan, setSelectedTrainingPlan] = useState(null);
 
   const axiosPrivate = useAxiosPrivate();
-  const timeZone = 'Asia/Ho_Chi_Minh';
+  const timeZone = "Asia/Ho_Chi_Minh";
 
   useEffect(() => {
     if (!loading && !error) {
       const events = rows.map((row) => ({
         id: row.id,
-        title: `${row.overview}`,
+        title: `${row.training_plan.overview}`,
         start: `${row.start_time}`,
         end: `${row.end_time}`,
         allDay: false,
@@ -71,8 +75,7 @@ const Calendar = () => {
         extendedProps: {
           customerId: row.customer_id,
           customerName: `${row.customer_name}`,
-          exercises: row.exercises,
-          note: row.note,
+          trainingPlan: row.training_plan,
         },
       }));
       setCurrentEvents(events);
@@ -128,11 +131,36 @@ const Calendar = () => {
         gender: customer.gender,
         birthday: customer.birthday,
         avatar: customer.avatar,
+        customer_user_id: customer.customer_user_id,
       }));
-      
+
       setCoachId(response.data.coach_id);
-      console.log(response.data.coach_id);
       setCustomers(formattedRows);
+    } catch (err) {
+      console.log("Error fetching exercises: ", err);
+    }
+  };
+
+  const fetchTrainingPlansByCustomer = async (customerId) => {
+    try {
+      const url = `/api/v1/training-plans/get-by-customers?customer=${customerId}`;
+
+      const response = await axiosPrivate.get(url, {
+        withCredentials: true,
+      });
+
+      const formattedRows = response.data.training_plans.map((tp) => ({
+        id: tp.id,
+        note: tp.note,
+        overview: tp.overview,
+        estimated_duration: tp.estimated_duration,
+        customer_id: tp.customer.id,
+        exercises: tp.exercises,
+      }));
+
+      console.log(formattedRows);
+
+      setTrainingPlans(formattedRows);
     } catch (err) {
       console.log("Error fetching exercises: ", err);
     }
@@ -155,34 +183,41 @@ const Calendar = () => {
   });
 
   const handleDateClick = (selected) => {
+    const event = {
+      id: null,
+      title: "",
+      start: selected.startStr,
+      end: selected.endStr,
+      allDay: false,
+      backgroundColor: "", 
+      borderColor: "", 
+      extendedProps: {
+        customerId: null,
+        customerName: "",
+        trainingPlan: {},
+      },
+    };
+
+    setSelectedEvent(event);
+
+    const selectedDate = new Date(selected.start);
+
+    selectedDate.setHours(7, 0, 0, 0);
+    const start = formatInTimeZone(
+      selectedDate,
+      timeZone,
+      "yyyy-MM-dd'T'HH:mm"
+    );
+    setEventStart(start);
+
+    const endDate = new Date(selected.start);
+    endDate.setHours(10, 0, 0, 0);
+    const end = formatInTimeZone(endDate, timeZone, "yyyy-MM-dd'T'HH:mm");
+    setEventEnd(end);
+
     setSelectedInfo(selected);
-    setOpenDialog(true);
-  };
-
-  const handleSaveEvent = () => {
-    const calendarApi = selectedInfo.view.calendar;
-    calendarApi.unselect();
-
-    if (newEventTitle && newEventCustomer) {
-      const customer = customers.find((c) => c.id === newEventCustomer);
-
-      calendarApi.addEvent({
-        title: `${newEventTitle}`,
-        start: selectedInfo.startStr + "T00:00:00",
-        end: selectedInfo.endStr + "T00:00:00",
-        
-        allDay: false,
-        extendedProps: {
-          customerId: newEventCustomer,
-          customerName: customer.first_name + " " + customer.last_name,
-        },
-      });
-    }
-
-    setOpenDialog(false);
-    setNewEventTitle("");
-    setNewEventCustomer("");
-    setSelectedInfo(null);
+    fetchAllExercises();
+    setOpenEventDialog(true);
   };
 
   const handleEventClick = (selected) => {
@@ -193,80 +228,101 @@ const Calendar = () => {
     setEventTitle(event.title ? event.title.split(" (")[0] : "");
 
     setCustomerId(event.extendedProps?.customerId || "");
-
-    const startTime = event.start ? formatInTimeZone(event.start, timeZone, 'yyyy-MM-dd\'T\'HH:mm') : "";
-    const endTime = event.end ? formatInTimeZone(event.end, timeZone, 'yyyy-MM-dd\'T\'HH:mm') : "";
+    fetchTrainingPlansByCustomer(event.extendedProps?.customerId);
+    const startTime = event.start
+      ? formatInTimeZone(event.start, timeZone, "yyyy-MM-dd'T'HH:mm")
+      : "";
+    const endTime = event.end
+      ? formatInTimeZone(event.end, timeZone, "yyyy-MM-dd'T'HH:mm")
+      : "";
 
     setEventStart(startTime);
     setEventEnd(endTime);
 
-    console.log(startTime, endTime);
-    setEventNote(event.extendedProps?.note || "");
-
-    setCurrentExercises(event.extendedProps?.exercises || []);
+    setEventNote(event.extendedProps?.trainingPlan?.note || "");
+    setEstimatedDuration(event.extendedProps?.trainingPlan?.estimated_duration || "")
+    setCurrentExercises(event.extendedProps?.trainingPlan?.exercises || []);
+    setSelectedTrainingPlan(event.extendedProps?.trainingPlan || null);
 
     fetchAllExercises();
     setOpenEventDialog(true);
   };
 
-  const handleSaveEditEvent = () => {
-    selectedEvent.setProp("title", `${eventTitle} (${customerId})`);
-    selectedEvent.setExtendedProp("customerId", customerId);
-    selectedEvent.setStart(eventStart);
-    selectedEvent.setEnd(eventEnd);
-    setOpenEventDialog(false);
+  function getCustomerColor(events, customerId) {
+    const event = events.find((e) => e.extendedProps.customerId === customerId);
+    return event ? event.backgroundColor : null;
+  }
+
+  const formatDate = (date) => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return new Intl.DateTimeFormat('vi-VN', options).format(new Date(date));
+  };
+  
+  const formatTime = (date) => {
+    const options = { hour: '2-digit', minute: '2-digit' };
+    return new Intl.DateTimeFormat('vi-VN', options).format(new Date(date));
   };
 
-  const handleSaveAddEvent = async () => {
-
-    if (!eventTitle || !customerId || !eventStart || !eventEnd) {
+  const handleSaveEvent = async () => {
+    if (!customerId || !eventStart || !eventEnd || !selectedTrainingPlan) {
       alert("Vui lòng điền đầy đủ thông tin buổi tập!");
       return;
     }
 
     const startTime = new Date(eventStart);
     const endTime = new Date(eventEnd);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (startTime < today) {
+      alert("Chỉ có thể tạo buổi tập từ ngày hiện tại về sau!");
+      return;
+    }
 
     if (startTime >= endTime) {
       alert("Giờ bắt đầu phải nhỏ hơn giờ kết thúc!");
       return;
     }
 
-    const isOverlapping = (start, end) => {
-      return currentEvents.some((event) => {
+    const isOverlapping = (start, end, currentEvent) => {
+      const filteredEvents = currentEvents.filter(event => event.id !== Number(currentEvent.id));
+      return filteredEvents.some((event) => {
         const existingStart = new Date(event.start);
         const existingEnd = new Date(event.end);
-        return (
+
+        const isOverlapping =
           (start >= existingStart && start < existingEnd) ||
           (end > existingStart && end <= existingEnd) ||
-          (start <= existingStart && end >= existingEnd)
-        );
+          (start <= existingStart && end >= existingEnd);
+
+        return isOverlapping;
       });
     };
 
-    if (isOverlapping(startTime, endTime)) {
+    console.log(selectedEvent.id);
+    if (isOverlapping(startTime, endTime, selectedEvent)) {
       alert("Buổi tập trùng giờ với một buổi tập khác. Vui lòng chọn thời gian khác.");
       return;
     }
 
     try {
       const eventData = {
-        overview: eventTitle,
         customer: customerId,
         coach: coachId,
         start_time: eventStart,
         end_time: eventEnd,
-        note: eventNote,
-        exercises: currentExercises.map(exercise => exercise.id)
+        training_plan: {
+          id: selectedTrainingPlan.id,
+          estimated_duration: estimatedDuration,
+          note: eventNote,
+          customer: customerId,
+          overview: selectedTrainingPlan.overview,
+          exercises: currentExercises,
+        },
       };
-      const startTime = new Date(eventStart);
-      const endTime = new Date(eventEnd);
-      const duration = (endTime - startTime) / (1000 * 60); 
 
-      eventData.duration = duration;
-      
       let response;
-      if (selectedEvent.id) {
+      if (selectedEvent?.id) {
         response = await axiosPrivate.patch(
           `/api/v1/workout-schedules/${selectedEvent.id}/`,
           eventData,
@@ -276,41 +332,82 @@ const Calendar = () => {
         );
       } else {
         response = await axiosPrivate.post(
-          '/api/v1/workout-schedules/',
+          "/api/v1/workout-schedules/",
           eventData,
           {
             withCredentials: true,
           }
         );
       }
-
+      console.log(selectedEvent);
       if (response.data) {
+        const bgColor = getCustomerColor(currentEvents, customerId);
+        console.log(bgColor);
         const updatedEvent = {
           id: response.data.id,
-          title: `${eventTitle}`,
+          title: `${selectedTrainingPlan.overview}`,
           start: `${eventStart}`,
           end: `${eventEnd}`,
           allDay: false,
+          backgroundColor: bgColor,
+          borderColor: bgColor,
           extendedProps: {
             customerId: customerId,
-            customerName: customers.find(c => c.id === customerId)?.first_name + " " + 
-                         customers.find(c => c.id === customerId)?.last_name,
-            exercises: currentExercises,
-            note: eventNote
-          }
+            customerName:
+              customers.find((c) => c.id === customerId)?.first_name +
+              " " +
+              customers.find((c) => c.id === customerId)?.last_name,
+            trainingPlan: response.data.training_plan,
+          },
         };
 
-        if (selectedEvent.id) {
-          selectedEvent.setProp('title', updatedEvent.title);
+        if (selectedEvent?.id) {
+          selectedEvent.setProp("title", updatedEvent.title);
           selectedEvent.setStart(updatedEvent.start);
           selectedEvent.setEnd(updatedEvent.end);
-          selectedEvent.setExtendedProp('customerId', updatedEvent.extendedProps.customerId);
-          selectedEvent.setExtendedProp('customerName', updatedEvent.extendedProps.customerName);
-          selectedEvent.setExtendedProp('exercises', updatedEvent.extendedProps.exercises);
-          selectedEvent.setExtendedProp('note', updatedEvent.extendedProps.note);
+          selectedEvent.setExtendedProp(
+            "customerId",
+            updatedEvent.extendedProps.customerId
+          );
+          selectedEvent.setExtendedProp(
+            "customerName",
+            updatedEvent.extendedProps.customerName
+          );
+          selectedEvent.setExtendedProp(
+            "trainingPlan",
+            updatedEvent.extendedProps.trainingPlan
+          );
         } else {
-          const calendarApi = selectedEvent.view.calendar;
-          calendarApi.addEvent(updatedEvent);
+          setCurrentEvents((prevEvents) => [...prevEvents, updatedEvent]);
+        }
+
+        const customer = customers.find((customer) => customer.id === customerId);
+        const customer_user_id = customer?.customer_user_id;
+
+        if (customer_user_id) {
+
+          const eventStartDate = formatDate(eventStart);
+          const eventStartTime = formatTime(eventStart);
+          const eventEndTime = formatTime(eventEnd);
+
+          let notificationMessage;
+
+          if (!selectedEvent?.id) {
+            notificationMessage = `Bạn có buổi tập mới từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. 
+                              Tổng quan buổi tập: ${response.data.training_plan.overview}. 
+                              Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
+          } else {
+            notificationMessage = `Lịch tập của bạn đã được thay đổi. 
+                              Thời gian mới: từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. 
+                              Tổng quan buổi tập: ${response.data.training_plan.overview}. 
+                              Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
+          }
+
+          await NotificationService.createNotification(
+            axiosPrivate,
+            customer_user_id,
+            notificationMessage,
+          );
         }
 
         setOpenEventDialog(false);
@@ -319,6 +416,9 @@ const Calendar = () => {
         setEventStart("");
         setEventEnd("");
         setEventNote("");
+        setSelectedTrainingPlan(null);
+        setTrainingPlans(null);
+        setEstimatedDuration(null);
         setCurrentExercises([]);
         setSelectedEvent(null);
       }
@@ -331,29 +431,36 @@ const Calendar = () => {
     if (window.confirm(`Bạn có chắc chắn muốn xóa buổi tập này không?`)) {
       try {
         await axiosPrivate.delete(
-          `/api/v1/workout-schedules/${selectedEvent.id}/`, 
-          { withCredentials: true }  
+          `/api/v1/workout-schedules/${selectedEvent.id}/`,
+          { withCredentials: true }
         );
-        
+
         selectedEvent.remove();
         setOpenEventDialog(false);
-      }
-      catch (err) {
+        setSelectedTrainingPlan(null);
+        setEstimatedDuration(null)
+        setEventTitle(null);
+        setCustomerId(null);
+        setEventStart(null);
+        setEventEnd(null);
+        setEventNote(null);
+        setCurrentExercises([]);
+        setSelectedEvent(null);
+      } catch (err) {
         console.error("Error deleting workout schedule:", err);
       }
       alert("Xoá buổi tập thành công!");
     }
   };
-  
 
   const handleAddExercise = () => {
     if (selectedExercise) {
       const exerciseToAdd = exercises.find((ex) => ex.id === selectedExercise);
-      
+
       const isExerciseAlreadyAdded = currentExercises.some(
         (ex) => ex.id === selectedExercise
       );
-  
+
       if (isExerciseAlreadyAdded) {
         alert("Bài tập này đã có trong danh sách.");
       } else {
@@ -364,7 +471,6 @@ const Calendar = () => {
       }
     }
   };
-  
 
   const renderEventContent = (eventInfo) => {
     const { title, extendedProps } = eventInfo.event;
@@ -382,34 +488,61 @@ const Calendar = () => {
     return (
       <Tooltip
         arrow
+        placement="right-start"
+        slotProps={{
+          popper: {
+            modifiers: [
+              {
+                name: "offset",
+                options: {
+                  offset: [0, 0],
+                },
+              },
+            ],
+          },
+        }}
         title={
-          <>
+          <div className="event-tooltip">
             <Typography variant="body2" color="inherit">
-              Tổng quan: {title}
+              Giáo án: {title}
             </Typography>
             <Typography variant="body2">
               Khách hàng: {extendedProps.customerName}
             </Typography>
             <Typography variant="body2">
               Bài tập:{" "}
-              {extendedProps.exercises && extendedProps.exercises.length > 0
-                ? extendedProps.exercises.map((exercise) => (
+              {extendedProps.trainingPlan.exercises &&
+              extendedProps.trainingPlan.exercises.length > 0
+                ? extendedProps.trainingPlan.exercises.map((exercise) => (
                     <div key={exercise.id}> - {exercise.name}</div>
                   ))
                 : "Chưa có bài tập nào."}
             </Typography>
-          </>
+          </div>
         }
         PopperProps={{
           modifiers: [
             {
-              name: "zIndex",
+              name: "preventOverflow",
               enabled: true,
               options: {
-                zIndex: 1500, 
+                altAxis: true,
+                altBoundary: true,
+                tether: true,
+                padding: 8,
               },
             },
+            {
+              name: "flip",
+              enabled: true,
+            },
           ],
+          sx: {
+            zIndex: 9999,
+            "& .MuiTooltip-tooltip": {
+              zIndex: 9999,
+            },
+          },
         }}
       >
         <span
@@ -436,6 +569,20 @@ const Calendar = () => {
     setCurrentExercises((prevExercises) =>
       prevExercises.filter((exercise) => exercise.id !== id)
     );
+  };
+
+  const resetDialogState = () => {
+    setSelectedEvent(null);
+    setEventTitle(null);
+    setCustomerId(null);
+    setEventStart(null);
+    setEventEnd(null);
+    setEventNote(null);
+    setCurrentExercises([]);
+    setSelectedTrainingPlan(null);
+    setEstimatedDuration(null);
+    setTrainingPlans(null),
+    setOpenEventDialog(false);
   };
 
   return (
@@ -468,49 +615,8 @@ const Calendar = () => {
         />
       </Box>
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle sx={{ alignSelf: 'center'}}>THÊM BUỔI TẬP MỚI</DialogTitle>
-        <DialogContent>
-          <Box display="flex" flexDirection="column" gap={2}>
-          <FormControl
-              sx={{
-                width: "350px",
-              }}
-              margin="dense"
-            >
-              <InputLabel sx={{ marginBottom: 2 }}>Khách hàng</InputLabel>
-              <Select
-                value={newEventCustomer}
-                onChange={(e) => setNewEventCustomer(e.target.value)}
-                label="Khách hàng"
-              >
-                {customers.map((customer) => (
-                  <MenuItem key={customer.id} value={customer.id}>
-                    {customer.first_name} {customer.last_name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Tổng quan buổi tập"
-              fullWidth
-              value={newEventTitle}
-              onChange={(e) => setNewEventTitle(e.target.value)}
-            />
-            
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Hủy</Button>
-          <Button onClick={handleSaveEvent}>Lưu</Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={openEventDialog} onClose={() => setOpenEventDialog(false)}>
-        <DialogTitle sx={{ mb: "10px", alignSelf: 'center' }}>
+      <Dialog open={openEventDialog} onClose={resetDialogState}>
+        <DialogTitle sx={{ mb: "10px", alignSelf: "center" }}>
           CHI TIẾT BUỔI TẬP
           <IconButton
             aria-label="close"
@@ -525,7 +631,14 @@ const Calendar = () => {
             <InputLabel sx={{ marginBottom: 2 }}>Khách hàng</InputLabel>
             <Select
               value={customerId}
-              onChange={(e) => setCustomerId(e.target.value)}
+              onChange={(e) => {
+                const selectedCustomerId = e.target.value;
+                setCustomerId(selectedCustomerId);
+                fetchTrainingPlansByCustomer(selectedCustomerId);
+                setSelectedTrainingPlan(null);
+                setEstimatedDuration(null);
+                setEventNote(null);
+              }}
               label="Khách hàng"
             >
               {customers.map((customer) => (
@@ -535,13 +648,50 @@ const Calendar = () => {
               ))}
             </Select>
           </FormControl>
+          <FormControl fullWidth margin="dense">
+            <InputLabel sx={{ marginBottom: 2 }}>Giáo án buổi tập</InputLabel>
+            <Select
+              value={selectedTrainingPlan?.id ?? ""}
+              onChange={(e) => {
+                const selectedId = e.target.value;
+                const selectedPlan = trainingPlans.find(
+                  (tp) => tp.id === selectedId
+                );
+                setSelectedTrainingPlan(selectedPlan);
+                setEstimatedDuration(selectedPlan.estimated_duration);
+                setEventNote(selectedPlan.note);
+                setCurrentExercises(selectedPlan.exercises)
+              }}
+              label="Giáo án buổi tập"
+            >
+              {trainingPlans?.length > 0 ? (
+                trainingPlans.map((tp) => (
+                  <MenuItem key={tp.id} value={tp.id}>
+                    {tp.overview}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled value="">
+                  {selectedTrainingPlan?.id || "Chưa có giáo án"}{" "}
+                </MenuItem>
+              )}
+            </Select>
+          </FormControl>
+
           <TextField
-            label="Tổng quan buổi tập"
-            value={eventTitle}
-            onChange={(e) => setEventTitle(e.target.value)}
+            label="Thời lượng ước tính của giáo án"
+            type="text"
+            value={estimatedDuration}
+            onChange={(e) => setEstimatedDuration(e.target.value)}
             fullWidth
             margin="normal"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">phút</InputAdornment>
+              ),
+            }}
           />
+
           <TextField
             label="Thời gian bắt đầu"
             type="datetime-local"
@@ -549,7 +699,6 @@ const Calendar = () => {
             onChange={(e) => setEventStart(e.target.value)}
             fullWidth
             margin="normal"
-            InputLabelProps={{ shrink: true }}
           />
           <TextField
             label="Thời gian kết thúc"
@@ -558,7 +707,6 @@ const Calendar = () => {
             onChange={(e) => setEventEnd(e.target.value)}
             fullWidth
             margin="normal"
-            InputLabelProps={{ shrink: true }}
           />
           <TextField
             label="Ghi chú"
@@ -567,7 +715,6 @@ const Calendar = () => {
             onChange={(e) => setEventNote(e.target.value)}
             fullWidth
             margin="normal"
-            InputLabelProps={{ shrink: true }}
             placeholder={eventNote ? "" : "Thêm ghi chú cho buổi tập này..."}
             multiline
             rows={4}
@@ -594,21 +741,22 @@ const Calendar = () => {
                 marginBottom: 2,
               }}
             >
-              Danh sách bài tập: {currentExercises.length} bài
+              Danh sách bài tập:{" "}
+              {currentExercises?.length ?? "0"} bài
             </Typography>
             <IconButton onClick={() => setOpenAddExerciseDialog(true)}>
               <AddIcon />
             </IconButton>
           </Box>
 
-          {currentExercises.length > 0 ? (
+          {currentExercises?.length > 0 ? (
             <Stack
               direction="column"
               spacing={1}
               alignSelf="flex-start"
               width="100%"
             >
-              {currentExercises.map((currentExercise) => (
+              {currentExercises?.map((currentExercise) => (
                 <Box
                   key={currentExercise.id}
                   sx={{
@@ -712,10 +860,12 @@ const Calendar = () => {
           <Button onClick={handleDeleteEvent} color="error">
             Xóa
           </Button>
-          <Button 
-            onClick={handleSaveAddEvent} 
+          <Button
+            onClick={handleSaveEvent}
             color="primary"
-            disabled={!eventTitle || !customerId || !eventStart || !eventEnd}
+            disabled={
+              !selectedTrainingPlan || !customerId || !eventStart || !eventEnd
+            }
           >
             Lưu
           </Button>

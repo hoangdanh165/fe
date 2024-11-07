@@ -29,6 +29,7 @@ const AccountManagement = lazy(() => import("../pages/admin/AccountManagement"))
 const Statistic = lazy(() => import("../pages/admin/Statistic"));
 const ServiceResponse = lazy(() => import("../pages/admin/ServiceResponse"));
 const CoachManagement = lazy(() => import("../pages/admin/CoachManagement"));
+const ExerciseManagement = lazy(() => import("../pages/admin/ExerciseManagement"));
 
 // Coach pages
 const UserProfile = lazy(() => import("../pages/coach/UserProfile"));
@@ -138,6 +139,14 @@ const routes = [
             element: (
               <PrivateRoute allowedRoles={["admin"]}>
                 <CoachManagement />
+              </PrivateRoute>
+            ),
+          },
+          {
+            path: paths.exercises,
+            element: (
+              <PrivateRoute allowedRoles={["admin"]}>
+                <ExerciseManagement />
               </PrivateRoute>
             ),
           },

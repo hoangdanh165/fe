@@ -8,9 +8,7 @@ const NotificationService = {
                 user: userId,
                 notification: {
                     message: message,
-                    extra_data: {
-                        customer: extra_data,
-                    }
+                    extra_data: extra_data,
                 },
                 
             });

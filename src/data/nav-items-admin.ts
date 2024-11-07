@@ -44,9 +44,15 @@ const navItems: NavItem[] = [
     icon: 'ic:baseline-person',
     active: false,
   },
-
   {
     id: 6,
+    path: paths.exercises,
+    title: 'Quản lý Bài tập',
+    icon: 'bi:book',
+    active: false,
+  },
+  {
+    id: 7,
     path: '/home/settings',
     title: 'Settings',
     icon: 'mingcute:settings-3-line',

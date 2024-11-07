@@ -32,6 +32,7 @@ export default {
   services: `${rootPaths.adminRoot}/services`,
   service_response: `${rootPaths.adminRoot}/service-responses`,
   coachs: `${rootPaths.adminRoot}/coachs`,
+  exercises: `${rootPaths.adminRoot}/exercises`,
 
   // Sale paths
   sale_home:`${rootPaths.saleRoot}/`,

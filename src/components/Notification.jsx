@@ -66,7 +66,7 @@ const Notification = () => {
     if (!confirmAccept) return;
     
   
-    const customerContracts = selectedNotification.customer.customer_contracts_pt;
+    const customerContracts = selectedNotification.customer_contracts_pt;
     if (customerContracts.length === 0) {
       console.error("Không có thông tin hợp đồng cho khách hàng.");
       return;
@@ -76,13 +76,13 @@ const Notification = () => {
   
     try {
       const response = await axiosPrivate.patch(`/api/v1/contracts/${contractToUpdate.id}/`, {
-        coach: selectedNotification.customer.coachId,
+        coach: selectedNotification.coachId,
       });
       
       if (response.status === 200) {
         await NotificationService.createNotification(
           axiosPrivate,
-          selectedNotification.customer.customer_user_id,
+          selectedNotification.customer_user_id,
           `Dựa vào phản hồi của bạn, huấn luyện viên của bạn đã được đổi. Vui lòng kiểm tra HLV mới. 
           Nếu có vấn đề gì xảy ra, hãy liên hệ với chúng tôi để được giúp đỡ.`
         );
@@ -100,6 +100,7 @@ const Notification = () => {
     }
     else {
       setSelectedNotification(notification.notification.extra_data);
+      console.log(notification.notification.extra_data);
       setSelectedNotificationId(notification.id);
       setIsDialogOpen(true);
     }
@@ -322,12 +323,12 @@ const Notification = () => {
           THÔNG TIN KHÁCH HÀNG
         </DialogTitle>
         <DialogContent sx={{ color: "white", padding: 10 }}>
-          {selectedNotification?.customer && (
+          {selectedNotification && (
             <Stack spacing={2}>
               <Avatar
-                src={selectedNotification.customer?.avatar ?? ""}
-                alt={`${selectedNotification.customer?.first_name ?? ""} ${
-                  selectedNotification.customer?.last_name ?? ""
+                src={selectedNotification?.avatar ?? ""}
+                alt={`${selectedNotification?.first_name ?? ""} ${
+                  selectedNotification?.last_name ?? ""
                 }`}
                 sx={{
                   width: 80,
@@ -338,8 +339,8 @@ const Notification = () => {
               />
 
               <Typography variant="h6" sx={{ alignSelf: "center" }}>
-                {selectedNotification.customer?.first_name ?? ""}{" "}
-                {selectedNotification.customer?.last_name ?? ""}
+                {selectedNotification?.first_name ?? ""}{" "}
+                {selectedNotification?.last_name ?? ""}
               </Typography>
 
               <Typography
@@ -350,7 +351,7 @@ const Notification = () => {
                   alignSelf: "center",
                 }}
               >
-                {selectedNotification.customer?.email ?? "Chưa có email"}
+                {selectedNotification?.email ?? "Chưa có email"}
               </Typography>
               <Typography
                 variant="h6"
@@ -360,7 +361,7 @@ const Notification = () => {
                   alignSelf: "center",
                 }}
               >
-                {selectedNotification.customer?.phone ?? "Chưa có SĐT"}
+                {selectedNotification?.phone ?? "Chưa có SĐT"}
               </Typography>
               <Typography
                 variant="h6"
@@ -370,7 +371,7 @@ const Notification = () => {
                   alignSelf: "center",
                 }}
               >
-                {selectedNotification.customer?.address ?? "Chưa có địa chỉ"}
+                {selectedNotification?.address ?? "Chưa có địa chỉ"}
               </Typography>
 
               <Typography
@@ -386,11 +387,11 @@ const Notification = () => {
               >
                 Giới tính:{" "}
                 <span style={{ color: "wheat" }}>
-                  {selectedNotification.customer?.gender != null
+                  {selectedNotification?.gender != null
                     ? `${
-                        selectedNotification.customer.gender === 0
+                        selectedNotification.gender === 0
                           ? "Nữ"
-                          : selectedNotification.customer.gender === 1
+                          : selectedNotification.gender === 1
                           ? "Nam"
                           : "Khác"
                       }`
@@ -403,7 +404,7 @@ const Notification = () => {
               >
                 Ngày sinh:{" "}
                 <span style={{ color: "wheat" }}>
-                  {selectedNotification.customer?.birthday ?? "Chưa điền"}
+                  {selectedNotification?.birthday ?? "Chưa điền"}
                 </span>
               </Typography>
               <Typography
@@ -412,8 +413,8 @@ const Notification = () => {
               >
                 Chiều cao:{" "}
                 <span style={{ color: "wheat" }}>
-                  {selectedNotification.customer?.height != null
-                    ? `${selectedNotification.customer.height} cm`
+                  {selectedNotification?.height != null
+                    ? `${selectedNotification.height} cm`
                     : "Chưa điền"}
                 </span>
               </Typography>
@@ -423,8 +424,8 @@ const Notification = () => {
               >
                 Cân nặng:{" "}
                 <span style={{ color: "wheat" }}>
-                  {selectedNotification.customer?.weight != null
-                    ? `${selectedNotification.customer.weight} kg`
+                  {selectedNotification?.weight != null
+                    ? `${selectedNotification.weight} kg`
                     : "Chưa điền"}
                 </span>
               </Typography>
@@ -434,8 +435,20 @@ const Notification = () => {
               >
                 Tỷ lệ mỡ:{" "}
                 <span style={{ color: "wheat" }}>
-                  {selectedNotification.customer?.body_fat != null
-                    ? `${selectedNotification.customer.body_fat} %`
+                  {selectedNotification?.body_fat != null
+                    ? `${selectedNotification.body_fat} %`
+                    : "Chưa điền"}
+                </span>
+              </Typography>
+
+              <Typography
+                variant="body1"
+                sx={{ color: "white", marginLeft: 7 }}
+              >
+                Tình trạng sức khoẻ:{" "}
+                <span style={{ color: "wheat" }}>
+                  {selectedNotification?.health_condition != null
+                    ? `${selectedNotification.health_condition}`
                     : "Chưa điền"}
                 </span>
               </Typography>
@@ -447,9 +460,9 @@ const Notification = () => {
                 Thông tin gói tập
               </Typography>
 
-              {selectedNotification.customer.customer_contracts_pt.length >
+              {selectedNotification?.customer_contracts_pt?.length >
               0 ? (
-                selectedNotification.customer.customer_contracts_pt.map(
+                selectedNotification.customer_contracts_pt.map(
                   (contract) => (
                     <Stack key={contract.id} spacing={1} sx={{ marginLeft: 7 }}>
                       <Typography variant="body1" sx={{ color: "white" }}>
