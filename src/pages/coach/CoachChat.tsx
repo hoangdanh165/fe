@@ -194,7 +194,7 @@ const CoachChat: React.FC = () => {
         <Typography variant="h6" mb={2} color="white">
           Danh sách trò chuyện
         </Typography>
-        <Search placeholder="Search..." style={{ marginBottom: "16px", backgroundColor: "#2a2b34", color: "white" }} />
+        <Search placeholder="Search..." style={{ marginBottom: "16px", color: "white" }} />
         <Button variant="contained" color="primary" onClick={handleOpenDialog} style={{ marginBottom: "16px" }}>
           Thêm
         </Button>
@@ -219,9 +219,9 @@ const CoachChat: React.FC = () => {
 
       {/* Main Chat Container */}
       <Box flex={1} display="flex" flexDirection="column" bgcolor="#171821">
-        <MainContainer>
+        <MainContainer style={{ border: "3px solid rgba(0,0,0,.87)" }}>
           <ChatContainer>
-            <ConversationHeader style={{ border: "3px solid black" }}>        
+            <ConversationHeader style={{ border: "0px solid #171821", backgroundColor: "#171821" }}>        
               <Avatar src={
                 selectedConversation?.customer_data?.avatar_url ? 
                   selectedConversation?.customer_data?.avatar_url 
@@ -266,7 +266,7 @@ const CoachChat: React.FC = () => {
               ))}
             </MessageList>
 
-            <MessageInput placeholder="Type your message here..." onSend={handleSend} onChange={handleInputChange} style={{ backgroundColor: "#2a2b34", color: "white" }} />
+            <MessageInput placeholder="Type your message here..." onSend={handleSend} onChange={handleInputChange} style={{ backgroundColor: "#2a2b34", color: "white", border: "0px solid #171821" }} />
           </ChatContainer>
         </MainContainer>
       </Box>
