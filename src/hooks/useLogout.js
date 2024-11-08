@@ -1,15 +1,15 @@
-import axios from "../services/axios";
+import useAxiosPrivate from "./useAxiosPrivate";
 import useAuth from "./useAuth";
 
 const useLogout = () => {
     const { setAuth } = useAuth(); 
-    window.localStorage.removeItem('isLoggedIn');
-    
+    const axiosPrivate = useAxiosPrivate();
+
     const logout = async () => {
         setAuth(null);
-        localStorage.removeItem('persist')
+        localStorage.removeItem('persist');
         try {
-            axios.post('/api/v1/users/log-out/', 
+            axiosPrivate.post('/api/v1/users/log-out/', 
             {}, 
             {
                 withCredentials: true

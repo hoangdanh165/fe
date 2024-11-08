@@ -25,7 +25,6 @@ export const usePTServicesData = (reloadTrigger: number) => {
           start_date: ptservice.start_date,
           expire_date: ptservice.expire_date,
           discount: ptservice.discount,
-          number_of_session: ptservice.number_of_session, 
           session_duration: ptservice.session_duration, 
           cost_per_session: ptservice.cost_per_session, 
           validity_period: ptservice.validity_period, 

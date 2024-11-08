@@ -194,7 +194,7 @@ const NonPTServiceTable = ({ searchText }: { searchText: string }): ReactElement
       flex: 0.5,
       minWidth: 300,
       headerAlign: 'center',
-      align: 'left',
+      align: 'center',
     },
     {
       field: 'discount',

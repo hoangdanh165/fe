@@ -54,6 +54,9 @@ export const useScheduleData = (reloadTrigger: number) => {
             customer_gender: ws.customer.gender,
             customer_birthday: ws.customer.birthday,
             customer_avatar: ws.customer.avatar,
+            customer_session_info: ws.customer.used_sessions + " / " + ws.customer.total_sessions,
+            customer_used_sessions: ws.customer.used_sessions,
+            customer_total_sessions: ws.customer.total_sessions,
             customer_color: customerColors[customerId], 
             
             coach_id: ws.coach,

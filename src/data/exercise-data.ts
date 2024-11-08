@@ -26,6 +26,7 @@ export const useExercisesData = (reloadTrigger: number) => {
           duration: exercise.duration,
           repetitions: exercise.repetitions,
           image_url: exercise.image_url,
+          image_preview: exercise?.image_url ?? "",
           rest_period: exercise.rest_period,
           embedded_video_url: exercise.embedded_video_url,
           categories: exercise.categories.map((category) => ({

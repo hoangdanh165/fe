@@ -46,6 +46,8 @@ const Calendar = () => {
   const [estimatedDuration, setEstimatedDuration] = useState("");
   const [coachId, setCoachId] = useState("");
   const [customerId, setCustomerId] = useState("");
+  const [sessionInfo, setSessionInfo] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // State for exercises
   const [exercises, setExercises] = useState([]); // All exercises in system
@@ -76,6 +78,7 @@ const Calendar = () => {
           customerId: row.customer_id,
           customerName: `${row.customer_name}`,
           trainingPlan: row.training_plan,
+          customerSessionInfo: row.customer_session_info,
         },
       }));
       setCurrentEvents(events);
@@ -132,6 +135,8 @@ const Calendar = () => {
         birthday: customer.birthday,
         avatar: customer.avatar,
         customer_user_id: customer.customer_user_id,
+        used_sessions: customer.used_sessions,
+        total_sessions: customer.total_sessions,
       }));
 
       setCoachId(response.data.coach_id);
@@ -143,6 +148,7 @@ const Calendar = () => {
 
   const fetchTrainingPlansByCustomer = async (customerId) => {
     try {
+      setIsLoading(true);
       const url = `/api/v1/training-plans/get-by-customers?customer=${customerId}`;
 
       const response = await axiosPrivate.get(url, {
@@ -163,6 +169,8 @@ const Calendar = () => {
       setTrainingPlans(formattedRows);
     } catch (err) {
       console.log("Error fetching exercises: ", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -243,7 +251,7 @@ const Calendar = () => {
     setEstimatedDuration(event.extendedProps?.trainingPlan?.estimated_duration || "")
     setCurrentExercises(event.extendedProps?.trainingPlan?.exercises || []);
     setSelectedTrainingPlan(event.extendedProps?.trainingPlan || null);
-
+    setSessionInfo(event.extendedProps?.customerSessionInfo || null);
     fetchAllExercises();
     setOpenEventDialog(true);
   };
@@ -575,6 +583,7 @@ const Calendar = () => {
     setSelectedEvent(null);
     setEventTitle(null);
     setCustomerId(null);
+    setSessionInfo(null);
     setEventStart(null);
     setEventEnd(null);
     setEventNote(null);
@@ -632,12 +641,23 @@ const Calendar = () => {
             <Select
               value={customerId}
               onChange={(e) => {
-                const selectedCustomerId = e.target.value;
-                setCustomerId(selectedCustomerId);
-                fetchTrainingPlansByCustomer(selectedCustomerId);
+                const selectedCustomer = customers.find(
+                  (customer) => customer.id === e.target.value
+                );
+                
+                
+                setCustomerId(selectedCustomer.id);
+                fetchTrainingPlansByCustomer(selectedCustomer.id);
                 setSelectedTrainingPlan(null);
                 setEstimatedDuration(null);
                 setEventNote(null);
+                setCurrentExercises(null);
+                if(selectedCustomer?.used_sessions === selectedCustomer?.total_sessions) {
+                  alert("Khách hàng này đã hết số buổi tập luyện!");
+                  setSessionInfo(selectedCustomer.used_sessions + " / " + selectedCustomer.total_sessions);
+                } else {
+                  setSessionInfo(selectedCustomer.used_sessions + " / " + selectedCustomer.total_sessions);
+                }
               }}
               label="Khách hàng"
             >
@@ -648,6 +668,14 @@ const Calendar = () => {
               ))}
             </Select>
           </FormControl>
+          <TextField
+            label="Số buổi đã tập"
+            type="text"
+            value={sessionInfo}
+            disabled
+            fullWidth
+            margin="normal"
+          />
           <FormControl fullWidth margin="dense">
             <InputLabel sx={{ marginBottom: 2 }}>Giáo án buổi tập</InputLabel>
             <Select
@@ -664,7 +692,9 @@ const Calendar = () => {
               }}
               label="Giáo án buổi tập"
             >
-              {trainingPlans?.length > 0 ? (
+              {isLoading ? (
+                <MenuItem disabled>Đang tải...</MenuItem>
+              ) : trainingPlans?.length > 0 ? (
                 trainingPlans.map((tp) => (
                   <MenuItem key={tp.id} value={tp.id}>
                     {tp.overview}
@@ -672,7 +702,7 @@ const Calendar = () => {
                 ))
               ) : (
                 <MenuItem disabled value="">
-                  {selectedTrainingPlan?.id || "Chưa có giáo án"}{" "}
+                  {selectedTrainingPlan?.id || "Chưa có giáo án"}
                 </MenuItem>
               )}
             </Select>

@@ -54,7 +54,6 @@ interface PTService {
   id: number;
   discount: string;
   name: string;
-  number_of_session: string;
   session_duration: string;
   cost_per_session: string;
   validity_period: string;
@@ -69,6 +68,7 @@ interface Contract {
   customer: Customer;
   is_purchased: boolean;
   used_sessions: number;
+  number_of_session: string;
 }
 
 interface Coach {
@@ -562,7 +562,7 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
       
               <Typography variant="body1" sx={{ color: 'white', marginLeft: 7 }}>
                 Số buổi đã tập: <span style={{ color: 'wheat'}}>
-                  {selectedContract?.used_sessions ?? '0'} / {selectedContract.ptservice?.number_of_session ?? '0'}
+                  {selectedContract?.used_sessions ?? '0'} / {selectedContract?.number_of_session ?? '0'}
                 </span>
               </Typography>
             </Stack>

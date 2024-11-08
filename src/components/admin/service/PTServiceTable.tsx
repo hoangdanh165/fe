@@ -6,10 +6,7 @@ import CustomPagination from "../../common/CustomPagination";
 import CustomNoResultsOverlay from "../../common/CustomNoResultsOverlay";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import {
-  Stack,
-  Avatar,
   Tooltip,
-  Typography,
   CircularProgress,
   Dialog,
   DialogTitle,
@@ -17,10 +14,6 @@ import {
   DialogActions,
   Button,
   TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Grid,
   Alert,
   InputAdornment,
@@ -43,7 +36,6 @@ interface CustomerStatistic {
   start_date: string;
   expire_date: string;
   discount: string;
-  number_of_session: string;
   session_duration: string;
   cost_per_session: string;
   validity_period: string;
@@ -82,7 +74,6 @@ const PTServiceTable = ({
       start_date: "",
       expire_date: "",
       discount: "0",
-      number_of_session: "0",
       session_duration: "0",
       cost_per_session: "0",
       validity_period: "0",
@@ -117,7 +108,6 @@ const PTServiceTable = ({
         {
           discount: editingPTService.discount,
           name: editingPTService.name,
-          number_of_session: editingPTService.number_of_session,
           session_duration: editingPTService.session_duration,
           cost_per_session: editingPTService.cost_per_session,
           validity_period: editingPTService.validity_period,
@@ -148,7 +138,6 @@ const PTServiceTable = ({
         {
           discount: editingPTService.discount,
           name: editingPTService.name,
-          number_of_session: editingPTService.number_of_session,
           session_duration: editingPTService.session_duration,
           cost_per_session: editingPTService.cost_per_session,
           validity_period: editingPTService.validity_period,
@@ -213,7 +202,7 @@ const PTServiceTable = ({
       flex: 0.5,
       minWidth: 280,
       headerAlign: "center",
-      align: "left",
+      align: "center",
     },
     {
       field: "discount",
@@ -221,15 +210,6 @@ const PTServiceTable = ({
       resizable: false,
       flex: 0.5,
       minWidth: 145,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "number_of_session",
-      headerName: "Số buổi tập",
-      resizable: false,
-      flex: 0.5,
-      minWidth: 150,
       headerAlign: "center",
       align: "center",
     },
@@ -440,30 +420,6 @@ const PTServiceTable = ({
                         color: "yellow",
                       },
                     }}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    margin="dense"
-                    label="Số buổi tập"
-                    type="text"
-                    variant="standard"
-                    value={editingPTService.number_of_session ?? "0"}
-                    onChange={(e) =>
-                      setEditingPTService({
-                        ...editingPTService,
-                        number_of_session: e.target.value,
-                      })
-                    }
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">buổi</InputAdornment>
-                      ),
-                      sx: {
-                        color: "yellow",
-                      },
-                    }}
-                    sx={{ width: "50%" }}
                   />
                 </Grid>
                 <Grid item xs={4}>

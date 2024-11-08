@@ -57,6 +57,8 @@ interface Customer {
   height: number;
   weight: number;
   health_condition: string;
+  used_sessions: string;
+  total_sessions: string;
   workout_goal: WorkoutGoal;
 }
 
@@ -103,15 +105,16 @@ const TrainingPlanTable = ({
   const [isEditMode, setEditMode] = useState(!!editingTP);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [serviceModalOpen, setServiceModalOpen] = useState(false);
-  const [customers, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState<Customer | null>([]);
   const [openAddExerciseDialog, setOpenAddExerciseDialog] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState(""); // Selected exercise for adding to workout schedule
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [categories, setCategories] = useState([]); // All distinct categories from all exercises
   const [exercises, setExercises] = useState([]); // All exercises in system
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const [sessionInfo, setSessionInfo] = useState(null);
 
-  console.log(rows);
+  
   useEffect(() => {
     const fetchDropdownData = async () => {
       const response = await axiosPrivate.get(
@@ -129,6 +132,8 @@ const TrainingPlanTable = ({
         gender: customer.gender,
         birthday: customer.birthday,
         avatar: customer.avatar,
+        used_sessions: customer.used_sessions,
+        total_sessions: customer.total_sessions,
       }));
 
       setDropdownData(formattedRows);
@@ -137,10 +142,6 @@ const TrainingPlanTable = ({
     fetchDropdownData();
     fetchAllExercises();
   }, [axiosPrivate]);
-
-  useEffect(() => {
-    console.log(categories);
-  }, [categories]);
 
   const fetchAllExercises = async () => {
     try {
@@ -220,6 +221,7 @@ const TrainingPlanTable = ({
     if (tp) {
       setEditingTP(tp);
       setEditModalOpen(true);
+      setSessionInfo(tp.customer.used_sessions + " / " + tp.customer.total_sessions);
     }
   };
 
@@ -227,18 +229,20 @@ const TrainingPlanTable = ({
     setEditMode(false);
     setEditingTP({
       id: "",
-      exercises: null,
+      exercises: [],
       note: "",
       overview: "",
       estimated_duration: "",
-      customer: null,
+      customer: "",
     });
+    setSessionInfo(null);
     setEditModalOpen(true);
   };
 
   const handleCloseEditModal = () => {
     setEditModalOpen(false);
     setEditingTP(null);
+    setSessionInfo(null);
   };
 
   const handleSave = async () => {
@@ -252,9 +256,27 @@ const TrainingPlanTable = ({
   };
 
   const handleSaveEdit = async () => {
-    try {
-      if (!editingTP) return;
+    if (editingTP) {
+      if (!editingTP.customer) {
+        alert("Vui lòng chọn khách hàng!");
+        return;
+      }
+      if (!editingTP.overview) {
+        alert("Vui lòng nhập tổng quan buổi tập!");
+        return;
+      }
+      if (!editingTP.estimated_duration) {
+        alert("Vui lòng nhập thời lượng ước tính của buổi tập!");
+        return;
+      }
+      if (editingTP.exercises.length === 0) {
+        alert("Vui lòng thêm bài tập!");
+        return;
+      }
+    }
+    else return;
 
+    try {
       const response = await axiosPrivate.put(
         `/api/v1/training-plans/${editingTP.id}/`,
         {
@@ -274,6 +296,7 @@ const TrainingPlanTable = ({
       setReloadTrigger((prev) => prev + 1);
       setEditModalOpen(false);
       setEditingTP(null);
+      setSessionInfo(null);
       alert("Lưu thành công!");
     } catch (error) {
       console.error("Error saving training plan:", error);
@@ -282,8 +305,33 @@ const TrainingPlanTable = ({
   };
 
   const handleSaveAdd = async () => {
-    if (!editingTP) return;
-
+    if (editingTP) {
+      if (!editingTP.customer) {
+        alert("Vui lòng chọn khách hàng!");
+        return;
+      }
+      if(editingTP?.customer?.used_sessions && editingTP?.customer?.total_sessions) {
+        if (editingTP?.customer?.used_sessions === editingTP?.customer?.total_sessions) {
+          alert("Khách hàng này đã hết số buổi tập luyện!");
+          return;
+        }
+      }
+      
+      if (!editingTP.overview) {
+        alert("Vui lòng nhập tổng quan buổi tập!");
+        return;
+      }
+      if (!editingTP.estimated_duration) {
+        alert("Vui lòng nhập thời lượng ước tính của buổi tập!");
+        return;
+      }
+      if (editingTP.exercises.length === 0) {
+        alert("Vui lòng thêm bài tập!");
+        return;
+      }
+    }
+    else return;
+    
     try {
       const response = await axiosPrivate.post(
         `/api/v1/training-plans/`,
@@ -549,24 +597,38 @@ const TrainingPlanTable = ({
                   value={editingTP?.customer?.id || ""}
                   onChange={(e) => {
                     const selectedCustomer = customers.find(
-                      (customer) => customer.id === e.target.value
+                      (customer: Customer) => customer.id === e.target.value
                     );
                     if (selectedCustomer) {
                       setEditingTP({
                         ...editingTP,
                         customer: selectedCustomer,
                       });
+                      console.log(selectedCustomer);
+                      if(selectedCustomer?.used_sessions === selectedCustomer?.total_sessions) {
+                        alert("Khách hàng này đã hết số buổi tập luyện!");
+                        setSessionInfo(selectedCustomer.used_sessions + " / " + selectedCustomer.total_sessions);
+                      } else {
+                        setSessionInfo(selectedCustomer.used_sessions + " / " + selectedCustomer.total_sessions);
+                      }
                     }
                   }}
                   label="Khách hàng"
                 >
-                  {customers.map((customer) => (
+                  {customers.map((customer: Customer) => (
                     <MenuItem key={customer.id} value={customer.id}>
                       {customer.first_name} {customer.last_name}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
+              <TextField
+                label="Số buổi đã tập"
+                value={ sessionInfo || "Không có dữ liệu"}
+                disabled
+                fullWidth
+                margin="normal"
+              />
               <TextField
                 label="Tổng quan buổi tập"
                 value={editingTP?.overview || ""}

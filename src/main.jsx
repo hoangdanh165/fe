@@ -13,9 +13,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ThemeProvider theme={theme}>
       <BreakpointsProvider>
         <CssBaseline />
-        <AuthProvider>
-          <RouterProvider router={router} />
-        </AuthProvider>
+          <AuthProvider>
+            <RouterProvider router={router} />
+          </AuthProvider>
       </BreakpointsProvider>
     </ThemeProvider>
   </React.StrictMode>

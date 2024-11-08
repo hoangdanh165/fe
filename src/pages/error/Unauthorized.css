@@ -1,5 +1,6 @@
 body {
-  background-image: url('/banned-background.jpg'); /* Background image path */
+  /* background-image: url('/banned-background.jpg');  */
+  background-color: #171821;
   background-size: cover; /* Cover the entire viewport */
   background-position: center; /* Center the background image */
   color: white;

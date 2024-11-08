@@ -12,7 +12,7 @@ const Banned = () => {
         <Box 
             sx={{
                 height: '100vh',
-                backgroundImage: 'url(/banned-background.jpg)', 
+                backgroundColor: '#171821', 
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 display: 'flex',

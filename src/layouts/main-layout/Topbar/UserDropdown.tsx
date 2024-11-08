@@ -58,7 +58,7 @@ const UserDropdown = (): ReactElement => {
           },
         }}
       >
-        <Tooltip title="Nickelfox" arrow placement="bottom">
+        <Tooltip title="Thành viên" arrow placement="bottom">
           <Avatar src={profile} sx={{ width: 44, height: 44 }} />
         </Tooltip>
         <IconifyIcon

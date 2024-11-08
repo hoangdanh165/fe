@@ -96,6 +96,8 @@ const ExerciseTable = ({
       setExerciseNames((prevNames) =>
         prevNames.filter((name) => name !== exercise.name)
       );
+      const ExerciseNames = rows.map((exercise) => exercise.name);
+      setExerciseNames(ExerciseNames);
       setOriginalName(exercise.name);
       setIsAvailable(true);
       setEditModalOpen(true);
@@ -120,11 +122,6 @@ const ExerciseTable = ({
   };
 
   useEffect(() => {
-    const ExerciseNames = rows.map((exercise) => exercise.name);
-    setExerciseNames(ExerciseNames);
-  }, [rows, exerciseNames]);
-
-  useEffect(() => {
     fetchAllCategories();
   }, []);
 
@@ -141,6 +138,8 @@ const ExerciseTable = ({
       rest_period: "",
       embedded_video_url: "",
     });
+    const ExerciseNames = rows.map((exercise) => exercise.name);
+    setExerciseNames(ExerciseNames);
     setEditModalOpen(true);
     setIsAvailable(true);
   };
@@ -229,6 +228,7 @@ const ExerciseTable = ({
       );
 
       setReloadTrigger((prev) => prev + 1);
+      alert("Cập nhật bài tập thành công!");
       handleCloseEditModal();
     } catch (error) {
       if (error) {
@@ -301,6 +301,7 @@ const ExerciseTable = ({
 
       console.log("Đã thêm bài tập:", editingExercise);
       setReloadTrigger((prev) => prev + 1);
+      alert("Thêm bài tập thành công!");
       handleCloseEditModal();
     } catch (error) {
       if (error) {
