@@ -45,6 +45,7 @@ interface PTContractData {
   customer_name: string;
   ptservice_name: string;
   used_session: string;
+  number_of_session: string;
   is_purchased: boolean;
   coach_id: string;
   customer_id: string;
@@ -142,7 +143,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
     }
   };
 
-  const handleSaveEdit = async () => {
+    const handleSaveEdit = async () => {
     if (!editingPTContract) return;
     try {
       const response = await axiosPrivate.put(
@@ -152,6 +153,8 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
           expireDate: editingPTContract.expire_date,
           coachId: editingPTContract.coach_id,
           isPurchased: editingPTContract.is_purchased,
+          usedSession: editingPTContract.used_session,
+          numberOfSession: editingPTContract.number_of_session,
         },
         {
           headers: {
@@ -159,7 +162,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
           }
         }
       );
-
+  
       setReloadTrigger(prev => prev + 1);
       handleCloseEditModal();
     } catch (error) {
@@ -169,10 +172,10 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
       }
     }
   };
-
+  
   const handleSaveAdd = async () => {
     if (!editingPTContract) return;
-
+  
     try {
       const response = await axiosPrivate.post(
         `/nodejs/ptcontract/addPtContract/`,
@@ -183,6 +186,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
           customerId: editingPTContract.customer_id,
           ptServiceId: editingPTContract.ptservice_id,
           isPurchased: editingPTContract.is_purchased,
+          numberOfSession: editingPTContract.number_of_session,
         },
         {
           headers: {
@@ -190,7 +194,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
           }
         }
       );
-
+  
       console.log('Added new PT contract:', editingPTContract);
       setReloadTrigger(prev => prev + 1);
       handleCloseEditModal();
@@ -411,11 +415,11 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
         <DialogTitle sx={{ textAlign: 'center' }}>        
           {isEditMode ? 'Cập nhật hợp đồng PT' : 'Tạo hợp đồng PT'}
         </DialogTitle>
-        <DialogContent>
+                <DialogContent>
           {editingPTContract && (
             <>
               {emailError && <Alert severity="error">{emailError}</Alert>}
-
+        
               <TextField
                 autoFocus
                 margin="dense"
@@ -429,7 +433,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
                   shrink: true,
                 }}
               />
-
+        
               <TextField
                 margin="dense"
                 label="Ngày kết thúc (không bắt buộc nhập)"
@@ -442,7 +446,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
                   shrink: true,
                 }}
               />
-
+        
               <FormControl fullWidth margin="dense">
                 <InputLabel id="coach-name-label">Tên PT</InputLabel>
                 <Select
@@ -465,7 +469,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
                   ))}
                 </Select>
               </FormControl>
-
+        
               <FormControl fullWidth margin="dense">
                 <InputLabel id="customer-name-label">Tên khách hàng</InputLabel>
                 <Select
@@ -489,7 +493,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
                   ))}
                 </Select>
               </FormControl>
-
+        
               <FormControl fullWidth margin="dense">
                 <InputLabel id="ptservice-name-label">Tên gói</InputLabel>
                 <Select
@@ -513,18 +517,27 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
                   ))}
                 </Select>
               </FormControl>
-
+        
               <TextField
                 margin="dense"
                 label="Số buổi tập đã dùng" 
                 type="text"
                 fullWidth
                 variant="standard"
-                value={editingPTContract.used_session}
+                value={editingPTContract?.used_session?.includes('/') ? editingPTContract?.used_session?.split('/')[0] : "0"}
                 onChange={(e) => setEditingPTContract({ ...editingPTContract, used_session: e.target.value })}
-                disabled
               />
-
+        
+              <TextField
+                margin="dense"
+                label="Tổng buổi tập" 
+                type="text"
+                fullWidth
+                variant="standard"
+                value={editingPTContract.number_of_session}
+                onChange={(e) => setEditingPTContract({ ...editingPTContract, number_of_session: e.target.value })}
+              />
+        
               <FormControl fullWidth margin="dense">
                 <InputLabel id="is-purchased-label">Thanh toán</InputLabel>
                 <Select

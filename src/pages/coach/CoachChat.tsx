@@ -35,8 +35,10 @@ const CoachChat: React.FC = () => {
       try {
         const response = await axiosPrivate.get("/api/v1/users/info/");
         const profileData = response.data.profile || {};
+        //console.log(profileData);
+        //console.log("======================")
         setCoachProfile({
-          id: profileData.id ?? null,
+          id: profileData.coach_user_id ?? null, //Day la coach_id
           avatar: response.data.avatar_url ?? null,
           phone: response.data.phone ?? null,
           email: response.data.email ?? null,
@@ -63,12 +65,13 @@ const CoachChat: React.FC = () => {
   }, [axiosPrivate]);
 
   useEffect(() => {
+    console.log("called")
     if (coachProfile.id) {
       const fetchConversations = async () => {
         try {
           const response = await axiosPrivate.get(`/nodejs/chat/getChatMenuOfCoachId/${coachProfile.id}`);
           setConversations(response.data);
-          console.log(response)
+          //console.log(response)
         } catch (error) {
           console.error("Error fetching conversations:", error);
         }
@@ -90,7 +93,8 @@ const CoachChat: React.FC = () => {
 
   const handleConversationClick = (conversation) => {
     setSelectedConversation(conversation);
-    fetchMessages(conversation.coach_id_id, conversation.customer_id_id);
+    console.log(conversation.customer_data.customer_id)
+    fetchMessages(conversation.coach_id_id, conversation.customer_data.customer_id);
   };
 
   const handleSend = async (message) => {
@@ -120,6 +124,7 @@ const CoachChat: React.FC = () => {
           },
         ]);
         setTyping(false); // Reset typing state after sending the message
+
       } catch (error) {
         console.error("Error sending message:", error);
       }
@@ -160,6 +165,8 @@ const CoachChat: React.FC = () => {
     try {
       const response = await axiosPrivate.get('/nodejs/chat/getAllCustomerProfiles');
       setCustomers(response.data);
+      console.log("handleOpenDialog")
+      console.log(response.data)
       setDialogOpen(true);
     } catch (error) {
       console.error("Error fetching customer profiles:", error);
@@ -175,8 +182,9 @@ const CoachChat: React.FC = () => {
     const newConversation = {
       id: Date.now(),
       coach_id_id: coachProfile.id,
+      //todo
       customer_id_id: selectedCustomer,
-      customer_data: customers.find(customer => customer.id === selectedCustomer),
+      customer_data: customers.find(customer => customer.customer_id === selectedCustomer),
       content: '',
     };
     setConversations([...conversations, newConversation]);
@@ -185,7 +193,7 @@ const CoachChat: React.FC = () => {
     setDialogOpen(false);
   };
 
-  const selectedCustomerData = customers.find(customer => customer.id === selectedCustomer);
+  let selectedCustomerData = customers.find(customer => customer.customer_id === selectedCustomer);
 
   return (
     <Box display="flex" height="85vh" bgcolor="#171821" color="white">
@@ -211,7 +219,7 @@ const CoachChat: React.FC = () => {
                 color: "white",
               }}
             >
-              <Avatar src={conv?.customer_data?.avatar_url ? conv?.customer_data?.avatar_url : "https://i.pinimg.com/originals/23/51/bc/2351bc65b2b5d75cef146b7edddf805b.gif"} name={`${conv?.customer_data?.first_name} ${conv?.customer_data?.last_name}`} />
+              <Avatar src={conv?.customer_data?.avatar_url ? conv?.customer_data?.avatar_url : "https://i.pinimg.com/originals/23/51/bc/2351bc65b2b5d75cef146b7edddf805b.gif"} name={``} />
             </Conversation>
           ))}
         </ConversationList>
@@ -221,7 +229,7 @@ const CoachChat: React.FC = () => {
       <Box flex={1} display="flex" flexDirection="column" bgcolor="#171821">
         <MainContainer style={{ border: "3px solid rgba(0,0,0,.87)" }}>
           <ChatContainer>
-            <ConversationHeader style={{ border: "0px solid #171821", backgroundColor: "#171821" }}>        
+            <ConversationHeader style={{ border: "3px solid #171821"}}>        
               <Avatar src={
                 selectedConversation?.customer_data?.avatar_url ? 
                   selectedConversation?.customer_data?.avatar_url 
@@ -229,9 +237,7 @@ const CoachChat: React.FC = () => {
                   ? "https://i.pinimg.com/originals/23/51/bc/2351bc65b2b5d75cef146b7edddf805b.gif"
                   : "https://www.pngkit.com/png/full/799-7998601_profile-placeholder-person-icon.png"
               } 
-                name={
-                  selectedConversation?.customer_data?.first_name
-                } 
+                name=""
               />
               <ConversationHeader.Content 
                 userName={
@@ -281,14 +287,17 @@ const CoachChat: React.FC = () => {
               labelId="customer-label"
               id="customer-select"
               value={selectedCustomer}
-              onChange={(e) => setSelectedCustomer(e.target.value)}
+              onChange={(e) => {
+                setSelectedCustomer(e.target.value);
+                console.log("selectedCustomer: ", e.target.value);
+              }}
               renderValue={(selected) => {
-                const customer = customers.find(c => c.id === selected);
+                const customer = customers.find(c => c.customer_id === selected);
                 return customer ? `${customer.first_name} ${customer.last_name}` : '';
               }}
             >
               {customers.map((customer) => (
-                <MenuItem key={customer.id} value={customer.id}>
+                <MenuItem key={customer.customer_id} value={customer.customer_id}>
                   {`${customer.first_name} ${customer.last_name}`}
                 </MenuItem>
               ))}
