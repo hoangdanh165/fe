@@ -34,7 +34,6 @@ export const usePTContractData = (reloadTrigger: number) => {
           coach_id: contract.coach.id,
           customer_id: contract.customer.id,
         }));
-
         
         setRows(formattedRows);
       } catch (err) {

@@ -35,6 +35,7 @@ import {
   GridRenderCellParams,
   GridTreeNodeWithRender,
 } from '@mui/x-data-grid';
+import NotificationService from '../../services/notification';
 
 interface PTContractData {
   id: string;
@@ -194,8 +195,15 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
           }
         }
       );
-  
-      console.log('Added new PT contract:', editingPTContract);
+      
+      if (response.status >= 200 && response.status < 300) {
+        await NotificationService.createNotification(
+          axiosPrivate,
+          editingPTContract.customer_id,
+          `Một hợp đồng mới đã được tạo dành cho bạn. Hãy vào danh sách hợp đồng để kiểm tra.`
+        );
+      }
+
       setReloadTrigger(prev => prev + 1);
       handleCloseEditModal();
     } catch (error) {
