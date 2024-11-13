@@ -35,6 +35,7 @@ import {
   GridRenderCellParams,
   GridTreeNodeWithRender,
 } from '@mui/x-data-grid';
+import NotificationService from '../../services/notification';
 
 interface PTContractData {
   id: string;
@@ -49,6 +50,7 @@ interface PTContractData {
   is_purchased: boolean;
   coach_id: string;
   customer_id: string;
+  real_customer_id: string;
 }
 
 const SalePTContractTable = ({ searchText }: { searchText: string }): ReactElement => {
@@ -62,7 +64,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
   const axiosPrivate = useAxiosPrivate();
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   const [coachNames, setCoachNames] = useState<{ id: string, name: string }[]>([]);
-  const [customerNames, setCustomerNames] = useState<{ id: string, name: string }[]>([]);
+  const [customerNames, setCustomerNames] = useState<{ id: string, name: string, customer_id: string }[]>([]);
   const [ptServices, setPtServices] = useState<{ id: string, name: string }[]>([]);
 
   useEffect(() => {
@@ -78,7 +80,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
     const fetchCustomerNames = async () => {
       try {
         const response = await axiosPrivate.get('nodejs/chat/getAllCustomerProfiles');
-        setCustomerNames(response.data.map((customer: any) => ({ id: customer.id, name: `${customer.first_name} ${customer.last_name}` })));
+        setCustomerNames(response.data.map((customer: any) => ({ id: customer.id, name: `${customer.first_name} ${customer.last_name}`, customer_id: customer.customer_id })));
       } catch (error) {
         console.error('Error fetching customer names:', error);
       }
@@ -194,8 +196,17 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
           }
         }
       );
-  
-      console.log('Added new PT contract:', editingPTContract);
+      
+      if (response.status >= 200 && response.status < 300) {
+        await NotificationService.createNotification(
+          axiosPrivate,
+          editingPTContract.real_customer_id,
+          `Một hợp đồng mới đã được tạo dành cho bạn. Hãy vào danh sách hợp đồng để kiểm tra.
+          Tên coach: ${editingPTContract.coach_name}, Tên khách: ${editingPTContract.customer_name},
+          Tên gói: ${editingPTContract.ptservice_name}`,
+        );
+      }
+
       setReloadTrigger(prev => prev + 1);
       handleCloseEditModal();
     } catch (error) {
@@ -481,7 +492,8 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
                     setEditingPTContract({ 
                       ...editingPTContract, 
                       customer_name: e.target.value,
-                      customer_id: selectedCustomer ? selectedCustomer.id : ''
+                      customer_id: selectedCustomer ? selectedCustomer.id : '',
+                      real_customer_id: selectedCustomer ? selectedCustomer?.customer_id : '',
                     });
                   }}
                   disabled={isEditMode}

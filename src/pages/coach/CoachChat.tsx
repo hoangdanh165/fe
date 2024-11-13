@@ -163,7 +163,7 @@ const CoachChat: React.FC = () => {
 
   const handleOpenDialog = async () => {
     try {
-      const response = await axiosPrivate.get('/nodejs/chat/getAllCustomerProfiles');
+      const response = await axiosPrivate.get('/nodejs/chat/getAllCustomerProfilesInContractWithCoachId/'+coachProfile.id);
       setCustomers(response.data);
       console.log("handleOpenDialog")
       console.log(response.data)
