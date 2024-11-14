@@ -1,11 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Outlet, createBrowserRouter, Navigate } from "react-router-dom";
-import PrivateRoute from "../components/PrivateRoute";
-import PageLoader from "../components/loading/PageLoader";
-import Splash from "../components/loading/Splash";
 import { rootPaths } from "./paths";
 import paths from "./paths";
-import ServiceManagement from "../pages/admin/ServiceManagement";
 
 const App = lazy(() => import("../App"));
 
@@ -22,7 +18,8 @@ const ForgotPassword = lazy(() => import("../pages/auth/ForgotPassword"));
 // Error pages
 const NotFound = lazy(() => import("../pages/error/NotFound"));
 const Unauthorized = lazy(() => import("../pages/error/Unauthorized")); 
-
+const Banned = lazy(() => import("../pages/error/Banned"));
+const Forbidden = lazy(() => import("../pages/error/Forbidden"));
 
 // Admin pages
 const AccountManagement = lazy(() => import("../pages/admin/AccountManagement"));
@@ -30,6 +27,7 @@ const Statistic = lazy(() => import("../pages/admin/Statistic"));
 const ServiceResponse = lazy(() => import("../pages/admin/ServiceResponse"));
 const CoachManagement = lazy(() => import("../pages/admin/CoachManagement"));
 const ExerciseManagement = lazy(() => import("../pages/admin/ExerciseManagement"));
+import ServiceManagement from "../pages/admin/ServiceManagement";
 
 // Coach pages
 const UserProfile = lazy(() => import("../pages/coach/UserProfile"));
@@ -46,8 +44,13 @@ const MainLayoutSale = lazy(() => import("../layouts/main-layout-sale"));
 const SaleHomePage = lazy(() => import("../components/sale/SaleHomePage"));
 
 // Other components
+import PrivateRoute from "../components/PrivateRoute";
+import HomeRedirect from "../components/HomeRedirect";
+import IsLoggedIn from "../components/IsLoggedIn";
+import PageLoader from "../components/loading/PageLoader";
+import Splash from "../components/loading/Splash";
 const PersistLogin = lazy(() => import("../components/PersistLogin"));
-const Banned = lazy(() => import("../components/Banned"));
+
 
 
 const createMainLayoutAdminRoutes = () => (
@@ -92,7 +95,12 @@ const routes = [
     children: [
       {
         index: true,
-        element: <Navigate to="/auth/login" />,
+        element: (
+          <PersistLogin>
+            <HomeRedirect />
+          </PersistLogin>
+          
+        ),
       },
       {
         path: rootPaths.adminRoot,
@@ -208,34 +216,55 @@ const routes = [
             </PrivateRoute>
           )
         },
-        {
-          path: '*',
-          element: 
-          <PrivateRoute allowedRoles={["coach"]}>
-             <CoachHomePage />
-            </PrivateRoute>,
-        },
+        // {
+        //   path: '*',
+        //   element: 
+        //   <PrivateRoute allowedRoles={["coach"]}>
+        //      <CoachHomePage />
+        //     </PrivateRoute>,
+        // },
            
       ]
-     },
-     {
+      },
+      {
       path: rootPaths.saleRoot,
       element: <PersistLogin>{createMainLayoutSaleRoutes()}</PersistLogin>,
       children: [
         {
           path: paths.sale_home,
-          element: <SaleHomePage />,
+          element: (
+            <PrivateRoute allowedRoles={["sale"]}>
+              <SaleHomePage />,
+            </PrivateRoute>
+          ), 
         },
         {
           path: paths.sale_contracts,
-          element: <SaleContracts />,
+          element: (
+            <PrivateRoute allowedRoles={["sale"]}>
+              <SaleContracts />,
+            </PrivateRoute>
+          ), 
         },
         {
-          path: '*',
-          element: <SaleHomePage />,
+          path: paths.service_response_for_sale,
+          element: (
+            <PrivateRoute allowedRoles={["sale"]}>
+              <ServiceResponse />
+            </PrivateRoute>
+          ),
         },
+        // {
+        //   path: '*',
+        //   element: (
+        //     <PrivateRoute allowedRoles={["sale"]}>
+        //       <SaleHomePage />,
+        //     </PrivateRoute>
+        //   ),
+          
+        // },
       ],
-    },
+      },
       
       {
         path: rootPaths.authRoot,
@@ -243,31 +272,47 @@ const routes = [
         children: [
           {
             path: paths.login,
-            element: <Login />,
-            
+            element: (
+              <IsLoggedIn>
+                <Login />
+              </IsLoggedIn>
+            )
           },
           {
             path: paths.signup,
-            element: <SignUp />,
+            element: (
+              <IsLoggedIn>
+                <SignUp />
+              </IsLoggedIn>
+            )
           },
           {
             path: paths.forgot_password,
-            element: <ForgotPassword />,
+            element: (
+              <IsLoggedIn>
+                <ForgotPassword />
+              </IsLoggedIn>
+            )
           },
         ],
       },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
     ],
   },
+  
   {
-    path: "*",
-    element: <NotFound />,
-  },
-  {
-    path: "/unauthorized",
+    path: paths.unauthorized,
     element: <Unauthorized />,
   },
   {
-    path: "/banned",
+    path: paths.forbidden,
+    element: <Forbidden />,
+  },
+  {
+    path: paths.banned,
     element: <Banned />,
   },
 ];

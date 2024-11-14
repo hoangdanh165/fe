@@ -64,7 +64,7 @@ const ServiceResponse = () => {
   const fetchCoaches = async () => {
     setLoading(true);
     try {
-      const response = await axiosPrivate.get("/api/v1/coach-profiles/");
+      const response = await axiosPrivate.get("/api/v1/coach-profiles/all/");
       setCoaches(response.data);
     } catch (error) {
       console.error("Error fetching responses:", error);
@@ -88,7 +88,7 @@ const ServiceResponse = () => {
           height: "100vh",
         }}
       >
-        <CircularProgress />
+        <CircularProgress size={100} />
       </Box>
     );
   }
@@ -135,28 +135,41 @@ const ServiceResponse = () => {
     )?.coach_user_id;
 
     if (coachId && selectedResponse) {
-      try {          
-          const customerData = {
-            coachId,
-            ...selectedResponse.customer,
-          };
-          
-          await NotificationService.createNotification(
-            axiosPrivate,
-            coachUserId,
-            `Bạn được giao nhiệm vụ đảm nhận một khách hàng mới (${selectedResponse.customer.first_name} ${selectedResponse.customer.last_name}). 
-            Hãy kiểm tra lịch dạy, điều kiện hiện tại để phản hồi sớm nhất có thể!`,
-            customerData,
-          );
+      // const contracts = selectedResponse.customer.customer_contracts_pt;
+      // const today = new Date();
 
-          await axiosPrivate.patch(
-            `/api/v1/service-responses/${selectedResponse.id}/`,
-            {
-              responded: true,
-            }
-          );
-          fetchResponses(`/api/v1/service-responses/?page=${currentPage + 1}`);
-         
+      // // Lọc các hợp đồng có ngày hết hạn lớn hơn ngày hôm nay
+      // const validContracts = contracts.filter(contract => {
+      //   const expireDate = new Date(contract.expire_date);
+      //   return expireDate > today;
+      // });
+      // const contractToModified = validContracts[0];
+
+      try {
+        // await axiosPrivate.patch(`/api/v1/contracts/${contractToModified.id}/`, {
+        //   coach: coachId,
+        // });
+
+        const customerData = {
+          coachId,
+          ...selectedResponse.customer,
+        };
+
+        await NotificationService.createNotification(
+          axiosPrivate,
+          coachUserId,
+          `Bạn được giao nhiệm vụ đảm nhận một khách hàng mới (${selectedResponse.customer.first_name} ${selectedResponse.customer.last_name}). 
+            Hãy kiểm tra lịch dạy, điều kiện hiện tại để phản hồi sớm nhất có thể!`,
+          customerData
+        );
+
+        await axiosPrivate.patch(
+          `/api/v1/service-responses/${selectedResponse.id}/`,
+          {
+            responded: true,
+          }
+        );
+        fetchResponses(`/api/v1/service-responses/?page=${currentPage + 1}`);
       } catch (error) {
         console.error("Error updating coach:", error);
         alert("Có lỗi xảy ra");
@@ -308,20 +321,20 @@ const ServiceResponse = () => {
                   <TableCell align="center" sx={{ fontSize: "small" }}>
                     {response.create_date}
                   </TableCell>
-                  
-                  <TableCell align="center" sx={{ fontSize: "small" }}>
-                    {response.coach && !response.responded && (  // Kiểm tra có coach và chưa phản hồi
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ width: 10, height: 40 }}
-                        onClick={() => handleOpenModal(response)}
-                      >
-                        <EditIcon fontSize="small" />
-                      </Button>
-                    )}
-                  </TableCell>
 
+                  <TableCell align="center" sx={{ fontSize: "small" }}>
+                    {response.coach &&
+                      !response.responded && ( // Kiểm tra có coach và chưa phản hồi
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          sx={{ width: 10, height: 40 }}
+                          onClick={() => handleOpenModal(response)}
+                        >
+                          <EditIcon fontSize="small" />
+                        </Button>
+                      )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -38,8 +38,11 @@ export default {
   // Sale paths
   sale_home:`${rootPaths.saleRoot}/`,
   sale_contracts:`${rootPaths.saleRoot}/contracts`,
+  service_response_for_sale: `${rootPaths.saleRoot}/service-responses`,
 
   // Errors paths
   404: `${rootPaths.errorRoot}/404`,
   unauthorized: `/unauthorized`,
+  forbidden: `/forbidden`,
+  banned: `/banned`,
 };

@@ -13,7 +13,7 @@ const UserDropdown = (): ReactElement => {
   const menuOpen = Boolean(anchorEl);
   const logout = useLogout();  
   const navigate = useNavigate();
-  const { auth } = useAuth();
+  const { auth, setAuth } = useAuth();
 
   const profile = auth?.avatar;
 
@@ -27,10 +27,12 @@ const UserDropdown = (): ReactElement => {
 
   const handleMenuItemClick = useCallback(
     (userMenuItemId: number) => {
+      localStorage.removeItem('isLoggedIn');
+      setAuth(null);
       handleUserClose();
       if (userMenuItemId === 5) {
           logout();
-          navigate('/auth/login');
+          navigate('/auth/login', { replace: true});
         
       }
     },

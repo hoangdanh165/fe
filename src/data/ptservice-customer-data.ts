@@ -38,6 +38,7 @@ export const usePTServiceCustomerData = (reloadTrigger: number, selectedValue: s
           avatar: npsc.avatar,
           height: npsc.height,
           weight: npsc.weight,
+          health_condition: npsc.health_condition,
           workout_goal: npsc.workout_goal,
           contracts: npsc.customer_contracts,
         }));

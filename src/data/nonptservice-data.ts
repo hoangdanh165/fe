@@ -22,9 +22,13 @@ export const useNonPTServicesData = (reloadTrigger: number) => {
         // Nếu backend có pagination thì response.data.results
         const formattedRows = response.data.map((nonptservice) => ({
           id: nonptservice.id,
-          start_date: nonptservice.start_date,
-          expire_date: nonptservice.expire_date,
           discount: nonptservice.discount,
+          discount_start: nonptservice.discount_start
+            ? nonptservice.discount_start.substring(0, 10) 
+            : null,
+          discount_end: nonptservice.discount_end
+            ? nonptservice.discount_end.substring(0, 10)
+            : null,
           number_of_month: nonptservice.number_of_month, 
           cost_per_month: nonptservice.cost_per_month, 
           name: nonptservice.name, 

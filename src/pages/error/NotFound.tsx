@@ -17,7 +17,7 @@ const NotFound = (): ReactElement => {
       py={12}
     >
       <Typography variant="h1" color="text.secondary">
-        Oops! Page Not Found!
+        Oops! Trang này không tồn tại!
       </Typography>
       <Typography
         variant="h5"
@@ -26,8 +26,7 @@ const NotFound = (): ReactElement => {
         maxWidth={600}
         textAlign="center"
       >
-        We couldn’t locate the page you’re trying to reach. We apologize for any inconvenience this
-        may have caused. Thank you for your understanding!
+        Chúng tôi không tìm thấy trang hiện tại bạn đang truy cập, vui lòng kiểm tra lại đường dẫn!
       </Typography>
       <Image
         alt="Not Found Image"
@@ -40,7 +39,7 @@ const NotFound = (): ReactElement => {
         }}
       />
       <Button href={ paths.login } size="large" variant="contained" component={Link}>
-        Go to Home
+        Quay lại
       </Button>
     </Stack>
   );

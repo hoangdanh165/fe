@@ -36,6 +36,8 @@ interface CustomerStatistic {
   start_date: string;
   expire_date: string;
   discount: string;
+  discount_start: string;
+  discount_end: string;
   session_duration: string;
   cost_per_session: string;
   validity_period: string;
@@ -74,6 +76,8 @@ const PTServiceTable = ({
       start_date: "",
       expire_date: "",
       discount: "0",
+      discount_start: "",
+      discount_end: "",
       session_duration: "0",
       cost_per_session: "0",
       validity_period: "0",
@@ -99,18 +103,60 @@ const PTServiceTable = ({
     }
   };
 
+  function validateFields(editingPTService) {
+    const { session_duration, cost_per_session, validity_period, discount } = editingPTService;
+  
+    if (isNaN(session_duration) || session_duration === "") {
+      alert("Thời lượng mỗi buổi tập phải có giá trị số hợp lệ!");
+      return false;
+    }
+    
+    if (isNaN(cost_per_session) || cost_per_session === "") {
+      alert("Giá mỗi buổi tập phải có giá trị số hợp lệ!");
+      return false;
+    }
+  
+    if (isNaN(validity_period) || validity_period === "") {
+      alert("Thời gian sử dụng phải có giá trị số hợp lệ!");
+      return false;
+    }
+  
+    if (isNaN(discount)) {
+      alert("Khuyến mãi phải có giá trị số hợp lệ!");
+      return false;
+    }
+  
+    return true;
+  }
+
   const handleSaveEdit = async () => {
     if (!editingPTService) return;
-    console.log(editingPTService);
+    
+    if (!validateFields(editingPTService)) {
+      return; 
+    }
+
+    const payload = {
+      ...editingPTService,
+      discount_start: editingPTService.discount_start
+        ? `${editingPTService.discount_start}T00:00:00`
+        : null,
+      discount_end: editingPTService.discount_end
+        ? `${editingPTService.discount_end}T00:00:00`
+        : null,
+    };
+
     try {
       const response = await axiosPrivate.put(
         `/api/v1/pt-services/${editingPTService.id}/`,
         {
-          discount: editingPTService.discount,
-          name: editingPTService.name,
-          session_duration: editingPTService.session_duration,
-          cost_per_session: editingPTService.cost_per_session,
-          validity_period: editingPTService.validity_period,
+          discount: payload.discount,
+          discount_start: payload.discount_start,
+          discount_end: payload.discount_end,
+          name: payload.name,
+          session_duration: payload.session_duration,
+          cost_per_session: payload.cost_per_session,
+          validity_period: payload.validity_period,
         },
         {
           headers: {
@@ -131,16 +177,32 @@ const PTServiceTable = ({
 
   const handleSaveAdd = async () => {
     if (!editingPTService) return;
+    
+    if (!validateFields(editingPTService)) {
+      return; 
+    }
+    
+    const payload = {
+      ...editingPTService,
+      discount_start: editingPTService.discount_start
+        ? `${editingPTService.discount_start}T00:00:00`
+        : null,
+      discount_end: editingPTService.discount_end
+        ? `${editingPTService.discount_end}T00:00:00`
+        : null,
+    };
 
     try {
       const response = await axiosPrivate.post(
         `/api/v1/pt-services/`,
         {
-          discount: editingPTService.discount,
-          name: editingPTService.name,
-          session_duration: editingPTService.session_duration,
-          cost_per_session: editingPTService.cost_per_session,
-          validity_period: editingPTService.validity_period,
+          discount: payload.discount,
+          discount_start: payload.discount_start,
+          discount_end: payload.discount_end,
+          name: payload.name,
+          session_duration: payload.session_duration,
+          cost_per_session: payload.cost_per_session,
+          validity_period: payload.validity_period,
         },
         {
           headers: {
@@ -402,29 +464,6 @@ const PTServiceTable = ({
                 <Grid item xs={4}>
                   <TextField
                     margin="dense"
-                    label="Khuyến mãi"
-                    type="text"
-                    variant="standard"
-                    value={editingPTService.discount ?? "0"}
-                    onChange={(e) =>
-                      setEditingPTService({
-                        ...editingPTService,
-                        discount: e.target.value,
-                      })
-                    }
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">%</InputAdornment>
-                      ),
-                      sx: {
-                        color: "yellow",
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    margin="dense"
                     label="Thời lượng mỗi buổi tập"
                     type="text"
                     variant="standard"
@@ -443,13 +482,10 @@ const PTServiceTable = ({
                         color: "yellow",
                       },
                     }}
-                    sx={{ width: "100%" }}
+                    sx={{ width: "90%" }}
                   />
                 </Grid>
-              </Grid>
-
-              <Grid container spacing={2} marginTop={2}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <TextField
                     margin="dense"
                     label="Giá mỗi buổi tập"
@@ -470,10 +506,10 @@ const PTServiceTable = ({
                         color: "yellow",
                       },
                     }}
-                    sx={{ width: "70%" }}
+                    sx={{ width: "90%" }}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <TextField
                     margin="dense"
                     label="Thời gian sử dụng"
@@ -494,7 +530,78 @@ const PTServiceTable = ({
                         color: "yellow",
                       },
                     }}
-                    sx={{ width: "100%" }}
+                    sx={{ width: "80%" }}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={2} marginTop={2}>
+                <Grid item xs={2}>
+                  <TextField
+                    margin="dense"
+                    label="Khuyến mãi"
+                    type="text"
+                    variant="standard"
+                    value={editingPTService.discount ?? "0"}
+                    onChange={(e) =>
+                      setEditingPTService({
+                        ...editingPTService,
+                        discount: e.target.value,
+                      })
+                    }
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">%</InputAdornment>
+                      ),
+                      sx: {
+                        color: "yellow",
+                        width: "100px",
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={5}>
+                  <TextField
+                    margin="dense"
+                    label="Ngày bắt đầu khuyến mãi"
+                    type="date"
+                    fullWidth
+                    variant="standard"
+                    value={editingPTService.discount_start || ""}
+                    onChange={(e) =>
+                      setEditingPTService({
+                        ...editingPTService,
+                        discount_start: e.target.value,
+                      })
+                    }
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    InputProps={{
+                      sx: { color: "yellow", width: "90%" },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={5}>
+                  <TextField
+                    margin="dense"
+                    label="Ngày kết thúc khuyến mãi"
+                    type="date"
+                    fullWidth
+                    variant="standard"
+                    value={editingPTService.discount_end || ""}
+                    onChange={(e) =>
+                      setEditingPTService({
+                        ...editingPTService,
+                        discount_end: e.target.value,
+                      })
+                    }
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    InputProps={{
+                      sx: { color: "yellow" },
+                    }}
                   />
                 </Grid>
               </Grid>

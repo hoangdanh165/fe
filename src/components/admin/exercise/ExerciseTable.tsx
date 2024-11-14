@@ -209,7 +209,15 @@ const ExerciseTable = ({
     formData.append("duration", editingExercise.duration);
     formData.append("repetitions", editingExercise.repetitions);
     formData.append("rest_period", editingExercise.rest_period);
-    formData.append("embedded_video_url", editingExercise.embedded_video_url);
+    
+    if (editingExercise.embedded_video_url) {
+      const updatedEmbeddedVideoUrl = editingExercise.embedded_video_url
+        .replace(/width="\d+"/, 'width="100%"')
+        .replace(/height="\d+"/, 'height="100%"');
+      formData.append("embedded_video_url", updatedEmbeddedVideoUrl);
+    } else {
+      formData.append("embedded_video_url", editingExercise.embedded_video_url);
+    }
 
     if (editingExercise.image_url) {
       formData.append("image_url", editingExercise.image_url);

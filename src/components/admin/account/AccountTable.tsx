@@ -155,7 +155,9 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
           status: editingUser.status,
           email_verified: editingUser.email_verified,
           password: editingUser.password,
-          role: editingUser.role,
+          "role": {
+            name: editingUser.role,
+          }
         },
         {
           headers: {

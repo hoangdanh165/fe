@@ -21,6 +21,9 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  FormControlLabel,
+  Checkbox,
+  CircularProgress
 } from "@mui/material";
 import IconifyIcon from "./IconifyIcon";
 import { useScheduleData } from "../../data/schedule-data";
@@ -47,7 +50,10 @@ const Calendar = () => {
   const [coachId, setCoachId] = useState("");
   const [customerId, setCustomerId] = useState("");
   const [sessionInfo, setSessionInfo] = useState("");
+  const [isDone, setIsDone] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+
 
   // State for exercises
   const [exercises, setExercises] = useState([]); // All exercises in system
@@ -79,6 +85,7 @@ const Calendar = () => {
           customerName: `${row.customer_name}`,
           trainingPlan: row.training_plan,
           customerSessionInfo: row.customer_session_info,
+          isDone: row.is_done,
         },
       }));
       setCurrentEvents(events);
@@ -86,11 +93,14 @@ const Calendar = () => {
     }
   }, [rows, loading, error]);
 
+  const getContractIdByCustomerId = (customers, customerId) => {
+    const customer = customers.find((c) => c.id === customerId);
+    return customer ? customer.contract_id : null;
+  };
+
   const fetchAllExercises = async () => {
     try {
-      const response = await axiosPrivate.get("/api/v1/exercises/", {
-        withCredentials: true,
-      });
+      const response = await axiosPrivate.get("/api/v1/exercises/");
 
       const formattedRows = response.data.map((exercise) => ({
         id: exercise.id,
@@ -118,12 +128,10 @@ const Calendar = () => {
   };
 
   const fetchAllCustomers = async () => {
+    setIsLoading(true);
     try {
       const response = await axiosPrivate.get(
-        "/api/v1/coach-profiles/get-customers/",
-        {
-          withCredentials: true,
-        }
+        "/api/v1/coach-profiles/get-customers/"
       );
 
       const formattedRows = response.data.customers.map((customer) => ({
@@ -137,12 +145,15 @@ const Calendar = () => {
         customer_user_id: customer.customer_user_id,
         used_sessions: customer.used_sessions,
         total_sessions: customer.total_sessions,
+        contract_id: customer.contract_id,
       }));
 
       setCoachId(response.data.coach_id);
       setCustomers(formattedRows);
     } catch (err) {
       console.log("Error fetching exercises: ", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -151,9 +162,7 @@ const Calendar = () => {
       setIsLoading(true);
       const url = `/api/v1/training-plans/get-by-customers?customer=${customerId}`;
 
-      const response = await axiosPrivate.get(url, {
-        withCredentials: true,
-      });
+      const response = await axiosPrivate.get(url);
 
       const formattedRows = response.data.training_plans.map((tp) => ({
         id: tp.id,
@@ -222,7 +231,7 @@ const Calendar = () => {
     endDate.setHours(10, 0, 0, 0);
     const end = formatInTimeZone(endDate, timeZone, "yyyy-MM-dd'T'HH:mm");
     setEventEnd(end);
-
+    setIsEditMode(false);
     setSelectedInfo(selected);
     fetchAllExercises();
     setOpenEventDialog(true);
@@ -252,6 +261,8 @@ const Calendar = () => {
     setCurrentExercises(event.extendedProps?.trainingPlan?.exercises || []);
     setSelectedTrainingPlan(event.extendedProps?.trainingPlan || null);
     setSessionInfo(event.extendedProps?.customerSessionInfo || null);
+    setIsDone(event.extendedProps?.isDone || false);
+    setIsEditMode(true);
     fetchAllExercises();
     setOpenEventDialog(true);
   };
@@ -269,6 +280,57 @@ const Calendar = () => {
   const formatTime = (date) => {
     const options = { hour: '2-digit', minute: '2-digit' };
     return new Intl.DateTimeFormat('vi-VN', options).format(new Date(date));
+  };
+
+  const isTimeOverlappingInSameDay = (start, end) => {
+    const eventDay = new Date(start);
+    eventDay.setHours(0, 0, 0, 0); 
+  
+    const filteredEvents = currentEvents.filter(event => {
+      const existingEventDate = new Date(event.start);
+      existingEventDate.setHours(0, 0, 0, 0); 
+      return existingEventDate.getTime() === eventDay.getTime();
+    });
+    
+    return filteredEvents.some((event) => {
+      const existingStart = new Date(event.start);
+      const existingEnd = new Date(event.end);
+  
+      const startHour = start.getHours();
+      const startMinute = start.getMinutes();
+      const endHour = end.getHours();
+      const endMinute = end.getMinutes();
+  
+      const existingStartHour = existingStart.getHours();
+      const existingStartMinute = existingStart.getMinutes();
+      const existingEndHour = existingEnd.getHours();
+      const existingEndMinute = existingEnd.getMinutes();
+  
+      const isOverlapping =
+        (startHour > existingStartHour || (startHour === existingStartHour && startMinute >= existingStartMinute)) &&
+        (startHour < existingEndHour || (startHour === existingEndHour && startMinute < existingEndMinute)) ||
+        (endHour > existingStartHour || (endHour === existingStartHour && endMinute >= existingStartMinute)) &&
+        (endHour < existingEndHour || (endHour === existingEndHour && endMinute < existingEndMinute)) ||
+        (startHour < existingStartHour || (startHour === existingStartHour && startMinute <= existingStartMinute)) &&
+        (endHour > existingEndHour || (endHour === existingEndHour && endMinute >= existingEndMinute));
+  
+      return isOverlapping;
+    });
+  };
+  
+  const isOverlapping = (start, end, currentEvent) => {
+    const filteredEvents = currentEvents.filter(event => event.id !== Number(currentEvent.id));
+    return filteredEvents.some((event) => {
+      const existingStart = new Date(event.start);
+      const existingEnd = new Date(event.end);
+
+      const isOverlapping =
+        (start >= existingStart && start < existingEnd) ||
+        (end > existingStart && end <= existingEnd) ||
+        (start <= existingStart && end >= existingEnd);
+
+      return isOverlapping;
+    });
   };
 
   const handleSaveEvent = async () => {
@@ -292,33 +354,18 @@ const Calendar = () => {
       return;
     }
 
-    const isOverlapping = (start, end, currentEvent) => {
-      const filteredEvents = currentEvents.filter(event => event.id !== Number(currentEvent.id));
-      return filteredEvents.some((event) => {
-        const existingStart = new Date(event.start);
-        const existingEnd = new Date(event.end);
-
-        const isOverlapping =
-          (start >= existingStart && start < existingEnd) ||
-          (end > existingStart && end <= existingEnd) ||
-          (start <= existingStart && end >= existingEnd);
-
-        return isOverlapping;
-      });
-    };
-
-    console.log(selectedEvent.id);
     if (isOverlapping(startTime, endTime, selectedEvent)) {
       alert("Buổi tập trùng giờ với một buổi tập khác. Vui lòng chọn thời gian khác.");
       return;
     }
-
+    setIsLoading(true);
     try {
       const eventData = {
         customer: customerId,
         coach: coachId,
         start_time: eventStart,
         end_time: eventEnd,
+        is_done: isDone,
         training_plan: {
           id: selectedTrainingPlan.id,
           estimated_duration: estimatedDuration,
@@ -328,34 +375,50 @@ const Calendar = () => {
           exercises: currentExercises,
         },
       };
+      let usedSessions = parseInt(sessionInfo.split(" / ")[0], 10);
 
       let response;
       if (selectedEvent?.id) {
         response = await axiosPrivate.patch(
           `/api/v1/workout-schedules/${selectedEvent.id}/`,
           eventData,
-          {
-            withCredentials: true,
-          }
         );
+
+        const contractId = getContractIdByCustomerId(customers, customerId);
+        
+        if(isDone && contractId) {
+          usedSessions = usedSessions + 1;
+          await axiosPrivate.patch(
+            `/api/v1/contracts/${contractId}/`,
+            {
+              used_sessions: usedSessions,
+            },
+          );
+        } else if(!isDone && contractId) {
+          usedSessions = usedSessions - 1;
+          await axiosPrivate.patch(
+            `/api/v1/contracts/${contractId}/`,
+            {
+              used_sessions: usedSessions,
+            },
+          );
+        }
+
       } else {
         response = await axiosPrivate.post(
           "/api/v1/workout-schedules/",
           eventData,
-          {
-            withCredentials: true,
-          }
         );
       }
-      console.log(selectedEvent);
+
       if (response.data) {
         const bgColor = getCustomerColor(currentEvents, customerId);
-        console.log(bgColor);
+        console.log(usedSessions);
         const updatedEvent = {
           id: response.data.id,
           title: `${selectedTrainingPlan.overview}`,
-          start: `${eventStart}`,
-          end: `${eventEnd}`,
+          start: `${response.data.start_time}`,
+          end: `${response.data.end_time}`,
           allDay: false,
           backgroundColor: bgColor,
           borderColor: bgColor,
@@ -366,6 +429,8 @@ const Calendar = () => {
               " " +
               customers.find((c) => c.id === customerId)?.last_name,
             trainingPlan: response.data.training_plan,
+            customerSessionInfo: usedSessions.toString() + " / " + response.data.customer.total_sessions,
+            isDone: response.data.is_done,
           },
         };
 
@@ -380,6 +445,14 @@ const Calendar = () => {
           selectedEvent.setExtendedProp(
             "customerName",
             updatedEvent.extendedProps.customerName
+          );
+          selectedEvent.setExtendedProp(
+            "customerSessionInfo",
+            updatedEvent.extendedProps.customerSessionInfo
+          );
+          selectedEvent.setExtendedProp(
+            "isDone",
+            updatedEvent.extendedProps.isDone
           );
           selectedEvent.setExtendedProp(
             "trainingPlan",
@@ -418,12 +491,20 @@ const Calendar = () => {
           );
         }
 
+        
+
+        
+
+        
+        
         setOpenEventDialog(false);
         setEventTitle("");
         setCustomerId("");
         setEventStart("");
         setEventEnd("");
         setEventNote("");
+        setIsEditMode(false);
+        setIsDone(false);
         setSelectedTrainingPlan(null);
         setTrainingPlans(null);
         setEstimatedDuration(null);
@@ -432,11 +513,14 @@ const Calendar = () => {
       }
     } catch (err) {
       console.error("Error saving workout schedule:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleDeleteEvent = async () => {
     if (window.confirm(`Bạn có chắc chắn muốn xóa buổi tập này không?`)) {
+      setIsLoading(true);
       try {
         await axiosPrivate.delete(
           `/api/v1/workout-schedules/${selectedEvent.id}/`,
@@ -456,8 +540,10 @@ const Calendar = () => {
         setSelectedEvent(null);
       } catch (err) {
         console.error("Error deleting workout schedule:", err);
+      } finally {
+        alert("Xoá buổi tập thành công!");
+        setIsLoading(false);
       }
-      alert("Xoá buổi tập thành công!");
     }
   };
 
@@ -579,6 +665,65 @@ const Calendar = () => {
     );
   };
 
+  const handleEventDrop = async (info) => {
+    setIsLoading(true);
+    const e_start = formatInTimeZone(
+      info.event.start.toISOString(),
+      timeZone,
+      "yyyy-MM-dd'T'HH:mm"
+    );
+    const e_end = formatInTimeZone(
+      info.event.end.toISOString(),
+      timeZone,
+      "yyyy-MM-dd'T'HH:mm"
+    );
+    
+    const updatedEvent = {
+      id: info.event.id,
+      start: e_start,
+      end: e_end,
+    };
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    
+    const eventStartDate = new Date(updatedEvent.start);
+    const eventEndDate = new Date(updatedEvent.end);
+    if (eventStartDate < today) {
+      info.revert();
+      alert("Không thể chuyển buổi tập về trước ngày hôm nay!");
+      setIsLoading(false);
+      return;
+    }
+    
+    if (isTimeOverlappingInSameDay(eventStartDate, eventEndDate)) {
+      info.revert();
+      alert("Buổi tập trùng giờ với một buổi tập khác trong ngày này! Vui lòng chọn ngày khác hoặc thay đổi thời gian.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      await axiosPrivate.patch(
+        `/api/v1/workout-schedules/${updatedEvent.id}/`,
+        {
+          start_time: updatedEvent.start,
+          end_time: updatedEvent.end,
+        },
+      );
+      setCurrentEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.id === updatedEvent.id ? { ...event, start: updatedEvent.start, end: updatedEvent.end } : event
+        )
+      );
+    } catch (err) {
+      console.error('Error updating event:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   const resetDialogState = () => {
     setSelectedEvent(null);
     setEventTitle(null);
@@ -590,12 +735,31 @@ const Calendar = () => {
     setCurrentExercises([]);
     setSelectedTrainingPlan(null);
     setEstimatedDuration(null);
-    setTrainingPlans(null),
+    setTrainingPlans(null);
+    setIsEditMode(false);
     setOpenEventDialog(false);
   };
 
   return (
-    <Box m="20px">
+    <Box m="20px" sx={{ position: 'relative' }}>
+      {(loading || isLoading) && (
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 10000,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress size={100} sx={{}} />
+      </Box>
+    )}
+
       <Box flex="1 1 100%" ml="15px">
         <FullCalendar
           locale="vi"
@@ -604,10 +768,11 @@ const Calendar = () => {
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
           }}
           initialView="dayGridMonth"
           editable
+          droppable={true} 
+          eventDrop={handleEventDrop}
           selectable
           selectMirror
           dayMaxEvents
@@ -617,9 +782,6 @@ const Calendar = () => {
           eventContent={renderEventContent}
           buttonText={{
             today: "Hôm nay",
-            month: "Tháng",
-            week: "Tuần",
-            day: "Ngày",
           }}
         />
       </Box>
@@ -668,6 +830,18 @@ const Calendar = () => {
               ))}
             </Select>
           </FormControl>
+          <FormControlLabel
+            disabled={!isEditMode}
+            control={
+              <Checkbox
+                checked={isDone}
+                onChange={(e) => setIsDone(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Đã hoàn thành buổi tập"
+            sx={{ marginTop: 2 }}
+          />
           <TextField
             label="Số buổi đã tập"
             type="text"

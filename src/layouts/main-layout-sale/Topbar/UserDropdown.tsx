@@ -6,13 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import userMenuItems from '../../../data/usermenu-items';
 import useLogout from '../../../hooks/useLogout';
 import React from 'react';  
+import useAuth from '../../../hooks/useAuth';
 
 const UserDropdown = (): ReactElement => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
   const logout = useLogout();  
   const navigate = useNavigate();
-
+  const {setAuth} = useAuth();
   const handleUserClick = useCallback((event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   }, []);
@@ -23,10 +24,12 @@ const UserDropdown = (): ReactElement => {
 
   const handleMenuItemClick = useCallback(
     (userMenuItemId: number) => {
+      localStorage.removeItem('isLoggedIn');
+      setAuth(null);
       handleUserClose();
       if (userMenuItemId === 5) {
           logout();
-          navigate('/auth/login');
+          navigate('/auth/login', { replace: true});
         
       }
     },

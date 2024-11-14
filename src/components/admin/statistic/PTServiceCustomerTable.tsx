@@ -40,7 +40,6 @@ interface PTService {
   id: number;
   discount: string;
   name: string;
-  number_of_session: string;
   session_duration: string;
   cost_per_session: string;
   validity_period: string;
@@ -78,6 +77,14 @@ interface Contract {
   coach: Coach;
   is_purchased: boolean;
   used_sessions: number;
+  number_of_session: string;
+}
+
+interface WorkoutGoal {
+  general: string;
+  weight: string;
+  body_fat: string;
+  muscle_mass: string;
 }
 
 interface Customer {
@@ -92,7 +99,9 @@ interface Customer {
   birthday: string;
   height: number;
   weight: number;
+  health_condition: string;
   contracts: Contract[];
+  workout_goal: WorkoutGoal;
 }
 
 const PTServiceCustomerTable = ({
@@ -228,7 +237,7 @@ const PTServiceCustomerTable = ({
     {
       field: "actions",
       type: "actions",
-      headerName: "Hành động",
+      headerName: "Thao tác",
       resizable: false,
       flex: 1,
       minWidth: 80,
@@ -429,6 +438,70 @@ const PTServiceCustomerTable = ({
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">kg</InputAdornment>
+                  ),
+                }}
+              />
+
+<TextField
+                margin="dense"
+                label="Tình trạng sức khoẻ"
+                sx={{ color: "white" }}
+                fullWidth
+                variant="standard"
+                value={editingUser?.health_condition ?? "Chưa điền"}
+              />
+
+              <Typography variant="h6" color="white" marginTop={3}>
+                Mục tiêu tập luyện
+              </Typography>
+
+              <TextField
+                margin="dense"
+                label="Mục tiêu chung"
+                sx={{ color: "white" }}
+                fullWidth
+                variant="standard"
+                value={editingUser?.workout_goal?.general ?? "Chưa điền"}
+              />
+
+              <TextField
+                margin="dense"
+                label="Cân nặng"
+                sx={{ color: "white" }}
+                fullWidth
+                variant="standard"
+                value={editingUser?.workout_goal?.weight ?? "Chưa điền"}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">kg</InputAdornment>
+                  ),
+                }}
+              />
+
+              <TextField
+                margin="dense"
+                label="Khối lượng cơ"
+                sx={{ color: "white" }}
+                fullWidth
+                variant="standard"
+                value={editingUser?.workout_goal?.muscle_mass ?? "Chưa điền"}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">kg</InputAdornment>
+                  ),
+                }}
+              />
+
+              <TextField
+                margin="dense"
+                label="Tỉ lệ mỡ"
+                sx={{ color: "white" }}
+                fullWidth
+                variant="standard"
+                value={editingUser?.workout_goal?.body_fat ?? "Chưa điền"}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">%</InputAdornment>
                   ),
                 }}
               />
@@ -633,7 +706,7 @@ const PTServiceCustomerTable = ({
                             color="white"
                           >
                             Đã tập: {contract.used_sessions} /{" "}
-                            {contract.ptservice.number_of_session}
+                            {contract.number_of_session}
                           </Typography>
 
                           <Tooltip

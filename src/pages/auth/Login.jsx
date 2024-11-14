@@ -98,7 +98,7 @@ const Login = () => {
                 withCredentials: true
             }
         );
-        
+        localStorage.setItem('isLoggedIn', 'true');
         const accessToken = response?.data?.accessToken;
         const role = response?.data?.role;
         const status = response?.data?.status;
@@ -109,16 +109,7 @@ const Login = () => {
         setEmail('');
         setPassword('');
         
-        if (role === 'admin') {
-          navigate(paths.accounts); 
-        } else if (role === 'coach') {
-          navigate(paths.profile);  
-        } else if (role === 'sale') {
-          navigate(paths.profile);  
-        } 
-        else {
-          navigate(from, { replace: true });
-        }
+        navigate("/");
         
     } catch (err) {
       console.log(err);
@@ -128,7 +119,7 @@ const Login = () => {
         setErrMsg("Vui lòng điền email và mật khẩu!");
       } else if (err.response?.status === 401) {
         setErrMsg("Tài khoản hoặc mật khẩu không đúng!");
-        console.log("401 Error: ", err.response); // Log the exact 401 error
+        console.log("401 Error: ", err.response);
 
       } else {
         setErrMsg("Đăng nhập thất bại!");
