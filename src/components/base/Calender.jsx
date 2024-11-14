@@ -206,8 +206,8 @@ const Calendar = () => {
       start: selected.startStr,
       end: selected.endStr,
       allDay: false,
-      backgroundColor: "", 
-      borderColor: "", 
+      backgroundColor: "",
+      borderColor: "",
       extendedProps: {
         customerId: null,
         customerName: "",
@@ -257,7 +257,9 @@ const Calendar = () => {
     setEventEnd(endTime);
 
     setEventNote(event.extendedProps?.trainingPlan?.note || "");
-    setEstimatedDuration(event.extendedProps?.trainingPlan?.estimated_duration || "")
+    setEstimatedDuration(
+      event.extendedProps?.trainingPlan?.estimated_duration || ""
+    );
     setCurrentExercises(event.extendedProps?.trainingPlan?.exercises || []);
     setSelectedTrainingPlan(event.extendedProps?.trainingPlan || null);
     setSessionInfo(event.extendedProps?.customerSessionInfo || null);
@@ -273,10 +275,10 @@ const Calendar = () => {
   }
 
   const formatDate = (date) => {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    return new Intl.DateTimeFormat('vi-VN', options).format(new Date(date));
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    return new Intl.DateTimeFormat("vi-VN", options).format(new Date(date));
   };
-  
+
   const formatTime = (date) => {
     const options = { hour: '2-digit', minute: '2-digit' };
     return new Intl.DateTimeFormat('vi-VN', options).format(new Date(date));
@@ -355,7 +357,9 @@ const Calendar = () => {
     }
 
     if (isOverlapping(startTime, endTime, selectedEvent)) {
-      alert("Buổi tập trùng giờ với một buổi tập khác. Vui lòng chọn thời gian khác.");
+      alert(
+        "Buổi tập trùng giờ với một buổi tập khác. Vui lòng chọn thời gian khác."
+      );
       return;
     }
     setIsLoading(true);
@@ -462,11 +466,12 @@ const Calendar = () => {
           setCurrentEvents((prevEvents) => [...prevEvents, updatedEvent]);
         }
 
-        const customer = customers.find((customer) => customer.id === customerId);
+        const customer = customers.find(
+          (customer) => customer.id === customerId
+        );
         const customer_user_id = customer?.customer_user_id;
 
         if (customer_user_id) {
-
           const eventStartDate = formatDate(eventStart);
           const eventStartTime = formatTime(eventStart);
           const eventEndTime = formatTime(eventEnd);
@@ -487,7 +492,7 @@ const Calendar = () => {
           await NotificationService.createNotification(
             axiosPrivate,
             customer_user_id,
-            notificationMessage,
+            notificationMessage
           );
         }
 
@@ -530,7 +535,7 @@ const Calendar = () => {
         selectedEvent.remove();
         setOpenEventDialog(false);
         setSelectedTrainingPlan(null);
-        setEstimatedDuration(null)
+        setEstimatedDuration(null);
         setEventTitle(null);
         setCustomerId(null);
         setEventStart(null);
@@ -786,7 +791,11 @@ const Calendar = () => {
         />
       </Box>
 
-      <Dialog open={openEventDialog} onClose={resetDialogState}>
+      <Dialog
+        open={openEventDialog}
+        onClose={resetDialogState}
+        className="dialog"
+      >
         <DialogTitle sx={{ mb: "10px", alignSelf: "center" }}>
           CHI TIẾT BUỔI TẬP
           <IconButton
@@ -806,19 +815,29 @@ const Calendar = () => {
                 const selectedCustomer = customers.find(
                   (customer) => customer.id === e.target.value
                 );
-                
-                
+
                 setCustomerId(selectedCustomer.id);
                 fetchTrainingPlansByCustomer(selectedCustomer.id);
                 setSelectedTrainingPlan(null);
                 setEstimatedDuration(null);
                 setEventNote(null);
                 setCurrentExercises(null);
-                if(selectedCustomer?.used_sessions === selectedCustomer?.total_sessions) {
+                if (
+                  selectedCustomer?.used_sessions ===
+                  selectedCustomer?.total_sessions
+                ) {
                   alert("Khách hàng này đã hết số buổi tập luyện!");
-                  setSessionInfo(selectedCustomer.used_sessions + " / " + selectedCustomer.total_sessions);
+                  setSessionInfo(
+                    selectedCustomer.used_sessions +
+                      " / " +
+                      selectedCustomer.total_sessions
+                  );
                 } else {
-                  setSessionInfo(selectedCustomer.used_sessions + " / " + selectedCustomer.total_sessions);
+                  setSessionInfo(
+                    selectedCustomer.used_sessions +
+                      " / " +
+                      selectedCustomer.total_sessions
+                  );
                 }
               }}
               label="Khách hàng"
@@ -862,7 +881,7 @@ const Calendar = () => {
                 setSelectedTrainingPlan(selectedPlan);
                 setEstimatedDuration(selectedPlan.estimated_duration);
                 setEventNote(selectedPlan.note);
-                setCurrentExercises(selectedPlan.exercises)
+                setCurrentExercises(selectedPlan.exercises);
               }}
               label="Giáo án buổi tập"
             >
@@ -945,8 +964,7 @@ const Calendar = () => {
                 marginBottom: 2,
               }}
             >
-              Danh sách bài tập:{" "}
-              {currentExercises?.length ?? "0"} bài
+              Danh sách bài tập: {currentExercises?.length ?? "0"} bài
             </Typography>
             <IconButton onClick={() => setOpenAddExerciseDialog(true)}>
               <AddIcon />
