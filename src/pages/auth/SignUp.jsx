@@ -4,7 +4,6 @@ import {
   Paper,
   Stack,
   Button,
-  Divider,
   TextField,
   IconButton,
   Typography,
@@ -385,9 +384,6 @@ const SignUp = () => {
               các điều khoản.
             </Link>
           </Typography>
-          <Divider />
-          
-          
         </Stack>
       </Paper>
     </Form>

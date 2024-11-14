@@ -64,7 +64,7 @@ const CustomerTable = ({ searchText }) => {
     },
     {
       field: "avatar",
-      headerName: "Avatar",
+      headerName: "Ảnh đại diện",
       resizable: false,
       flex: 0.5,
       minWidth: 150,
@@ -133,9 +133,9 @@ const CustomerTable = ({ searchText }) => {
         return [
           <Tooltip title="Xem" key={params.id}>
             <GridActionsCellItem
-              icon={<IconifyIcon icon="fluent:edit-32-filled" />}
+              icon={<IconifyIcon icon="mdi:eye"/>}
               label="Xem"
-              onClick={() => handleViewInfo(params.id)} // Use params.id here
+              onClick={() => handleViewInfo(params.id)}
             />
           </Tooltip>,
         ];

@@ -4,7 +4,6 @@ import {
   Paper,
   Stack,
   Button,
-  Divider,
   Checkbox,
   FormGroup,
   TextField,
@@ -103,8 +102,9 @@ const Login = () => {
         const role = response?.data?.role;
         const status = response?.data?.status;
         const avatar = response?.data?.avatar;
+        const fullName = response?.data?.fullName;
 
-        setAuth({ email, role, status, accessToken, avatar });
+        setAuth({ email, role, status, accessToken, avatar, fullName });
 
         setEmail('');
         setPassword('');
@@ -248,7 +248,7 @@ const Login = () => {
               ),
             }}
             />
-            <FormGroup sx={{ ml: 1, width: "fit-content" }}>
+            {/* <FormGroup sx={{ ml: 1, width: "fit-content" }}>
               <FormControlLabel
                 control={
                   <Checkbox checked={persist} onChange={togglePersist} />
@@ -258,7 +258,15 @@ const Login = () => {
                   color: "text.secondary",
                 }}
               />
-            </FormGroup>
+            </FormGroup> */}
+            <Link
+              href={paths.forgot_password}
+              textAlign="right"
+              underline="none"
+              sx={{ color: "gray" }}
+            >
+              Quên mật khẩu?
+            </Link>
             <Button
               onClick={handleSubmit}
               sx={{
@@ -267,15 +275,8 @@ const Login = () => {
             >
               Đăng nhập
             </Button>
-            <Link
-              href={paths.forgot_password}
-              textAlign="center"
-              underline="none"
-              sx={{ color: "text.secondary", mt: 2 }}
-            >
-              Quên mật khẩu?
-            </Link>
-            <Divider />
+            
+            
           </Stack>
         </Paper>
       </Form>

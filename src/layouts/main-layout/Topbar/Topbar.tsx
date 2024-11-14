@@ -6,15 +6,15 @@ import {
   TextField,
   IconButton,
   InputAdornment,
-  Box
-} from '@mui/material';
-import IconifyIcon from '../../../components/base/IconifyIcon';
-import { ReactElement, useState } from 'react';
-import { drawerCloseWidth, drawerOpenWidth } from '..';
-import UserDropdown from './UserDropdown';
-import { useBreakpoints } from '../../../providers/BreakpointsProvider';
-import React from 'react';
-import Notification from '../../../components/Notification';
+  Box,
+} from "@mui/material";
+import IconifyIcon from "../../../components/base/IconifyIcon";
+import { ReactElement, useState } from "react";
+import { drawerCloseWidth, drawerOpenWidth } from "..";
+import UserDropdown from "./UserDropdown";
+import { useBreakpoints } from "../../../providers/BreakpointsProvider";
+import React from "react";
+import Notification from "../../../components/Notification";
 
 const Topbar = ({
   open,
@@ -25,9 +25,9 @@ const Topbar = ({
 }): ReactElement => {
   const { down } = useBreakpoints();
 
-  const isMobileScreen = down('sm');
+  const isMobileScreen = down("sm");
 
-  const [showNotifications, setShowNotifications] = useState(false); 
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const handleNotificationClick = () => {
     setShowNotifications((prev) => !prev);
@@ -44,7 +44,7 @@ const Topbar = ({
           : open
           ? `calc(100% - ${drawerOpenWidth}px)`
           : `calc(100% - ${drawerCloseWidth}px)`,
-        paddingRight: '0 !important',
+        paddingRight: "0 !important",
       }}
     >
       <Toolbar
@@ -53,11 +53,17 @@ const Topbar = ({
         alignItems="center"
         justifyContent="space-between"
         sx={{
-          bgcolor: 'background.default',
+          bgcolor: "background.default",
           height: 116,
         }}
       >
-        <Stack direction="row" gap={2} alignItems="center" ml={2.5} flex="1 1 52.5%">
+        <Stack
+          direction="row"
+          gap={2}
+          alignItems="center"
+          ml={2.5}
+          flex="1 1 52.5%"
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -65,11 +71,10 @@ const Topbar = ({
             edge="start"
           >
             <IconifyIcon
-              icon={open ? 'ri:menu-unfold-4-line' : 'ri:menu-unfold-3-line'}
+              icon={open ? "ri:menu-unfold-4-line" : "ri:menu-unfold-3-line"}
               color="common.white"
             />
           </IconButton>
-          
         </Stack>
         <Stack
           direction="row"
@@ -84,7 +89,7 @@ const Topbar = ({
             badgeContent=" "
             variant="dot"
             sx={{
-              '& .MuiBadge-badge': {
+              "& .MuiBadge-badge": {
                 top: 11,
                 right: 11,
               },
@@ -105,15 +110,16 @@ const Topbar = ({
       {showNotifications && (
         <Box
           sx={{
-            position: 'absolute', 
-            top: 85, 
-            right: 430, 
-            zIndex: 10, 
+            position: "absolute",
+            top: 85,
+            right: 430,
+            zIndex: 10,
           }}
         >
           <Notification onClose={() => setShowNotifications(false)} />
         </Box>
-      )}    </AppBar>
+      )}{" "}
+    </AppBar>
   );
 };
 

@@ -3,6 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import listPlugin from "@fullcalendar/list";
 import { formatInTimeZone } from "date-fns-tz";
 import {
   Box,
@@ -183,10 +184,6 @@ const Calendar = () => {
   useEffect(() => {
     fetchAllCustomers();
   }, []);
-
-  useEffect(() => {
-    console.log("changeddd", currentEvents);
-  }, [currentEvents]);
 
   const filteredExercises = exercises.filter((exercise) => {
     if (selectedCategories.length === 0) {
@@ -769,6 +766,10 @@ const Calendar = () => {
     setIsEditMode(false);
     setOpenEventDialog(false);
   };
+  const now = new Date();
+  const timezoneOffset = 7 * 60; // GMT+7 (7 giờ x 60 phút)
+  const localDate = new Date(now.getTime() + timezoneOffset * 60 * 1000);
+  const startDate = localDate.toISOString().split("T")[0];
 
   return (
     <Box m="20px" sx={{ position: 'relative' }}>
@@ -794,10 +795,14 @@ const Calendar = () => {
         <FullCalendar
           locale="vi"
           height="100vh"
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
           headerToolbar={{
             left: "prev,next today",
             center: "title",
+            right: "dayGridMonth,listWeek",
+          }}
+          validRange={{
+            start: startDate,
           }}
           initialView="dayGridMonth"
           editable
@@ -812,6 +817,8 @@ const Calendar = () => {
           eventContent={renderEventContent}
           buttonText={{
             today: "Hôm nay",
+            list: "Tuần",
+            month: "Tháng",
           }}
         />
       </Box>
@@ -978,9 +985,12 @@ const Calendar = () => {
               Danh sách bài tập:{" "}
               {currentExercises?.length ?? "0"} bài
             </Typography>
-            <IconButton onClick={() => setOpenAddExerciseDialog(true)}>
-              <AddIcon />
-            </IconButton>
+            
+            {selectedTrainingPlan && (
+              <IconButton onClick={() => setOpenAddExerciseDialog(true)}>
+                <AddIcon />
+              </IconButton>
+            )}
           </Box>
 
           {currentExercises?.length > 0 ? (

@@ -19,6 +19,7 @@ const useRefreshToken = () => {
                 accessToken: response.data.accessToken, 
                 avatar: response.data.avatar,
                 status: response.data.status, 
+                fullName: response.data.fullName, 
             }
         });
         return response.data.accessToken;
