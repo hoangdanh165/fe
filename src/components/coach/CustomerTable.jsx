@@ -63,8 +63,8 @@ const CustomerTable = ({ searchText }) => {
       headerAlign: "center",
     },
     {
-      field: "first_name",
-      headerName: "Họ",
+      field: "avatar",
+      headerName: "Avatar",
       resizable: false,
       flex: 0.5,
       minWidth: 150,
@@ -72,16 +72,16 @@ const CustomerTable = ({ searchText }) => {
       align: "center",
       renderCell: (params) => {
         return (
-          <Stack direction="row" gap={6} alignItems="center">
+          <Stack direction="row" gap={1} alignItems="center">
             <Tooltip
-              title={params.row.customer_profile.first_name}
+              title={`${params.row.customer_profile.first_name} ${params.row.customer_profile.last_name}`}
               placement="top"
               arrow
             >
               {params.row.customer_profile.avatar ? (
                 <Avatar
                   src={params.row.customer_profile.avatar}
-                  alt={params.row.customer_profile.first_name}
+                  alt={`${params.row.customer_profile.first_name} ${params.row.customer_profile.last_name}`}
                 />
               ) : (
                 <Avatar>
@@ -89,29 +89,21 @@ const CustomerTable = ({ searchText }) => {
                 </Avatar>
               )}
             </Tooltip>
-            <Typography variant="body2">
-              {params.row.customer_profile.first_name}
-            </Typography>
           </Stack>
         );
       },
     },
     {
-      field: "last_name",
-      headerName: "Tên",
+      field: "fullname",
+      headerName: "Họ và Tên",
       resizable: false,
       flex: 0.5,
-      minWidth: 50,
+      minWidth: 150,
       headerAlign: "center",
       align: "center",
       renderCell: (params) => {
-        return (
-          <Stack direction="row" gap={6} alignItems="center">
-            <Typography variant="body2">
-              {params.row.customer_profile.last_name}
-            </Typography>
-          </Stack>
-        );
+        const fullName = `${params.row.customer_profile.first_name} ${params.row.customer_profile.last_name}`;
+        return <Typography variant="body2">{fullName}</Typography>;
       },
     },
     {
@@ -133,7 +125,7 @@ const CustomerTable = ({ searchText }) => {
     {
       field: "actions",
       type: "actions",
-      headerName: "Actions",
+      headerName: "Thao tác",
       resizable: false,
       flex: 1,
       minWidth: 80,
@@ -183,17 +175,6 @@ const CustomerTable = ({ searchText }) => {
         sx={{ width: 650 }}
       >
         <Box sx={{ width: 650, padding: 5 }}>
-          <IconButton
-            onClick={handleCloseDrawer}
-            sx={{
-              position: "absolute",
-              top: 10,
-              left: 20,
-              fontSize: "40px",
-            }}
-          >
-            <IconifyIcon icon="eva:close-fill" />
-          </IconButton>
           <Typography
             variant="h6"
             gutterBottom
@@ -238,8 +219,7 @@ const CustomerTable = ({ searchText }) => {
           >
             <Tab label="Tổng quan" />
             <Tab label="Gói PT" />
-            <Tab label="Gói non-PT" />
-            <Tab label="Mô tả" />
+            <Tab label="Gói tháng" />
           </Tabs>
 
           <Box sx={{ p: 2 }}>
@@ -359,8 +339,10 @@ const CustomerTable = ({ searchText }) => {
                         </Typography>
                         <Typography variant="body1">
                           <strong>
-                            {selectedUser.customer_profile.health_condition !== null &&
-                            selectedUser.customer_profile.health_condition !== undefined
+                            {selectedUser.customer_profile.health_condition !==
+                              null &&
+                            selectedUser.customer_profile.health_condition !==
+                              undefined
                               ? `${selectedUser.customer_profile.health_condition}`
                               : "Chưa cập nhật"}
                           </strong>
@@ -373,7 +355,15 @@ const CustomerTable = ({ searchText }) => {
                           justifyContent: "space-between",
                         }}
                       >
-                        <Typography variant="body1" sx={{ color: "white" }}>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            color: "white",
+                            flexShrink: 0,
+                            minWidth: "200px",
+                          }}
+                          noWrap
+                        >
                           Mục tiêu tập luyện:
                         </Typography>
                         <Typography variant="body1">
@@ -382,7 +372,7 @@ const CustomerTable = ({ searchText }) => {
                               null &&
                             selectedUser.customer_profile.workout_goal !==
                               undefined
-                              ? `Cân nặng: ${selectedUser.customer_profile.workout_goal.weight}, Cân nặng cơ thể: ${selectedUser.customer_profile.workout_goal.body_fat}, Khối lượng cơ: ${selectedUser.customer_profile.workout_goal.muscle_mass}`
+                              ? `Cân nặng: ${selectedUser.customer_profile.workout_goal.weight} kg, Tỷ lệ mỡ cơ thể: ${selectedUser.customer_profile.workout_goal.body_fat}%, Khối lượng cơ: ${selectedUser.customer_profile.workout_goal.muscle_mass} kg`
                               : "Chưa cập nhật"}
                           </strong>
                         </Typography>
@@ -491,7 +481,7 @@ const CustomerTable = ({ searchText }) => {
                         Số buổi:
                       </Typography>
                       <Typography variant="body1">
-                        <strong>{service.number_of_session}</strong>
+                        <strong>{service.session_duration}</strong>
                       </Typography>
                     </Box>
                     <Box
@@ -506,7 +496,7 @@ const CustomerTable = ({ searchText }) => {
                       </Typography>
                       <Typography variant="body1">
                         <strong>
-                          {service.number_of_session -
+                          {service.session_duration -
                             selectedUser.used_sessions}
                         </strong>
                       </Typography>
@@ -581,6 +571,7 @@ const CustomerTable = ({ searchText }) => {
                     }}
                   >
                     <CardContent sx={{ padding: "20px" }}>
+                      {/* Service Name */}
                       <Typography
                         variant="h5"
                         component="div"
@@ -590,7 +581,6 @@ const CustomerTable = ({ searchText }) => {
                       </Typography>
                       <Divider sx={{ borderColor: "white" }} />
 
-                      {/* Service Name */}
                       <Box
                         sx={{
                           display: "flex",
@@ -673,10 +663,6 @@ const CustomerTable = ({ searchText }) => {
                   </Card>
                 ))
               : activeTab === 2 && <Typography>Không có dữ liệu</Typography>}
-
-            {activeTab === 3 && (
-              <Typography variant="body1">Thêm nội dung mô tả...</Typography>
-            )}
           </Box>
 
           <Button
