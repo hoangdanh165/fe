@@ -19,6 +19,8 @@ export const useCoachsData = () => {
         const formattedRows = response.data.map((coach) => ({
           id: coach.id,
           avatar: coach.avatar,
+          email: coach.email,
+          phone: coach.phone,
           average_rating: coach.average_rating,
           first_name: coach.first_name,
           last_name: coach.last_name,

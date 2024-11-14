@@ -74,6 +74,8 @@ interface Contract {
 interface Coach {
   id: string;
   avatar: string;
+  email: string;
+  phone: string;
   average_rating: number;
   first_name: string;
   last_name: string;
@@ -336,8 +338,13 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
               <Typography variant="h6" color="white">
                 {editingUser?.first_name ?? ""} {editingUser?.last_name ?? ""}
               </Typography>
-
-              <Typography variant="body1" textAlign="center" color="white">
+              <Typography variant="h6" sx={{ fontSize: '0.875rem', color: 'rgba(128, 128, 128, 0.8)', alignSelf: 'center' }}>
+                {editingUser?.email ?? ""}
+              </Typography>
+              <Typography variant="h6" sx={{ fontSize: '0.875rem', color: 'rgba(128, 128, 128, 0.8)', alignSelf: 'center' }}>
+                {editingUser?.phone ?? ""}
+              </Typography>
+              <Typography variant="h6" sx={{ fontSize: '0.875rem', color: 'rgba(128, 128, 128, 0.8)', alignSelf: 'center' }}>
                 Địa chỉ: {editingUser?.address ?? ""}
               </Typography>
 
