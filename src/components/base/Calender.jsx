@@ -713,6 +713,27 @@ const Calendar = () => {
       return;
     }
 
+    let notificationMessage;
+    const customer = customers.find((customer) => customer.id === info.event.extendedProps.customerId);
+    const customer_user_id = customer?.customer_user_id;
+
+    if (customer_user_id) {
+      const eventStartDate = formatDate(info.event.startStr);
+      const eventStartTime = formatTime(info.event.startStr);
+      const eventEndTime = formatTime(info.event.endStr);
+
+      if (!selectedEvent?.id) {
+        notificationMessage = `Bạn có buổi tập mới từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. 
+                          Tổng quan buổi tập: ${info.event.extendedProps.trainingPlan.overview}. 
+                          Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
+      } else {
+        notificationMessage = `Lịch tập của bạn đã được thay đổi. 
+                          Thời gian mới: từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. 
+                          Tổng quan buổi tập: ${info.event.extendedProps.trainingPlan.overview}. 
+                          Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
+      }
+    }
+    console.log(customer_user_id, notificationMessage);
     try {
       await axiosPrivate.patch(
         `/api/v1/workout-schedules/${updatedEvent.id}/`,
@@ -722,10 +743,14 @@ const Calendar = () => {
         },
       );
 
-      setCurrentEvents((prevEvents) => prevEvents.filter((event) => Number(event.id) !== Number(info.oldEvent.id))
-      );
+      setCurrentEvents((prevEvents) => prevEvents.filter((event) => Number(event.id) !== Number(info.oldEvent.id)));
       setCurrentEvents((prevEvents) => [...prevEvents, updatedEvent]);
-      
+
+      await NotificationService.createNotification(
+        axiosPrivate,
+        customer_user_id,
+        notificationMessage,
+      );
     } catch (err) {
       console.error('Error updating event:', err);
     } finally {
