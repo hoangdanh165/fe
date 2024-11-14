@@ -1079,9 +1079,11 @@ const Calendar = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDeleteEvent} color="error">
-            Xóa
-          </Button>
+          {isEditMode && (
+            <Button onClick={handleDeleteEvent} color="error">
+              Xóa
+            </Button>
+          )}
           <Button
             onClick={handleSaveEvent}
             color="primary"

@@ -234,7 +234,7 @@ const routes = [
           path: paths.sale_home,
           element: (
             <PrivateRoute allowedRoles={["sale"]}>
-              <SaleHomePage />,
+              <SaleHomePage />
             </PrivateRoute>
           ), 
         },
@@ -242,7 +242,7 @@ const routes = [
           path: paths.sale_contracts,
           element: (
             <PrivateRoute allowedRoles={["sale"]}>
-              <SaleContracts />,
+              <SaleContracts />
             </PrivateRoute>
           ), 
         },
