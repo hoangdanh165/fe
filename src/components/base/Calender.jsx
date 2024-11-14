@@ -475,14 +475,14 @@ const Calendar = () => {
           let notificationMessage;
 
           if (!selectedEvent?.id) {
-            notificationMessage = `Bạn có buổi tập mới từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. 
-                              Tổng quan buổi tập: ${response.data.training_plan.overview}. 
-                              Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
+            notificationMessage = `Bạn có buổi tập mới từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. ` + 
+                              `Tổng quan buổi tập: ${response.data.training_plan.overview}. ` +
+                              `Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
           } else {
-            notificationMessage = `Lịch tập của bạn đã được thay đổi. 
-                              Thời gian mới: từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. 
-                              Tổng quan buổi tập: ${response.data.training_plan.overview}. 
-                              Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
+            notificationMessage = `Lịch tập của bạn đã được thay đổi. ` +  
+                              `Thời gian mới: từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. ` +
+                              `Tổng quan buổi tập: ${response.data.training_plan.overview}. ` +
+                              `Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
           }
 
           await NotificationService.createNotification(
@@ -722,16 +722,12 @@ const Calendar = () => {
       const eventStartTime = formatTime(info.event.startStr);
       const eventEndTime = formatTime(info.event.endStr);
 
-      if (!selectedEvent?.id) {
-        notificationMessage = `Bạn có buổi tập mới từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. 
-                          Tổng quan buổi tập: ${info.event.extendedProps.trainingPlan.overview}. 
-                          Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
-      } else {
-        notificationMessage = `Lịch tập của bạn đã được thay đổi. 
-                          Thời gian mới: từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. 
-                          Tổng quan buổi tập: ${info.event.extendedProps.trainingPlan.overview}. 
-                          Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
-      }
+
+      notificationMessage = `Lịch tập của bạn đã được thay đổi. ` + 
+                        `Thời gian mới: từ ${eventStartTime} đến ${eventEndTime} ngày ${eventStartDate}. ` + 
+                        `Tổng quan buổi tập: ${info.event.extendedProps.trainingPlan.overview}. ` +
+                        `Hãy kiểm tra lịch tập của bạn để xem chi tiết hơn.`;
+      
     }
     console.log(customer_user_id, notificationMessage);
     try {
