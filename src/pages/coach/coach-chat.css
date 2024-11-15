@@ -11,6 +11,16 @@
     border-radius: 5px;
 }
 
+.cs-conversation-header__user-name {
+    background-color: #1f2029;
+    color: white;
+}
+
+.cs-conversation-header__info {
+    background-color: #1f2029;
+    color: wheat;
+}
+
 .cs-typing-indicator {
     background-color: #1f2029 !important;
     margin-left: 15px;
