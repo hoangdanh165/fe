@@ -1,3 +1,4 @@
+/* CSS cho phần khung xem tin nhắn */
 .cs-conversation-header {
     background-color: #1f2029;
     border: none !important;
@@ -7,12 +8,16 @@
     border-bottom: 1.5px solid #171821 !important;
 }
 
+/* CSS cho phần hiển thị các cuộc trò chuyện */
 .cs-conversation.cs-conversation--active {
     border-radius: 5px !important;
     font-weight: bold !important;
     margin-bottom: 10px !important;
 }   
 
+.cs-conversation.cs-conversation--active .cs-conversation__name, .cs-conversation.cs-conversation--active .cs-conversation__info {
+    color: white !important;
+}
 .cs-message--outgoing .cs-message__content {
     border-bottom-right-radius: .7em !important;
 }
@@ -27,8 +32,12 @@
     margin-bottom: 10px !important;
 }
 
+.cs-conversation__last-sender, .cs-conversation__info-content {
+    color: #ffffff !important;
+}
 .cs-conversation__name {
     font-weight: bold !important;
+    color: #ffffff !important;
 }
 
 .cs-conversation-header__user-name {
@@ -60,6 +69,7 @@
     background-color: #1f2029 !important;
 }
 
+/* CSS cho phần tìm kiếm cuộc trò chuyện */
 .cs-search {
     background-color: #2b2f33 !important;
     margin-left: 15px;
@@ -77,6 +87,8 @@
     font-weight: lighter !important;
 }
 
+
+/* CSS cho phần nhập tin nhắn */
 .cs-message-input__content-editor-wrapper {
     background-color: #2b2f33 !important;
     margin-left: 13px;

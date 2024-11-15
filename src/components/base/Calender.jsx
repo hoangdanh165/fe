@@ -530,6 +530,7 @@ const Calendar = () => {
         setEventNote(null);
         setCurrentExercises([]);
         setSelectedEvent(null);
+        setIsDone(false);
       } catch (err) {
         console.error("Error deleting workout schedule:", err);
       } finally {
@@ -763,11 +764,12 @@ const Calendar = () => {
     setSelectedTrainingPlan(null);
     setEstimatedDuration(null);
     setTrainingPlans(null);
+    setIsDone(false);
     setIsEditMode(false);
     setOpenEventDialog(false);
   };
   const now = new Date();
-  const timezoneOffset = 7 * 60; // GMT+7 (7 giờ x 60 phút)
+  const timezoneOffset = 7 * 60;
   const localDate = new Date(now.getTime() + timezoneOffset * 60 * 1000);
   const startDate = localDate.toISOString().split("T")[0];
 

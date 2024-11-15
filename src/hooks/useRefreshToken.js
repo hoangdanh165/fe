@@ -7,23 +7,31 @@ const useRefreshToken = () => {
     const { setAuth } = useAuth();
     
     const refresh = async () => {
-        const response = await axios.post(REFRESH_URL,
-            {}, 
-            { withCredentials: true }
-        );
+        try {
+            const response = await axios.post(REFRESH_URL,
+                {}, 
+                { withCredentials: true }
+            );
 
-        setAuth(prev => {
-            return { 
-                ...prev, 
-                role: response.data.role,
-                accessToken: response.data.accessToken, 
-                avatar: response.data.avatar,
-                status: response.data.status, 
-                fullName: response.data.fullName, 
+            setAuth(prev => {
+                return { 
+                    ...prev, 
+                    role: response.data.role,
+                    accessToken: response.data.accessToken, 
+                    avatar: response.data.avatar,
+                    status: response.data.status, 
+                    fullName: response.data.fullName, 
+                }
+            });
+            return response.data.accessToken;
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                localStorage.removeItem("isLoggedIn");
             }
-        });
-        return response.data.accessToken;
-    }
+            throw error;
+        }
+    };
+
     return refresh;
 };
 

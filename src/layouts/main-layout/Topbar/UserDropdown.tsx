@@ -111,7 +111,7 @@ const UserDropdown = (): ReactElement => {
               variant="body1"
               sx={{ color: "white", fontWeight: "bold" }}
             >
-              {auth?.fullName}
+              {auth?.fullName} {" "} ({auth?.role === 'coach' ? "HLV" : "Khác"})
             </Typography>
           </Stack>
 
