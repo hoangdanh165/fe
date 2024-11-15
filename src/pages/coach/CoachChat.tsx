@@ -217,12 +217,27 @@ const CoachChat: React.FC = () => {
       </Box>
         <Search placeholder="Tìm kiếm..." style={{ marginBottom: "16px", color: "white" }} />
 
-        <ConversationList>  
-          {conversations.map((conv) => (
+      <ConversationList>
+        {conversations.map((conv) => {
+          const avatarUrl = conv?.customer_data?.avatar_url;
+          const fullAvatarUrl =
+            avatarUrl && !avatarUrl?.includes("http")
+              ? `https://pbl6-media-storage.s3.ap-southeast-1.amazonaws.com/${avatarUrl}`
+              : avatarUrl;
+
+          return (
             <Conversation
               key={conv?.id}
-              name={`${conv?.customer_data?.first_name} ${conv?.customer_data?.last_name}`}
-              info={truncateText(conv.content, 30)}
+              name={
+                <span style={conv?.id === selectedConversation?.id ? {} : { color: 'white' }}>
+                  {`${conv?.customer_data?.first_name} ${conv?.customer_data?.last_name}`}
+                </span>
+              }
+              info={
+                <span style={conv?.id === selectedConversation?.id ? {} : { color: 'white' }}>
+                  {truncateText(conv?.content?.replace(/<br>/g, ''), 30)}
+                </span>
+              }
               active={conv?.id === selectedConversation?.id}
               onClick={() => handleConversationClick(conv)}
               style={{
@@ -230,10 +245,19 @@ const CoachChat: React.FC = () => {
                 color: "white",
               }}
             >
-              <Avatar src={conv?.customer_data?.avatar_url ? conv?.customer_data?.avatar_url : "https://i.pinimg.com/originals/23/51/bc/2351bc65b2b5d75cef146b7edddf805b.gif"} name={``} />
+              <Avatar
+                src={
+                  conv?.customer_data?.avatar_url
+                    ? fullAvatarUrl
+                    : "https://i.pinimg.com/originals/23/51/bc/2351bc65b2b5d75cef146b7edddf805b.gif"
+                }
+                name={""}
+              />
             </Conversation>
-          ))}
-        </ConversationList>
+          );
+        })}
+      </ConversationList>
+
       </Box>
 
       {/* Main Chat Container */}
@@ -241,16 +265,19 @@ const CoachChat: React.FC = () => {
         <MainContainer style={{ border: "3px solid rgba(0,0,0,.87)" }}>
           <ChatContainer>
             <ConversationHeader style={{ border: "3px solid #171821"}}>        
-              <Avatar src={
-                selectedConversation?.customer_data?.avatar_url ? 
-                  selectedConversation?.customer_data?.avatar_url 
-                  : selectedConversation
-                  ? "https://i.pinimg.com/originals/23/51/bc/2351bc65b2b5d75cef146b7edddf805b.gif"
-                  : "https://www.pngkit.com/png/full/799-7998601_profile-placeholder-person-icon.png"
-              } 
+              <Avatar
+                src={
+                  selectedConversation?.customer_data?.avatar_url
+                    ? selectedConversation.customer_data.avatar_url.includes('http')
+                      ? selectedConversation.customer_data.avatar_url
+                      : `https://pbl6-media-storage.s3.ap-southeast-1.amazonaws.com/${selectedConversation.customer_data.avatar_url}`
+                    : selectedConversation
+                    ? "https://i.pinimg.com/originals/23/51/bc/2351bc65b2b5d75cef146b7edddf805b.gif"
+                    : "https://www.pngkit.com/png/full/799-7998601_profile-placeholder-person-icon.png"
+                }
                 name=""
-                style={{ 
-                  marginTop: 5, 
+                style={{
+                  marginTop: 5,
                   marginLeft: 5,
                   borderRadius: '50%',
                 }}
