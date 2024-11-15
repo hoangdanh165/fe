@@ -317,7 +317,7 @@ const Calendar = () => {
   };
   
   const isOverlapping = (start, end, currentEvent) => {
-    const filteredEvents = currentEvents.filter(event => event.id !== Number(currentEvent.id));
+    const filteredEvents = currentEvents.filter(event => Number(event.id) !== Number(currentEvent.id));
     return filteredEvents.some((event) => {
       const existingStart = new Date(event.start);
       const existingEnd = new Date(event.end);
