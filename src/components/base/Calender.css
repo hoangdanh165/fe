@@ -1,125 +1,103 @@
-.fc-toolbar-title {
-    color: rgb(255, 202, 202); 
-    font-size: 1.5em;
-    font-weight: bold;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none; 
-}
-.fc-col-header-cell {
-    color: rgb(255, 158, 158); 
-    font-size: 1.2em;
-    font-weight: bold;
-    text-align: center;
+.cs-conversation-header {
+    background-color: #1f2029;
+    border: none !important;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+    padding: 15px 15px 15px 15px !important;
+    border-bottom: 1.5px solid #171821 !important;
 }
 
-:root {
-    --fc-border-color: rgb(102, 102, 102);
-    --fc-today-bg-color: #4d4d4d !important;
-    --fc-neutral-bg-color: #3c3c3c !important;
-    --fc-list-event-hover-bg-color: #171821;
-}
-
-.fc-list-event {
-    padding: 5px 5px !important; 
+.cs-conversation.cs-conversation--active {
+    border-radius: 5px !important;
+    font-weight: bold !important;
     margin-bottom: 10px !important;
-    background-color: #171821;
+}   
+
+.cs-message--outgoing .cs-message__content {
+    border-bottom-right-radius: .7em !important;
 }
-.fc-list-event:hover {
+
+.cs-message--incoming .cs-message__content {
+    border-bottom-left-radius: .7em !important;
+}
+
+.cs-conversation {
+    border-radius: 5px !important;
+    font-weight: bold !important;
+    margin-bottom: 10px !important;
+}
+
+.cs-conversation__name {
+    font-weight: bold !important;
+}
+
+.cs-conversation-header__user-name {
+    background-color: #1f2029 !important;
+    color: #ffffff !important;
+}
+
+.cs-conversation-header__info {
+    background-color: #1f2029 !important;
+    color: rgb(255, 207, 119) !important;
+    font-weight: bold;
+}
+
+.cs-typing-indicator {
+    background-color: #1f2029 !important;
+    margin-left: 15px;
+    margin-bottom: 15px;
+}
+
+.cs-chat-container {
     background-color: #171821 !important;
-    opacity: 0.8 !important;
 }
-.fc-list-day-text {
-    color: rgb(201, 201, 201) !important;
-}
-.fc-list-day-side-text {
-    color: rgb(201, 201, 201) !important;
-}
-.fc-list-event-time {
-    display: none !important;
-}
-.fc-list-event-graphic {
-    display: none !important;
-}
-.fc-list-event-title {
+
+.cs-main-container {
     border: none !important;
 }
-.fc-list-day-cushion {
-    padding: none !important;
+
+.cs-message-list {
+    background-color: #1f2029 !important;
 }
 
-.fc-day-disabled {
-    background-color: #171821 !important; 
-    color: #a0a0a0;  
-    pointer-events: none;   
-    opacity: 0.6;          
-}
-.fc-event {
-    color: white;
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 170px;
-    display: inline-block;
-    margin-top: 10px;
-    margin-right: 10px;
-    margin-left: 15px !important;
-}
-.fc-event:hover {
-    background-color: #3c3c3c;   
-    box-shadow: none;        
+.cs-search {
+    background-color: #2b2f33 !important;
+    margin-left: 15px;
+    margin-right: 15px;
+    height: 60px;
 }
 
-.dialog {
-    z-index: 9999 !important;
+.cs-search__input {
+    background-color: #2b2f33 !important;
+    color: white !important;
 }
 
-.fc-daygrid-more-link {
-    color: rgb(255, 255, 255); 
-    font-weight: bold;
-    background-color: #949494;
-    padding: 8px 12px !important;
-    border-radius: 4px;
-    transition: 0.3s;
-    margin-left: 37px;
-    margin-top: 6px !important;
-    font-size: 20px;
+.cs-search__input::placeholder {
+    color: rgb(255, 182, 182) !important;
+    font-weight: lighter !important;
 }
 
-.fc-daygrid-more-link:hover {
-    background-color: #ffffff !important;
-    color: #171821; 
-    text-decoration: underline;
+.cs-message-input__content-editor-wrapper {
+    background-color: #2b2f33 !important;
+    margin-left: 13px;
 }
 
-.fc-daygrid-day-frame:hover {
-    background-color: #3c3c3c;
+.cs-message-input__content-editor {
+    background-color: #2b2f33 !important;
+    color: white !important;
 }
 
-.fc-daygrid-day-number {
-    color: #ffffff;
-    font-weight: bold;
-    font-size: 1.1em;
-}
-  
-  
-.fc-day-sun .fc-daygrid-day-frame {
-    background-color: #272727;
+.cs-message-input__content-editor[data-placeholder]:empty:before {
+    color: rgb(255, 182, 182) !important;
+    font-weight: lighter;
 }
 
-
-.fc-day-sun:hover .fc-daygrid-day-frame {
-    background-color: #3c3c3c;
-    cursor: pointer;
+.cs-message-input {
+    background-color: #1f2029 !important;
+    padding: 15px 15px 15px 15px !important;
+    border: none !important;
+    border-bottom-left-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
+    border-top: 1.5px solid #171821 !important;
+    
 }
-
-.fc .fc-more-popover .fc-popover-body {
-    background-color: #3c3c3c;
-}
-
-.fc .fc-popover-title {
-    color: white;
-    font-weight: bold;
-}
-  
