@@ -33,7 +33,7 @@
 }
 
 .cs-conversation__last-sender, .cs-conversation__info-content {
-    color: #ffffff !important;
+    color: #b0b3b8  !important;
 }
 .cs-conversation__name {
     font-weight: bold !important;
@@ -47,7 +47,7 @@
 
 .cs-conversation-header__info {
     background-color: #1f2029 !important;
-    color: rgb(255, 207, 119) !important;
+    color: #faeed7 !important;
     font-weight: bold;
 }
 
