@@ -13,10 +13,14 @@ import {
   Conversation,
   Search,
 } from '@chatscope/chat-ui-kit-react';
-import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+import "./coach-chat.css";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useAuth from "../../hooks/useAuth";
+import EditIcon from '@mui/icons-material/Edit';
+import { IconButton } from '@mui/material';
+
 
 const CoachChat: React.FC = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -196,17 +200,24 @@ const CoachChat: React.FC = () => {
   let selectedCustomerData = customers.find(customer => customer.customer_id === selectedCustomer);
 
   return (
-    <Box display="flex" height="85vh" bgcolor="#171821" color="white">
+    <Box display="flex" bgcolor="#171821" color="white" height={600}>
       {/* Sidebar with conversation list */}
-      <Box width="25%" bgcolor="#1f2029" p={2} display="flex" flexDirection="column">
-        <Typography variant="h6" mb={2} color="white">
-          Danh sách trò chuyện
+      <Box width="30%" bgcolor="#1f2029" p={2} display="flex" flexDirection="column" mr={5} borderRadius={3}>
+      <Box display="flex" alignItems="center" justifyContent="space-between" mb={5} ml={3} mt={3} mr={3}>
+        <Typography variant="h3" color="white">
+          Đoạn Chat
         </Typography>
-        <Search placeholder="Search..." style={{ marginBottom: "16px", color: "white" }} />
-        <Button variant="contained" color="primary" onClick={handleOpenDialog} style={{ marginBottom: "16px" }}>
-          Thêm
-        </Button>
-        <ConversationList>
+        <IconButton 
+          color="primary" 
+          onClick={handleOpenDialog} 
+          style={{ marginLeft: 'auto' }}
+        >
+          <EditIcon />
+        </IconButton>
+      </Box>
+        <Search placeholder="Tìm kiếm..." style={{ marginBottom: "16px", color: "white" }} />
+
+        <ConversationList>  
           {conversations.map((conv) => (
             <Conversation
               key={conv?.id}
@@ -226,7 +237,7 @@ const CoachChat: React.FC = () => {
       </Box>
 
       {/* Main Chat Container */}
-      <Box flex={1} display="flex" flexDirection="column" bgcolor="#171821">
+      <Box flex={1} display="flex" flexDirection="column" bgcolor="#171821" height={600}>
         <MainContainer style={{ border: "3px solid rgba(0,0,0,.87)" }}>
           <ChatContainer>
             <ConversationHeader style={{ border: "3px solid #171821"}}>        
@@ -238,6 +249,11 @@ const CoachChat: React.FC = () => {
                   : "https://www.pngkit.com/png/full/799-7998601_profile-placeholder-person-icon.png"
               } 
                 name=""
+                style={{ 
+                  marginTop: 5, 
+                  marginLeft: 5,
+                  borderRadius: '50%',
+                }}
               />
               <ConversationHeader.Content 
                 userName={
@@ -257,7 +273,7 @@ const CoachChat: React.FC = () => {
               </ConversationHeader.Actions>
             </ConversationHeader>
 
-            <MessageList typingIndicator={typing ? <TypingIndicator content="Typing..." style={{ backgroundColor: "#171821", color: "white" }} /> : null} style={{ backgroundColor: "#171821", color: "white" }}>
+            <MessageList typingIndicator={typing ? <TypingIndicator content="Đang nhập..." style={{ backgroundColor: "#171821", color: "white" }} /> : null} style={{ backgroundColor: "#171821", color: "white" }}>
               {messages?.map((msg) => (
                 <Message
                   key={msg.id}
@@ -272,7 +288,7 @@ const CoachChat: React.FC = () => {
               ))}
             </MessageList>
 
-            <MessageInput placeholder="Type your message here..." onSend={handleSend} onChange={handleInputChange} style={{ backgroundColor: "#2a2b34", color: "white", border: "0px solid #171821" }} />
+            <MessageInput placeholder="Nhập tin nhắn..." onSend={handleSend} onChange={handleInputChange} style={{ backgroundColor: "#2a2b34", color: "white", border: "0px solid #171821" }} />
           </ChatContainer>
         </MainContainer>
       </Box>

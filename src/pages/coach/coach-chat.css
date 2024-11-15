@@ -1,0 +1,71 @@
+.cs-conversation-header {
+    background-color: #1f2029;
+    border: none !important;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+    padding: 15px 15px 15px 15px !important;
+    border-bottom: 1.5px solid #171821 !important;
+}
+
+.cs-conversation.cs-conversation--active {
+    border-radius: 5px;
+}
+
+.cs-typing-indicator {
+    background-color: #1f2029 !important;
+    margin-left: 15px;
+    margin-bottom: 15px;
+}
+
+.cs-chat-container {
+    background-color: #171821 !important;
+}
+
+.cs-main-container {
+    border: none !important;
+}
+
+.cs-message-list {
+    background-color: #1f2029 !important;
+}
+
+.cs-search {
+    background-color: #2b2f33 !important;
+    margin-left: 15px;
+    margin-right: 15px;
+    height: 60px;
+}
+
+.cs-search__input {
+    background-color: #2b2f33 !important;
+    color: white !important;
+}
+
+.cs-search__input::placeholder {
+    color: white !important; /* Ví dụ: thay đổi màu placeholder thành màu xám */
+}
+
+.cs-message-input__content-editor-wrapper {
+    background-color: #2b2f33 !important;
+    margin-right: 13px;
+    margin-left: 13px;
+}
+
+.cs-message-input__content-editor {
+    background-color: #2b2f33 !important;
+    color: white !important;
+}
+
+.cs-message-input__content-editor[data-placeholder]:empty:before {
+    color: white;
+}
+
+.cs-message-input {
+    background-color: #1f2029 !important;
+    padding: 15px 15px 15px 15px !important;
+    border: none !important;
+    border-bottom-left-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
+    border-top: 1.5px solid #171821 !important;
+    
+}
