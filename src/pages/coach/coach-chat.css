@@ -8,17 +8,38 @@
 }
 
 .cs-conversation.cs-conversation--active {
-    border-radius: 5px;
+    border-radius: 5px !important;
+    font-weight: bold !important;
+    margin-bottom: 10px !important;
+}   
+
+.cs-message--outgoing .cs-message__content {
+    border-bottom-right-radius: .7em !important;
+}
+
+.cs-message--incoming .cs-message__content {
+    border-bottom-left-radius: .7em !important;
+}
+
+.cs-conversation {
+    border-radius: 5px !important;
+    font-weight: bold !important;
+    margin-bottom: 10px !important;
+}
+
+.cs-conversation__name {
+    font-weight: bold !important;
 }
 
 .cs-conversation-header__user-name {
     background-color: #1f2029 !important;
-    color: white !important;
+    color: #ffffff !important;
 }
 
 .cs-conversation-header__info {
     background-color: #1f2029 !important;
-    color: wheat !important;
+    color: rgb(255, 207, 119) !important;
+    font-weight: bold;
 }
 
 .cs-typing-indicator {
@@ -52,12 +73,12 @@
 }
 
 .cs-search__input::placeholder {
-    color: white !important; /* Ví dụ: thay đổi màu placeholder thành màu xám */
+    color: rgb(255, 182, 182) !important;
+    font-weight: lighter !important;
 }
 
 .cs-message-input__content-editor-wrapper {
     background-color: #2b2f33 !important;
-    margin-right: 13px;
     margin-left: 13px;
 }
 
@@ -67,7 +88,8 @@
 }
 
 .cs-message-input__content-editor[data-placeholder]:empty:before {
-    color: white;
+    color: rgb(255, 182, 182) !important;
+    font-weight: lighter;
 }
 
 .cs-message-input {
