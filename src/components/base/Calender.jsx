@@ -171,8 +171,6 @@ const Calendar = () => {
         exercises: tp.exercises,
       }));
 
-      console.log(formattedRows);
-
       setTrainingPlans(formattedRows);
     } catch (err) {
       console.log("Error fetching exercises: ", err);
@@ -519,7 +517,11 @@ const Calendar = () => {
           { withCredentials: true }
         );
 
-        selectedEvent.remove();
+        const updatedEvents = currentEvents.filter(event => Number(event.id) !== Number(selectedEvent.id));
+        setCurrentEvents(updatedEvents);
+
+        console.log("Cập nhật danh sách sự kiện:", updatedEvents);
+
         setOpenEventDialog(false);
         setSelectedTrainingPlan(null);
         setEstimatedDuration(null)
