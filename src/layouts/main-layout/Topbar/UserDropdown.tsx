@@ -5,6 +5,7 @@ import {
   IconButton,
   Stack,
   Typography,
+  Box,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -45,7 +46,7 @@ const UserDropdown = (): ReactElement => {
     setIsOpen(false);
     navigate(paths.profile);
   }, [navigate]);
-  console.log(auth?.fullName);
+
   return (
     <>
       <Button
@@ -67,7 +68,17 @@ const UserDropdown = (): ReactElement => {
           },
         }}
       >
-        <Tooltip title="Thành viên" arrow placement="bottom">
+        <Tooltip
+          title={
+            auth?.role === "admin"
+              ? "Quản trị viên"
+              : auth?.role === "coach"
+              ? "Huấn luyện viên"
+              : "Lễ tân"
+          }
+          arrow
+          placement="bottom"
+        >
           <Avatar src={profile} sx={{ width: 44, height: 44 }} />
         </Tooltip>
         <IconifyIcon
@@ -107,12 +118,20 @@ const UserDropdown = (): ReactElement => {
               src={auth?.avatar}
               sx={{ width: 44, height: 44, marginRight: 3 }}
             />
-            <Typography
-              variant="body1"
-              sx={{ color: "white", fontWeight: "bold" }}
-            >
-              {auth?.fullName} {" "} ({auth?.role === 'coach' ? "HLV" : "Khác"})
-            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <Typography
+                variant="body1"
+                sx={{ color: "white", fontWeight: "bold", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+              >
+                {auth?.fullName}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{ color: "white", fontSize: "0.875rem", opacity: 0.7, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+              >
+                ({auth?.role === 'coach' ? "Huấn luyện viên" : "Khách hàng"})
+              </Typography>
+            </Box>
           </Stack>
 
           <Button
@@ -134,7 +153,7 @@ const UserDropdown = (): ReactElement => {
             <IconButton color="inherit">
               <AccountCircleIcon />
             </IconButton>
-            <Typography sx={{ marginLeft: 1 }}>Xem Hồ Sơ</Typography>
+            <Typography sx={{ marginLeft: 1 }}>Xem hồ sơ</Typography>
           </Button>
 
           <Button
@@ -152,10 +171,10 @@ const UserDropdown = (): ReactElement => {
               alignItems: "center",
             }}
           >
-            <IconButton color="inherit">
+            <IconButton sx={{ color: "red" }}>
               <ExitToAppIcon />
             </IconButton>
-            <Typography sx={{ marginLeft: 1 }}>Đăng Xuất</Typography>
+            <Typography sx={{ marginLeft: 1, color: "red" }}>Đăng xuất</Typography>
           </Button>
         </Stack>
       )}

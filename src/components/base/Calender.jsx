@@ -37,10 +37,8 @@ import NotificationService from "../../services/notification";
 const Calendar = () => {
   const [currentEvents, setCurrentEvents] = useState([]);
   const { rows, loading, error } = useScheduleData(0);
-  const [selectedInfo, setSelectedInfo] = useState(null);
   const [openEventDialog, setOpenEventDialog] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [eventTitle, setEventTitle] = useState("");
   const [eventStart, setEventStart] = useState("");
   const [eventEnd, setEventEnd] = useState("");
   const [eventNote, setEventNote] = useState("");
@@ -52,8 +50,6 @@ const Calendar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
-
-  // State for exercises
   const [exercises, setExercises] = useState([]); // All exercises in system
   const [customers, setCustomers] = useState([]); // All customers of current coach
   const [currentExercises, setCurrentExercises] = useState([]); // Exercise list for each workout schedule
@@ -228,7 +224,6 @@ const Calendar = () => {
     const end = formatInTimeZone(endDate, timeZone, "yyyy-MM-dd'T'HH:mm");
     setEventEnd(end);
     setIsEditMode(false);
-    setSelectedInfo(selected);
     fetchAllExercises();
     setOpenEventDialog(true);
   };
@@ -237,8 +232,6 @@ const Calendar = () => {
     const event = selected.event;
 
     setSelectedEvent(event);
-
-    setEventTitle(event.title ? event.title.split(" (")[0] : "");
 
     setCustomerId(event.extendedProps?.customerId || "");
     fetchTrainingPlansByCustomer(event.extendedProps?.customerId);
@@ -488,7 +481,6 @@ const Calendar = () => {
         }
         
         setOpenEventDialog(false);
-        setEventTitle("");
         setCustomerId("");
         setEventStart("");
         setEventEnd("");
@@ -500,6 +492,7 @@ const Calendar = () => {
         setEstimatedDuration(null);
         setCurrentExercises([]);
         setSelectedEvent(null);
+        setSessionInfo(null);
       }
     } catch (err) {
       console.error("Error saving workout schedule:", err);
@@ -525,7 +518,6 @@ const Calendar = () => {
         setOpenEventDialog(false);
         setSelectedTrainingPlan(null);
         setEstimatedDuration(null)
-        setEventTitle(null);
         setCustomerId(null);
         setEventStart(null);
         setEventEnd(null);
@@ -756,7 +748,6 @@ const Calendar = () => {
   
   const resetDialogState = () => {
     setSelectedEvent(null);
-    setEventTitle(null);
     setCustomerId(null);
     setSessionInfo(null);
     setEventStart(null);

@@ -1,39 +1,51 @@
-import { Menu, Avatar, Button, Tooltip, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
-import IconifyIcon from '../../../components/base/IconifyIcon';
-import profile from '/kienos-logo1.png';
-import { useState, MouseEvent, useCallback, ReactElement } from 'react';
-import { useNavigate } from 'react-router-dom';
-import userMenuItems from '../../../data/usermenu-items';
-import useLogout from '../../../hooks/useLogout';
-import React from 'react';  
-import useAuth from '../../../hooks/useAuth';
+import {
+  Avatar,
+  Button,
+  Tooltip,
+  IconButton,
+  Stack,
+  Typography,
+  Box,
+} from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import IconifyIcon from "../../../components/base/IconifyIcon";
+import { useState, MouseEvent, useCallback, ReactElement } from "react";
+import { useNavigate } from "react-router-dom";
+import useLogout from "../../../hooks/useLogout";
+import React from "react";
+import useAuth from "../../../hooks/useAuth";
+import paths from "../../../routes/paths";
+
 const UserDropdown = (): ReactElement => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
-  const logout = useLogout();  
+  const logout = useLogout();
   const navigate = useNavigate();
-  const {setAuth } = useAuth();
-  const handleUserClick = useCallback((event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const { auth, setAuth } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  const profile = auth?.avatar;
+
+  const handleUserClick = useCallback(() => {
+    setIsOpen(!isOpen);
+  }, [isOpen]);
+
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
   }, []);
 
-  const handleUserClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
+  const handleLogout = useCallback(() => {
+    setIsOpen(false);
+    localStorage.removeItem("isLoggedIn");
+    setAuth(null);
+    logout();
+    navigate("/auth/login", { replace: true });
+  }, [logout, navigate, setAuth]);
 
-  const handleMenuItemClick = useCallback(
-    (userMenuItemId: number) => {
-      localStorage.removeItem('isLoggedIn');
-      setAuth(null);
-      handleUserClose();
-      if (userMenuItemId === 5) {
-          logout();
-          navigate('/auth/login', { replace: true});
-        
-      }
-    },
-    [handleUserClose, logout]
-  );
+  const handleProfileClick = useCallback(() => {
+    setIsOpen(false);
+    navigate(paths.profile);
+  }, [navigate]);
 
   return (
     <>
@@ -41,9 +53,9 @@ const UserDropdown = (): ReactElement => {
         color="inherit"
         variant="text"
         id="account-dropdown-menu"
-        aria-controls={menuOpen ? 'account-dropdown-menu' : undefined}
+        aria-controls={menuOpen ? "account-dropdown-menu" : undefined}
         aria-haspopup="true"
-        aria-expanded={menuOpen ? 'true' : undefined}
+        aria-expanded={menuOpen ? "true" : undefined}
         onClick={handleUserClick}
         disableRipple
         sx={{
@@ -51,14 +63,25 @@ const UserDropdown = (): ReactElement => {
           gap: 3.75,
           px: { xs: 0, sm: 0.625 },
           py: 0.625,
-          '&:hover': {
-            bgcolor: 'transparent',
+          "&:hover": {
+            bgcolor: "transparent",
           },
         }}
       >
-        <Tooltip title="Quản trị viên" arrow placement="bottom">
+        <Tooltip
+          title={
+            auth?.role === "admin"
+              ? "Quản trị viên"
+              : auth?.role === "coach"
+              ? "Huấn luyện viên"
+              : "Lễ tân"
+          }
+          arrow
+          placement="bottom"
+        >
           <Avatar src={profile} sx={{ width: 44, height: 44 }} />
         </Tooltip>
+
         <IconifyIcon
           color="common.white"
           icon="mingcute:down-fill"
@@ -66,52 +89,74 @@ const UserDropdown = (): ReactElement => {
           height={22.5}
           sx={(theme) => ({
             transform: menuOpen ? `rotate(180deg)` : `rotate(0deg)`,
-            transition: theme.transitions.create('all', {
+            transition: theme.transitions.create("all", {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.short,
             }),
           })}
         />
       </Button>
-      <Menu
-        id="account-dropdown-menu"
-        anchorEl={anchorEl}
-        open={menuOpen}
-        onClose={handleUserClose}
-        MenuListProps={{
-          'aria-labelledby': 'account-dropdown-button',
-        }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
-        {userMenuItems.map((userMenuItem) => (
-          <MenuItem key={userMenuItem.id} onClick={() => handleMenuItemClick(userMenuItem.id)}>
-            <ListItemIcon
-              sx={{
-                minWidth: `0 !important`,
-                color: userMenuItem.color,
-                width: 14,
-                height: 10,
-                mb: 1.5,
-              }}
-            >
-              <IconifyIcon icon={userMenuItem.icon} color={userMenuItem.color} />
-            </ListItemIcon>
-            <ListItemText
-              sx={(theme) => ({
-                color: userMenuItem.color,
-                '& .MuiListItemText-primary': {
-                  fontSize: theme.typography.subtitle2.fontSize,
-                  fontFamily: theme.typography.subtitle2.fontFamily,
-                  fontWeight: theme.typography.subtitle2.fontWeight,
-                },
-              })}
-            >
-              {userMenuItem.title}
-            </ListItemText>
-          </MenuItem>
-        ))}
-      </Menu>
+      {isOpen && (
+        <Stack
+          sx={{
+            position: "absolute",
+            top: "90px",
+            right: 30,
+            backgroundColor: "#272836",
+            padding: 5,
+            borderRadius: 2,
+            boxShadow: 3,
+            width: "300px",
+          }}
+        >
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            sx={{ marginBottom: 5 }}
+          >
+            <Avatar
+              src={auth?.avatar}
+              sx={{ width: 44, height: 44, marginRight: 3 }}
+            />
+            <Box sx={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <Typography
+                variant="body1"
+                sx={{ color: "white", fontWeight: "bold", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+              >
+                {auth?.email}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{ color: "white", fontSize: "0.875rem", opacity: 0.7, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+              >
+                ({auth?.role === 'admin' ? "Quản trị viên" : "Lễ tân"})
+              </Typography>
+            </Box>
+          </Stack>
+
+          <Button
+            onClick={handleLogout}
+            fullWidth
+            sx={{
+              marginTop: 1,
+              color: "white",
+              backgroundColor: "transparent",
+              "&:hover": {
+                backgroundColor: "#5e5e5e",
+              },
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <IconButton sx={{ color: "red" }}>
+              <ExitToAppIcon />
+            </IconButton>
+            <Typography sx={{ marginLeft: 1, color: "red", fontWeight: "bold" }}>Đăng xuất</Typography>
+          </Button>
+        </Stack>
+      )}
     </>
   );
 };

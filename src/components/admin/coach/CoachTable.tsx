@@ -216,7 +216,7 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
     {
       field: "actions",
       type: "actions",
-      headerName: "Hành động",
+      headerName: "Thao tác",
       resizable: false,
       flex: 1,
       minWidth: 80,

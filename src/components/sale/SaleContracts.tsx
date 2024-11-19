@@ -16,8 +16,8 @@ const SaleContracts = () => {
     <>
       <Box gridColumn={{ xs: 'span 12', '2xl': 'span 6' }} order={{ xs: 7 }}>
         <Tabs value={value} onChange={handleChange} aria-label="service tabs">
-          <Tab label="Hợp Đồng với Huấn Luyện Viên" />
-          <Tab label="Hợp đồng tự do" />
+          <Tab label="Hợp đồng HLV" />
+          <Tab label="Hợp đồng gói tháng" />
         </Tabs>
 
         {value === 0 && <SalePTContract />} 

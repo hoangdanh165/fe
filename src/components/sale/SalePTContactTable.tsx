@@ -260,7 +260,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
     },
     {
       field: 'coach_name',
-      headerName: 'Tên PT',
+      headerName: 'HLV',
       resizable: false,
       flex: 0.5,
       minWidth: 150,
@@ -287,7 +287,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
     },
     {
       field: 'is_purchased',
-      headerName: 'Thanh toán',
+      headerName: 'Tình trạng thanh toán',
       resizable: false,
       flex: 0.5,
       minWidth: 150,
@@ -298,7 +298,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'Hành động',
+      headerName: 'Thao tác',
       resizable: false,
       flex: 1,
       minWidth: 80,
@@ -424,7 +424,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
         }}
       >
         <DialogTitle sx={{ textAlign: 'center' }}>        
-          {isEditMode ? 'Cập nhật hợp đồng PT' : 'Tạo hợp đồng PT'}
+          {isEditMode ? 'Cập nhật hợp đồng HLV' : 'Tạo hợp đồng HLV'}
         </DialogTitle>
                 <DialogContent>
           {editingPTContract && (
@@ -447,7 +447,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
         
               <TextField
                 margin="dense"
-                label="Ngày kết thúc (không bắt buộc nhập)"
+                label="Ngày kết thúc (tuỳ chọn)"
                 type="date"
                 fullWidth
                 variant="standard"

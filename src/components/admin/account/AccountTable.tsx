@@ -293,7 +293,7 @@ const AccountTable = ({ searchText }: { searchText: string }): ReactElement => {
     {
       field: "actions",
       type: "actions",
-      headerName: "Actions",
+      headerName: "Thao tác",
       resizable: false,
       flex: 1,
       minWidth: 80,

@@ -19,6 +19,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Rating,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
@@ -146,6 +147,7 @@ const UserProfile = () => {
           weight: profileData.weight ?? null,
           body_fat: profileData.body_fat ?? null,
           muscle_mass: profileData.muscle_mass ?? null,
+          average_rating: profileData.average_rating ?? 0,
 
           goal_weight: profileData.workout_goal?.weight ?? null,
           goal_muscle_mass: profileData.workout_goal?.muscle_mass ?? null,
@@ -377,6 +379,11 @@ const UserProfile = () => {
                   <PhotoCamera />
                 </IconButton>
               </label>
+              <Tooltip title="Đánh giá trung bình">
+                <div>
+                  <Rating value={profile?.average_rating || 0} readOnly />
+                </div>
+              </Tooltip>
             </Stack>
             <Grid container spacing={3}>
               <Grid item xs={6}>

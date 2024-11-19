@@ -238,7 +238,7 @@ const SaleNonPTContractTable = ({ searchText }: { searchText: string }): ReactEl
     },
     {
       field: 'is_purchased',
-      headerName: 'Thanh toán',
+      headerName: 'Tình trạng thanh toán',
       resizable: false,
       flex: 0.5,
       minWidth: 150,
@@ -249,7 +249,7 @@ const SaleNonPTContractTable = ({ searchText }: { searchText: string }): ReactEl
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'Hành động',
+      headerName: 'Thao tác',
       resizable: false,
       flex: 1,
       minWidth: 80,
@@ -375,7 +375,7 @@ const SaleNonPTContractTable = ({ searchText }: { searchText: string }): ReactEl
         }}
       >
         <DialogTitle sx={{ textAlign: 'center' }}>        
-          {isEditMode ? 'Cập nhật hợp đồng Non-PT' : 'Tạo hợp đồng Non-PT'}
+          {isEditMode ? 'Cập nhật hợp đồng gói tháng' : 'Tạo hợp đồng gói tháng'}
         </DialogTitle>
         <DialogContent>
           {editingNonPTContract && (
@@ -428,7 +428,7 @@ const SaleNonPTContractTable = ({ searchText }: { searchText: string }): ReactEl
               )}
 
               <FormControl fullWidth margin="dense">
-                <InputLabel id="non-pt-service-label">Tên gói tập Tự do</InputLabel>
+                <InputLabel id="non-pt-service-label">Tên gói tháng</InputLabel>
                 <Select
                   labelId="non-pt-service-label"
                   id="non-pt-service-select"

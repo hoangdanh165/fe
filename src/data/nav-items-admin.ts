@@ -12,8 +12,8 @@ const navItems: NavItem[] = [
   {
     id: 1,
     path: paths.accounts,
-    title: 'Quản lý Tài khoản',
-    icon: 'mingcute:home-1-fill',
+    title: 'Quản lý tài khoản',
+    icon: 'mdi:account-group-outline',
     active: true,
   },
   {
@@ -26,14 +26,14 @@ const navItems: NavItem[] = [
   {
     id: 3,
     path: paths.services,
-    title: 'Quản lý Dịch vụ',
+    title: 'Quản lý dịch vụ',
     icon: 'lets-icons:bag-alt-light',
     active: false,
   },
   {
     id: 4,
     path: paths.service_response,
-    title: 'Phản hồi Dịch vụ',
+    title: 'Phản hồi dịch vụ',
     icon: 'bi:chat',
     active: false,
   },
@@ -41,21 +41,14 @@ const navItems: NavItem[] = [
     id: 5,
     path: paths.coachs,
     title: 'Quản lý HLV',
-    icon: 'ic:baseline-person',
+    icon: 'ic:outline-person',
     active: false,
   },
   {
     id: 6,
     path: paths.exercises,
-    title: 'Quản lý Bài tập',
+    title: 'Quản lý bài tập',
     icon: 'bi:book',
-    active: false,
-  },
-  {
-    id: 7,
-    path: '/home/settings',
-    title: 'Settings',
-    icon: 'mingcute:settings-3-line',
     active: false,
   },
   
