@@ -30,6 +30,13 @@ const navItems: NavItem[] = [
     icon: "bi:chat",
     active: false,
   },
+  {
+    id: 4,
+    path: paths.statistics_for_sale,
+    title: 'Thống kê',
+    icon: 'material-symbols-light:leaderboard-outline',
+    active: false,
+  },
 ];
 
 

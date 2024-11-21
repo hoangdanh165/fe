@@ -254,6 +254,14 @@ const routes = [
             </PrivateRoute>
           ),
         },
+        {
+          path: paths.statistics_for_sale,
+          element: (
+            <PrivateRoute allowedRoles={["sale"]}>
+              <Statistic />
+            </PrivateRoute>
+          ),
+        },
         // {
         //   path: '*',
         //   element: (

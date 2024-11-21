@@ -39,7 +39,7 @@ export default {
   sale_home:`${rootPaths.saleRoot}/`,
   sale_contracts:`${rootPaths.saleRoot}/contracts`,
   service_response_for_sale: `${rootPaths.saleRoot}/service-responses`,
-
+  statistics_for_sale: `${rootPaths.saleRoot}/statistics`,
   // Errors paths
   404: `${rootPaths.errorRoot}/404`,
   unauthorized: `/unauthorized`,
