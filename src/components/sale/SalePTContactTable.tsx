@@ -536,7 +536,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
                 type="text"
                 fullWidth
                 variant="standard"
-                value={editingPTContract?.used_session?.includes('/') ? editingPTContract?.used_session?.split('/')[0] : "0"}
+                value={editingPTContract?.used_session?.includes('/') ? editingPTContract?.used_session?.split('/')[0] : editingPTContract?.used_session}
                 onChange={(e) => setEditingPTContract({ ...editingPTContract, used_session: e.target.value })}
               />
         
