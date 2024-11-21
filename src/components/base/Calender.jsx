@@ -619,9 +619,9 @@ const Calendar = () => {
             },
           ],
           sx: {
-            zIndex: 9999,
+            zIndex: 1000,
             "& .MuiTooltip-tooltip": {
-              zIndex: 9999,
+              zIndex: 1000,
             },
           },
         }}

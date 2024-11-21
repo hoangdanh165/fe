@@ -118,6 +118,11 @@
     background-color: #3c3c3c;
 }
 
+.fc .fc-more-popover {
+    background-color: #3c3c3c;
+    z-index: 1000 !important;
+}
+
 .fc .fc-popover-title {
     color: white;
     font-weight: bold;
