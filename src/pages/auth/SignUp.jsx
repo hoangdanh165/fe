@@ -209,7 +209,7 @@ const SignUp = () => {
       >
         <Stack justifyContent="center" gap={5}>
           <Typography variant="h3" textAlign="center" color="text.secondary">
-            Đăng ký tài khoản
+            Đăng ký
           </Typography>
           <Typography variant="h6" fontWeight={500} textAlign="center" color="text.primary">
             Đã có tài khoản?{' '}
@@ -378,12 +378,6 @@ const SignUp = () => {
           >
             Đăng ký
           </Button>
-          <Typography variant="body1" textAlign="center">
-            Đăng ký tài khoản đồng nghĩa với việc bạn chấp nhận{' '}
-            <Link href="#!" underline="none">
-              các điều khoản.
-            </Link>
-          </Typography>
         </Stack>
       </Paper>
     </Form>
