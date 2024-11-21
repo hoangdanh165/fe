@@ -276,15 +276,15 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
       headerAlign: 'center',
       align: 'center',
     },
-    {
-      field: 'used_session',
-      headerName: 'Số buổi tập',
-      resizable: false,
-      flex: 0.5,
-      minWidth: 150,
-      headerAlign: 'center',
-      align: 'center',
-    },
+    // {
+    //   field: 'used_session',
+    //   headerName: 'Số buổi tập',
+    //   resizable: false,
+    //   flex: 0.5,
+    //   minWidth: 150,
+    //   headerAlign: 'center',
+    //   align: 'center',
+    // },
     {
       field: 'is_purchased',
       headerName: 'Tình trạng thanh toán',
@@ -300,7 +300,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
       type: 'actions',
       headerName: 'Thao tác',
       resizable: false,
-      flex: 1,
+      flex: 0.5,
       minWidth: 80,
       getActions: (params) => {
         return [

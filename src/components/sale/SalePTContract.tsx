@@ -22,7 +22,7 @@ const SalePTContract = (): ReactElement => {
         gap={3}
       >
         <Typography variant="h4" color="common.white">
-          Quản lý hợp đồng PT
+          Quản lý hợp đồng HLV
         </Typography>
         <TextField
           variant="filled"
