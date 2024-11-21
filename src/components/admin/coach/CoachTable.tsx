@@ -34,6 +34,9 @@ import {
   GridTreeNodeWithRender,
 } from "@mui/x-data-grid";
 
+interface WorkoutGoal {
+  general: string;
+}
 interface Customer {
   id: number;
   avatar: string;
@@ -48,6 +51,7 @@ interface Customer {
   weight: number | null;
   body_fat: number | null;
   muscle_mass: number | null;
+  workout_goal: WorkoutGoal;
 }
 
 interface PTService {
@@ -85,6 +89,7 @@ interface Coach {
   height: string;
   weight: string;
   start_date: string;
+  experiences: string;
   
   contracts: Contract[];
 }
@@ -407,6 +412,15 @@ const CoachTable = ({ searchText }: { searchText: string }): ReactElement => {
                 sx={{ color: "white" }}
                 variant="standard"
                 value={editingUser?.start_date ?? ""}
+              />
+
+              <TextField
+                fullWidth
+                label="Kinh nghiệm"
+                name="experiences"
+                value={editingUser?.experiences || 'Chưa điền'}
+                multiline
+                minRows={5}
               />
 
               <Typography
