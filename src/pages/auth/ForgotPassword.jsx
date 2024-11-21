@@ -38,7 +38,7 @@ const ForgotPassword = () => {
   const handleEmailChange = (e) => {
     const email = e.target.value;
     setEmail(email);
-
+    setErrMsg(null);
     if (!validateEmail(email)) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -65,6 +65,9 @@ const ForgotPassword = () => {
 
     if (!email) {
       newErrors.email = 'Email không được để trống!';
+    }
+    if (errMsg) {
+      return;
     }
 
     if (Object.keys(newErrors).length > 0) {
