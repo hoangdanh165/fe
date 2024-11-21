@@ -368,6 +368,8 @@ const Calendar = () => {
 
       let response;
       if (selectedEvent?.id) {
+        const originalIsDone = selectedEvent.extendedProps?.isDone;
+
         response = await axiosPrivate.patch(
           `/api/v1/workout-schedules/${selectedEvent.id}/`,
           eventData,
@@ -375,16 +377,13 @@ const Calendar = () => {
 
         const contractId = getContractIdByCustomerId(customers, customerId);
         
-        if(isDone && contractId) {
-          usedSessions = usedSessions + 1;
-          await axiosPrivate.patch(
-            `/api/v1/contracts/${contractId}/`,
-            {
-              used_sessions: usedSessions,
-            },
-          );
-        } else if(!isDone && contractId) {
-          usedSessions = usedSessions - 1;
+        if (contractId && originalIsDone !== isDone) {
+          if (isDone) {
+            usedSessions = usedSessions + 1;
+          } else {
+            usedSessions = usedSessions - 1;
+          }
+      
           await axiosPrivate.patch(
             `/api/v1/contracts/${contractId}/`,
             {
@@ -584,11 +583,11 @@ const Calendar = () => {
         }}
         title={
           <div className="event-tooltip">
-            <Typography variant="body2" color="inherit">
-              Giáo án: {title}
-            </Typography>
             <Typography variant="body2">
               Khách hàng: {extendedProps.customerName}
+            </Typography>
+            <Typography variant="body2" color="inherit">
+              Giáo án: {title}
             </Typography>
             <Typography variant="body2">
               Bài tập:{" "}
