@@ -30,6 +30,7 @@ export const useCoachsData = () => {
           height: coach.height,
           weight: coach.weight,
           start_date: coach.start_date,
+          experiences: coach.experiences,
           contracts: coach.coach_contracts,
           
         }));

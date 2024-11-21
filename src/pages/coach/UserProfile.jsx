@@ -115,7 +115,7 @@ const UserProfile = () => {
 
     height: null,
     weight: null,
-
+    experiences: null,
     body_fat: null,
     musle_mass: null,
 
@@ -148,6 +148,7 @@ const UserProfile = () => {
           body_fat: profileData.body_fat ?? null,
           muscle_mass: profileData.muscle_mass ?? null,
           average_rating: profileData.average_rating ?? 0,
+          experiences: profileData.experiences ?? 0,
 
           goal_weight: profileData.workout_goal?.weight ?? null,
           goal_muscle_mass: profileData.workout_goal?.muscle_mass ?? null,
@@ -274,6 +275,7 @@ const UserProfile = () => {
     formData.append("birthday", profile.birthday.toISOString().split("T")[0]);
     formData.append("height", profile.height);
     formData.append("weight", profile.weight);
+    formData.append("experiences", profile.experiences);
 
     if (auth.role === "coach") {
       if (!profile.id) {
@@ -570,8 +572,20 @@ const UserProfile = () => {
                   }}
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Kinh nghiệm"
+                  name="experiences"
+                  value={profile?.experiences || ''}
+                  onChange={handleChange}
+                  multiline
+                  minRows={5}
+                  placeholder="Thêm kinh nghiệm huấn luyện của bạn..."
+                />
+              </Grid>
             </Grid>
-
+            
             <Button
               variant="contained"
               color="primary"
