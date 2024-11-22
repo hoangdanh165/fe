@@ -364,6 +364,8 @@ const Calendar = () => {
           exercises: currentExercises,
         },
       };
+
+      console.log("updated", eventData);
       let usedSessions = parseInt(sessionInfo.split(" / ")[0], 10);
 
       let response;
@@ -842,8 +844,8 @@ const Calendar = () => {
                 setCustomerId(selectedCustomer.id);
                 fetchTrainingPlansByCustomer(selectedCustomer.id);
                 setSelectedTrainingPlan(null);
-                setEstimatedDuration(null);
-                setEventNote(null);
+                setEstimatedDuration("");
+                setEventNote("");
                 setCurrentExercises(null);
                 if(selectedCustomer?.used_sessions === selectedCustomer?.total_sessions) {
                   alert("Khách hàng này đã hết số buổi tập luyện!");
@@ -919,6 +921,7 @@ const Calendar = () => {
             value={estimatedDuration}
             onChange={(e) => setEstimatedDuration(e.target.value)}
             fullWidth
+            disabled={!selectedTrainingPlan}
             margin="normal"
             InputProps={{
               endAdornment: (
@@ -949,6 +952,7 @@ const Calendar = () => {
             value={eventNote}
             onChange={(e) => setEventNote(e.target.value)}
             fullWidth
+            disabled={!selectedTrainingPlan}
             margin="normal"
             placeholder={eventNote ? "" : "Thêm ghi chú cho buổi tập này..."}
             multiline
