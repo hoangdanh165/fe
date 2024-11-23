@@ -762,6 +762,7 @@ const Calendar = () => {
     setIsEditMode(false);
     setOpenEventDialog(false);
   };
+  
   const now = new Date();
   const timezoneOffset = 7 * 60;
   const localDate = new Date(now.getTime() + timezoneOffset * 60 * 1000);

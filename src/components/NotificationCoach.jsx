@@ -15,10 +15,13 @@ import {
   DialogContent,
   Stack,
   Avatar,
+  IconButton,
+  TextField,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { Visibility } from "@mui/icons-material";
 import NotificationService from "../services/notification";
-
+import useAuth from "../hooks/useAuth";
 
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
@@ -27,7 +30,11 @@ const Notification = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [selectedNotificationId, setSelectedNotificationId] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogReasonOpen, setIsDialogReasonOpen] = useState(false);
+  const [reason, setReason] = useState("");
+
   const axiosPrivate = useAxiosPrivate();
+  const { auth } = useAuth();
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -60,35 +67,89 @@ const Notification = () => {
     }
   };
 
-  const handleAcceptCustomer = async (selectedNotification) => {
+  const handleAcceptCustomer = async () => {
     if (!selectedNotification) return;
-    const confirmAccept = window.confirm("Bạn có chắc chắn muốn chấp nhận khách hàng này?");
+
+    const confirmAccept = window.confirm(
+      "Bạn có chắc chắn muốn chấp nhận khách hàng này?"
+    );
     if (!confirmAccept) return;
-    
-  
+
     const customerContracts = selectedNotification.customer_contracts_pt;
     if (customerContracts.length === 0) {
       console.error("Không có thông tin hợp đồng cho khách hàng.");
       return;
     }
-  
+
     const contractToUpdate = customerContracts[0];
-  
+
     try {
-      const response = await axiosPrivate.patch(`/api/v1/contracts/${contractToUpdate.id}/`, {
-        coach: selectedNotification.coachId,
-      });
-      
+      const response = await axiosPrivate.patch(
+        `/api/v1/contracts/${contractToUpdate.id}/`,
+        {
+          coach: selectedNotification.coachId,
+        }
+      );
+
       if (response.status === 200) {
         await NotificationService.createNotification(
           axiosPrivate,
           selectedNotification.customer_user_id,
-          `Dựa vào phản hồi của bạn, huấn luyện viên của bạn đã được đổi. Vui lòng kiểm tra HLV mới. 
-          Nếu có vấn đề gì xảy ra, hãy liên hệ với chúng tôi để được giúp đỡ.`
+          `Dựa vào phản hồi của bạn, huấn luyện viên của bạn đã được đổi thành ${auth.fullName}, vui lòng kiểm tra huấn luyện viên mới. ` +
+            `Nếu có vấn đề gì xảy ra, hãy liên hệ với chúng tôi để được tư vấn và giúp đỡ.`
+        );
+
+        await NotificationService.createNotification(
+          axiosPrivate,
+          null,
+          `Huấn luyện viên ${auth.fullName} đã chấp nhận khách hàng ` +
+            `${selectedNotification.first_name} ${selectedNotification.last_name}.`,
+          null,
+          `admin,sale`
+        );
+
+        await axiosPrivate.patch(
+          `/api/v1/service-responses/${selectedNotification.selectedResponseId}/`,
+          {
+            responded: true,
+          }
         );
       }
-      handleMarkAsRead(selectedNotificationId); 
-      handleCloseDialog(); 
+
+      handleMarkAsRead(selectedNotificationId);
+      handleCloseDialog();
+    } catch (error) {
+      console.error("Lỗi khi cập nhật hợp đồng:", error);
+    }
+  };
+
+  const handleDenyCustomer = async () => {
+    if (!selectedNotification) return;
+
+    if (!reason) {
+      alert("Vui lòng điền lý do từ chối!");
+      return;
+    }
+
+    const confirmAccept = window.confirm(
+      "Bạn có chắc chắn từ chối khách hàng này?"
+    );
+    if (!confirmAccept) return;
+
+    try {
+      await NotificationService.createNotification(
+        axiosPrivate,
+        null,
+        `Huấn luyện viên ${auth.fullName} đã từ chối khách hàng ` +
+          `${selectedNotification.first_name} ${selectedNotification.last_name} vì lí do ${reason}. ` +
+          `Hãy bố trí lại HLV cho khách hàng này.`,
+        null,
+        `admin,sale`
+      );
+
+      handleMarkAsRead(selectedNotificationId);
+      handleCloseDialog();
+      handleCloseDialogReason();
     } catch (error) {
       console.error("Lỗi khi cập nhật hợp đồng:", error);
     }
@@ -96,21 +157,23 @@ const Notification = () => {
 
   const handleViewDetail = (notification) => {
     if (notification.notification.extra_data === null) {
-      handleMarkAsRead(notification.id); 
-    }
-    else {
+      handleMarkAsRead(notification.id);
+    } else {
       setSelectedNotification(notification.notification.extra_data);
-      console.log(notification.notification.extra_data);
       setSelectedNotificationId(notification.id);
       setIsDialogOpen(true);
     }
-    
   };
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setSelectedNotification(null);
     setSelectedNotificationId(null);
+  };
+
+  const handleCloseDialogReason = () => {
+    setIsDialogReasonOpen(false);
+    setReason("");
   };
 
   const handleLoadMore = async () => {
@@ -215,88 +278,100 @@ const Notification = () => {
         </Typography>
 
         <List sx={{ padding: 0 }}>
-          {" "}
-          {filteredNotifications.map((notification) => (
-            <ListItem
-              key={notification.id}
+          {filteredNotifications.length === 0 ? (
+            <Typography
+              variant="body2"
               sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "4px 0",
+                color: "#bbb", 
+                textAlign: "center",
+                padding: 2,
               }}
             >
-              <Box
+              Không có thông báo
+            </Typography>
+          ) : (
+            filteredNotifications.map((notification) => (
+              <ListItem
+                key={notification.id}
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                  marginRight: 1,
-                  marginLeft: 1,
+                  padding: "4px 0",
                 }}
               >
                 <Box
                   sx={{
-                    flex: 1,
-                    maxWidth: "230px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    marginRight: 1,
+                    marginLeft: 1,
                   }}
                 >
-                  <Tooltip title={notification.notification.message} arrow>
+                  <Box
+                    sx={{
+                      flex: 1,
+                      maxWidth: "230px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <Tooltip title={notification.notification.message} arrow>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: notification.is_read ? "#bbb" : "#fff",
+                          marginLeft: 3,
+                          marginTop: 2,
+                          whiteSpace: "normal",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {notification.notification.message}
+                      </Typography>
+                    </Tooltip>
+
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#bbb", marginLeft: 3, marginTop: 1 }}
+                    >
+                      {timeAgo(notification.create_date)}
+                    </Typography>
+                  </Box>
+                  {notification.is_read ? (
                     <Typography
                       variant="body2"
                       sx={{
-                        color: notification.is_read ? "#bbb" : "#fff",
-                        marginLeft: 3,
+                        color: "#bbb",
+                        marginLeft: 2,
                         marginTop: 2,
-                        whiteSpace: "normal",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
                       }}
                     >
-                      {notification.notification.message}
+                      Đã xem
                     </Typography>
-                  </Tooltip>
-
-                  <Typography
-                    variant="body2"
-                    sx={{ color: "#bbb", marginLeft: 3, marginTop: 1 }}
-                  >
-                    {timeAgo(notification.create_date)}
-                  </Typography>
-                </Box>
-                {notification.is_read ? (
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: "#bbb",
-                      marginLeft: 2,
-                      marginTop: 2,
-                    }}
-                  >
-                    Đã xem
-                  </Typography>
-                ) : (
-                  <Button
-                    onClick={() => handleViewDetail(notification)}
-                    sx={{
-                      marginLeft: 2,
-                      minWidth: "auto",
-                      padding: 0,
-                      backgroundColor: "transparent",
-                      "&:hover": {
+                  ) : (
+                    <Button
+                      onClick={() => handleViewDetail(notification)}
+                      sx={{
+                        marginLeft: 2,
+                        minWidth: "auto",
+                        padding: 0,
                         backgroundColor: "transparent",
-                      },
-                    }}
-                  >
-                    <Visibility sx={{ color: "#fff" }} />
-                  </Button>
-                )}
-              </Box>
-            </ListItem>
-          ))}
+                        "&:hover": {
+                          backgroundColor: "transparent",
+                        },
+                      }}
+                    >
+                      <Visibility sx={{ color: "#fff" }} />
+                    </Button>
+                  )}
+                </Box>
+              </ListItem>
+            ))
+          )}
         </List>
 
         {nextUrl && (
@@ -321,6 +396,18 @@ const Notification = () => {
       <Dialog open={isDialogOpen} onClose={handleCloseDialog} maxWidth="sm">
         <DialogTitle sx={{ textAlign: "center", color: "white", marginTop: 4 }}>
           THÔNG TIN KHÁCH HÀNG
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseDialog}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: "white",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
         </DialogTitle>
         <DialogContent sx={{ color: "white", padding: 10 }}>
           {selectedNotification && (
@@ -452,6 +539,17 @@ const Notification = () => {
                     : "Chưa điền"}
                 </span>
               </Typography>
+              <Typography
+                variant="body1"
+                sx={{ color: "white", marginLeft: 7 }}
+              >
+                Mục tiêu tập luyện:{" "}
+                <span style={{ color: "wheat" }}>
+                  {selectedNotification?.workout_goal?.general != null
+                    ? `${selectedNotification.workout_goal.general}`
+                    : "Chưa điền"}
+                </span>
+              </Typography>
 
               <Typography
                 variant="h6"
@@ -460,33 +558,31 @@ const Notification = () => {
                 Thông tin gói tập
               </Typography>
 
-              {selectedNotification?.customer_contracts_pt?.length >
-              0 ? (
-                selectedNotification.customer_contracts_pt.map(
-                  (contract) => (
-                    <Stack key={contract.id} spacing={1} sx={{ marginLeft: 7 }}>
-                      <Typography variant="body1" sx={{ color: "white" }}>
-                        Tên gói:{" "}
-                        <span style={{ color: "wheat" }}>
-                          {contract.ptservice.name}
-                        </span>
-                      </Typography>
-                      <Typography variant="body1" sx={{ color: "white" }}>
-                        Thời hạn:{" "}
-                        <span style={{ color: "wheat" }}>
-                          {contract.start_date} - {contract.expire_date}
-                        </span>
-                      </Typography>
-                      
-                      <Typography variant="body1" sx={{ color: "white" }}>
-                        Đã sử dụng:{" "}
-                        <span style={{ color: "wheat" }}>
-                          {contract.used_sessions} / {contract.ptservice.number_of_session} buổi
-                        </span>
-                      </Typography>
-                    </Stack>
-                  )
-                )
+              {selectedNotification?.customer_contracts_pt?.length > 0 ? (
+                selectedNotification.customer_contracts_pt.map((contract) => (
+                  <Stack key={contract.id} spacing={1} sx={{ marginLeft: 7 }}>
+                    <Typography variant="body1" sx={{ color: "white" }}>
+                      Tên gói:{" "}
+                      <span style={{ color: "wheat" }}>
+                        {contract.ptservice.name}
+                      </span>
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: "white" }}>
+                      Thời hạn:{" "}
+                      <span style={{ color: "wheat" }}>
+                        {contract.start_date} - {contract.expire_date}
+                      </span>
+                    </Typography>
+
+                    <Typography variant="body1" sx={{ color: "white" }}>
+                      Đã sử dụng:{" "}
+                      <span style={{ color: "wheat" }}>
+                        {contract.used_sessions} / {contract.number_of_session}{" "}
+                        buổi
+                      </span>
+                    </Typography>
+                  </Stack>
+                ))
               ) : (
                 <Typography
                   variant="body1"
@@ -501,28 +597,71 @@ const Notification = () => {
 
         <DialogActions>
           <Button
-            onClick={handleCloseDialog}
+            onClick={() => setIsDialogReasonOpen(true)}
             color="error"
             sx={{
-              alignSelf: "center",
-              width: "100px",
+              alignSelf: "left",
+              width: "150px",
               height: "40px",
               margin: 4,
             }}
           >
-            Đóng
+            Từ chối
           </Button>
           <Button
             onClick={() => handleAcceptCustomer(selectedNotification)}
             color="success"
             sx={{
-              alignSelf: "center",
+              alignSelf: "right",
               width: "150px",
               height: "40px",
               margin: 4,
             }}
           >
             Chấp nhận
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={isDialogReasonOpen}
+        onClose={handleCloseDialogReason}
+        maxWidth="sm"
+      >
+        <DialogTitle sx={{ textAlign: "center", color: "white", marginTop: 4 }}>
+          LÝ DO TỪ CHỐI
+        </DialogTitle>
+        <DialogContent sx={{ color: "white", padding: 10 }}>
+          <TextField
+            label="Lý do"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            fullWidth
+            variant="outlined"
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button
+            onClick={handleCloseDialogReason}
+            color="error"
+            sx={{
+              alignSelf: "left",
+              width: "150px",
+              height: "40px",
+            }}
+          >
+            Huỷ
+          </Button>
+          <Button
+            onClick={handleDenyCustomer}
+            color="success"
+            sx={{
+              alignSelf: "right",
+              width: "150px",
+              height: "40px",
+            }}
+          >
+            Xác nhận
           </Button>
         </DialogActions>
       </Dialog>

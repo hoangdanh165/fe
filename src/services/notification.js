@@ -1,11 +1,12 @@
 const URL = '/api/v1/notifications/';
 
 const NotificationService = {
-    createNotification: async (axiosPrivate, userId, message = {}, extra_data = {}) => {
+    createNotification: async (axiosPrivate, userId, message = {}, extra_data = {}, roles) => {
         console.log(userId);
         try {
             const response = await axiosPrivate.post(URL, {
                 user: userId,
+                roles: roles,
                 notification: {
                     message: message,
                     extra_data: extra_data,

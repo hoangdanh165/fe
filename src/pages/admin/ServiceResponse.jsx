@@ -135,24 +135,14 @@ const ServiceResponse = () => {
     )?.coach_user_id;
 
     if (coachId && selectedResponse) {
-      // const contracts = selectedResponse.customer.customer_contracts_pt;
-      // const today = new Date();
-
-      // // Lọc các hợp đồng có ngày hết hạn lớn hơn ngày hôm nay
-      // const validContracts = contracts.filter(contract => {
-      //   const expireDate = new Date(contract.expire_date);
-      //   return expireDate > today;
-      // });
-      // const contractToModified = validContracts[0];
+      const selectedResponseId = selectedResponse.id;
 
       try {
-        // await axiosPrivate.patch(`/api/v1/contracts/${contractToModified.id}/`, {
-        //   coach: coachId,
-        // });
-
+        
         const customerData = {
           coachId,
           ...selectedResponse.customer,
+          selectedResponseId,
         };
 
         await NotificationService.createNotification(
@@ -163,12 +153,8 @@ const ServiceResponse = () => {
           customerData
         );
 
-        await axiosPrivate.patch(
-          `/api/v1/service-responses/${selectedResponse.id}/`,
-          {
-            responded: true,
-          }
-        );
+        
+        
         fetchResponses(`/api/v1/service-responses/?page=${currentPage + 1}`);
       } catch (error) {
         console.error("Error updating coach:", error);

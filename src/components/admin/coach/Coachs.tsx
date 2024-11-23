@@ -26,7 +26,7 @@ const Coachs = (): ReactElement => {
         </Typography>
         <TextField
           variant="filled"
-          placeholder="Search..."
+          placeholder="Tìm kiếm..."
           value={search}
           onChange={handleChange}
           sx={{

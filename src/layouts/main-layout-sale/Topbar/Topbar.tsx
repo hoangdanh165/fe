@@ -14,7 +14,7 @@ import { drawerCloseWidth, drawerOpenWidth } from '..';
 import UserDropdown from './UserDropdown';
 import { useBreakpoints } from '../../../providers/BreakpointsProvider';
 import React from 'react';
-import Notification from '../../../components/Notification';
+import Notification from '../../../components/NotificationA&S';
 
 const Topbar = ({
   open,
