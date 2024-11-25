@@ -17,6 +17,7 @@ import {
   Dialog,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from '@mui/icons-material/Remove';
 import { DataGrid } from "@mui/x-data-grid";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
@@ -24,14 +25,18 @@ const WorkoutHistory = () => {
   const { rows, loading, error } = useScheduleData(0);
   const [rowsData, setRowsData] = useState([]);
   const axiosPrivate = useAxiosPrivate();
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
 
   const [customers, setCustomers] = useState([]);
+  // Filter
   const [filteredData, setFilteredData] = useState(rowsData);
   const [customerFilter, setCustomerFilter] = useState("");
   const [startDateFilter, setStartDateFilter] = useState("");
   const [endDateFilter, setEndDateFilter] = useState("");
   const [completedFilter, setCompletedFilter] = useState(null);
   const [attendanceFilter, setAttendanceFilter] = useState(null);
+  const [startTimeFilter, setStartTimeFilter] = useState('');
+  const [endTimeFilter, setEndTimeFilter] = useState('');
   const [filterPopupOpen, setFilterPopupOpen] = useState(false);
 
   const fetchAllCustomers = async () => {
@@ -112,13 +117,45 @@ const WorkoutHistory = () => {
     setEndDateFilter(event.target.value);
   };
 
+  const handleStartTimeChange = (event) => {
+    setStartTimeFilter(event.target.value);
+  };
+  
+  const handleEndTimeChange = (event) => {
+    setEndTimeFilter(event.target.value);
+  };
+
   const handleClearFilters = () => {
     setCustomerFilter("");
     setStartDateFilter("");
     setEndDateFilter("");
     setCompletedFilter(null);
     setAttendanceFilter(null);
+    setStartTimeFilter('');
+    setEndTimeFilter('');
     setFilterPopupOpen(false);
+  };
+
+  const handleBulkComplete = async () => {
+
+    try {
+      const response = await axiosPrivate.post("api/v1/workout-schedules/edit-multiple/", {
+        ids: rowSelectionModel,
+        completed: true,
+      });
+  
+      if (response.status === 200) {
+        alert("Đã đánh dấu hoàn thành thành công cho (những) buổi tập đã chọn!");
+        const updatedData = filteredData.map((item) =>
+          rowSelectionModel.includes(item.id) ? { ...item, completed: true } : item
+        );
+        setFilteredData(updatedData);
+        setRowSelectionModel([]);
+      }
+    } catch (error) {
+      console.error("Lỗi khi đánh dấu hoàn thành:", error);
+      alert("Đã xảy ra lỗi khi đánh dấu hoàn thành.");
+    }    
   };
 
   useEffect(() => {
@@ -169,8 +206,29 @@ const WorkoutHistory = () => {
       );
     }
 
+    if (startTimeFilter) {
+      filtered = filtered.filter(
+        (row) => formatTime(row.start_time) >= startDateFilter
+      );
+    }
+  
+    if (endTimeFilter) {
+      filtered = filtered.filter(
+        (row) => formatTime(row.end_time) <= endTimeFilter
+      );
+    }
+
     setFilteredData(filtered);
-  }, [customerFilter, startDateFilter, endDateFilter, completedFilter, attendanceFilter, rowsData]);
+  }, [
+    customerFilter, 
+    startDateFilter, 
+    endDateFilter, 
+    completedFilter, 
+    attendanceFilter, 
+    startTimeFilter,
+    endTimeFilter,
+    rowsData
+  ]);
 
   const columns = [
     {
@@ -311,7 +369,7 @@ const WorkoutHistory = () => {
       <Box
         display="flex"
         alignItems="center"
-        mb={3}
+        mb={5}
         sx={{ position: "relative", zIndex: 2 }}
       >
         <Typography variant="h6" mr={2}>
@@ -324,25 +382,58 @@ const WorkoutHistory = () => {
         >
           <AddIcon />
         </IconButton>
+        {rowSelectionModel.length > 0 && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleBulkComplete}
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              zIndex: 10,
+              maxWidth: 200,
+              maxHeight: 40,
+              color: 'white',
+              backgroundColor: "#8BC34A",
+              '&:hover': {
+                backgroundColor: "#7CB342",
+              },
+            }}
+          >
+            Đã hoàn thành
+          </Button>
+        )}
       </Box>
       {filteredData.length === 0 ? (
-        <Typography variant="body1">Không có buổi tập nào đã qua.</Typography>
+        <Typography variant="body1">Không có lịch sử.</Typography>
       ) : (
         <DataGrid
           rows={filteredData}
           columns={visibleColumns}
-          pageSize={6}
-          rowsPerPageOptions={[6]}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
           initialState={{
             pagination: {
               paginationModel: {
-                pageSize: 6,
+                pageSize: 5,
               },
             },
           }}
-          pageSizeOptions={[6, 8, 10]}
+          pageSizeOptions={[5, 10, 15]}
           density="comfortable"
+          checkboxSelection
           disableSelectionOnClick
+          onRowSelectionModelChange={(newRowSelectionModel) => {
+            setRowSelectionModel(newRowSelectionModel);
+          }}
+          rowSelectionModel={rowSelectionModel}
+          sx={{
+            height: 1,
+            width: 1,
+            tableLayout: "fixed",
+            scrollbarWidth: "thin",
+          }}
         />
       )}
       <Dialog
@@ -416,7 +507,58 @@ const WorkoutHistory = () => {
                 marginBottom: 10,
               }}
             />
-            <Typography variant="subtitle1" fontWeight="bold" color="white">
+            <Typography variant="subtitle1" fontWeight="bold" color="white" display="flex" justifyContent="space-between" alignItems="center">
+              <span>Thời gian</span>
+              <IconButton
+                color="secondary"
+                onClick={() => {
+                  setStartTimeFilter('');
+                  setEndTimeFilter('');
+                }}
+                sx={{ padding: 0 }}
+              >
+                <RemoveIcon />
+              </IconButton>
+            </Typography>
+            <Box display="flex" gap={2} mb={3}>
+              <Box flex={1}>
+                <Typography variant="subtitle2" color="white" mb={1}>
+                  Từ
+                </Typography>
+                <TextField
+                  label="Từ giờ"
+                  type="time"
+                  value={startTimeFilter}
+                  onChange={handleStartTimeChange}
+                  fullWidth
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  sx={{
+                    height: 40,
+                  }}
+                />
+              </Box>
+              <Box flex={1}>
+                <Typography variant="subtitle2" color="white" mb={1}>
+                  Đến
+                </Typography>
+                <TextField
+                  label="Đến giờ"
+                  type="time"
+                  value={endTimeFilter}
+                  onChange={handleEndTimeChange}
+                  fullWidth
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  sx={{
+                    height: 40,
+                  }}
+                />
+              </Box>
+            </Box>
+            <Typography variant="subtitle1" fontWeight="bold" color="white" mt={5}>
               Khác
             </Typography>
             <Box display="flex" alignItems="center" gap={1}>
