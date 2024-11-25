@@ -14,8 +14,7 @@ export const useScheduleData = (reloadTrigger: number) => {
     const letters = '0123456789ABCDEF';
     let color = '#';
     for (let i = 0; i < 6; i++) {
-      // Lấy một giá trị ngẫu nhiên từ 0 đến 7, để đảm bảo màu tối
-      color += letters[Math.floor(Math.random() * 8)]; // Các giá trị từ 0 đến 7 tạo ra màu tối
+      color += letters[Math.floor(Math.random() * 8)];
     }
     return color;
   };
@@ -72,7 +71,7 @@ export const useScheduleData = (reloadTrigger: number) => {
           
             start_time: ws.start_time,
             end_time: ws.end_time,
-            is_done: ws.is_done,
+            completed: ws.completed,
             
             training_plan: {
               id: ws.training_plan.id,

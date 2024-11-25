@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import useRefreshToken from '../hooks/useRefreshToken';
 import useAuth from "../hooks/useAuth";
 import { CircularProgress } from "@mui/material";
+import Cookies from "js-cookie";
 
 const PersistLogin = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +18,12 @@ const PersistLogin = ({ children }) => {
             }
             catch (err) {
                 console.error(err);
+                const alertShown = Cookies.get("alertShown");
+                console.log(alertShown);
+                if (!alertShown) {
+                    alert("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!");
+                    Cookies.set("alertShown", "true", { path: "/", expires: 1 });
+                }
             }
             finally {
                 isMounted && setIsLoading(false);
@@ -27,6 +34,12 @@ const PersistLogin = ({ children }) => {
 
         return () => isMounted = false;
     }, [auth, persist, refresh]); 
+
+    useEffect(() => {
+        if (auth?.accessToken) {
+            Cookies.remove("alertShown");
+        }
+    }, [auth]);
 
     return (
         <>

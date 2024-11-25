@@ -25,25 +25,32 @@ const navItems: NavItem[] = [
   },
   {
     id: 3,
+    path: paths.workout_history,
+    title: "Lịch sử dạy",
+    icon: "material-symbols:history",
+    active: false,
+  },
+  {
+    id: 4,
     path: paths.training_plans,
     title: "Quản lý giáo án",
     icon: "bi:book",
     active: false,
   },
   {
-    id: 4,
+    id: 5,
     path: paths.chat,
     title: "Nhắn tin",
     icon: "bi:chat",
     active: false,
   },
-  {
-    id: 5,
-    path: paths.profile,
-    title: "Hồ sơ cá nhân",
-    icon: "iconoir:profile-circle",
-    active: false,
-  },
+  // {
+  //   id: 6,
+  //   path: paths.profile,
+  //   title: "Hồ sơ cá nhân",
+  //   icon: "iconoir:profile-circle",
+  //   active: false,
+  // },
 ];
 
 

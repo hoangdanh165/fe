@@ -46,7 +46,7 @@ const Calendar = () => {
   const [coachId, setCoachId] = useState("");
   const [customerId, setCustomerId] = useState("");
   const [sessionInfo, setSessionInfo] = useState("");
-  const [isDone, setIsDone] = useState(false);
+  const [completed, setCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -79,7 +79,7 @@ const Calendar = () => {
           customerName: `${row.customer_name}`,
           trainingPlan: row.training_plan,
           customerSessionInfo: row.customer_session_info,
-          isDone: row.is_done,
+          completed: row.completed,
         },
       }));
       setCurrentEvents(events);
@@ -250,7 +250,7 @@ const Calendar = () => {
     setCurrentExercises(event.extendedProps?.trainingPlan?.exercises || []);
     setSelectedTrainingPlan(event.extendedProps?.trainingPlan || null);
     setSessionInfo(event.extendedProps?.customerSessionInfo || null);
-    setIsDone(event.extendedProps?.isDone || false);
+    setCompleted(event.extendedProps?.completed || false);
     setIsEditMode(true);
     fetchAllExercises();
     setOpenEventDialog(true);
@@ -354,7 +354,7 @@ const Calendar = () => {
         coach: coachId,
         start_time: eventStart,
         end_time: eventEnd,
-        is_done: isDone,
+        completed: completed,
         training_plan: {
           id: selectedTrainingPlan.id,
           estimated_duration: estimatedDuration,
@@ -370,7 +370,7 @@ const Calendar = () => {
 
       let response;
       if (selectedEvent?.id) {
-        const originalIsDone = selectedEvent.extendedProps?.isDone;
+        const originalCompleted = selectedEvent.extendedProps?.completed;
 
         response = await axiosPrivate.patch(
           `/api/v1/workout-schedules/${selectedEvent.id}/`,
@@ -379,8 +379,8 @@ const Calendar = () => {
 
         const contractId = getContractIdByCustomerId(customers, customerId);
         
-        if (contractId && originalIsDone !== isDone) {
-          if (isDone) {
+        if (contractId && originalCompleted !== completed) {
+          if (completed) {
             usedSessions = usedSessions + 1;
           } else {
             usedSessions = usedSessions - 1;
@@ -420,7 +420,7 @@ const Calendar = () => {
               customers.find((c) => c.id === customerId)?.last_name,
             trainingPlan: response.data.training_plan,
             customerSessionInfo: usedSessions.toString() + " / " + response.data.customer.total_sessions,
-            isDone: response.data.is_done,
+            completed: response.data.completed,
           },
         };
 
@@ -441,8 +441,8 @@ const Calendar = () => {
             updatedEvent.extendedProps.customerSessionInfo
           );
           selectedEvent.setExtendedProp(
-            "isDone",
-            updatedEvent.extendedProps.isDone
+            "completed",
+            updatedEvent.extendedProps.completed
           );
           selectedEvent.setExtendedProp(
             "trainingPlan",
@@ -487,7 +487,7 @@ const Calendar = () => {
         setEventEnd("");
         setEventNote("");
         setIsEditMode(false);
-        setIsDone(false);
+        setCompleted(false);
         setSelectedTrainingPlan(null);
         setTrainingPlans(null);
         setEstimatedDuration(null);
@@ -525,7 +525,7 @@ const Calendar = () => {
         setEventNote(null);
         setCurrentExercises([]);
         setSelectedEvent(null);
-        setIsDone(false);
+        setCompleted(false);
       } catch (err) {
         console.error("Error deleting workout schedule:", err);
       } finally {
@@ -682,7 +682,7 @@ const Calendar = () => {
           customers.find((c) => c.id === info.event.extendedProps.customerId)?.last_name,
         trainingPlan: info.event.extendedProps.trainingPlan,
         customerSessionInfo: info.event.extendedProps.customerSessionInfo,
-        isDone: info.event.extendedProps.isDone,
+        completed: info.event.extendedProps.completed,
       },
     };
     console.log(updatedEvent);
@@ -758,7 +758,7 @@ const Calendar = () => {
     setSelectedTrainingPlan(null);
     setEstimatedDuration(null);
     setTrainingPlans(null);
-    setIsDone(false);
+    setCompleted(false);
     setIsEditMode(false);
     setOpenEventDialog(false);
   };
@@ -868,8 +868,8 @@ const Calendar = () => {
             disabled={!isEditMode}
             control={
               <Checkbox
-                checked={isDone}
-                onChange={(e) => setIsDone(e.target.checked)}
+                checked={completed}
+                onChange={(e) => setCompleted(e.target.checked)}
                 color="primary"
               />
             }

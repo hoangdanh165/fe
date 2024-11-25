@@ -22,6 +22,7 @@ export default {
   schedule: `${rootPaths.coachRoot}/schedule`,
   training_plans: `${rootPaths.coachRoot}/training-plans`,
   chat: `${rootPaths.coachRoot}/chat`,
+  workout_history: `${rootPaths.coachRoot}/workout-history`,
 
   // Customer paths
   // customer_profile: `${rootPaths.customerRoot}/profile`,
@@ -40,6 +41,7 @@ export default {
   sale_contracts:`${rootPaths.saleRoot}/contracts`,
   service_response_for_sale: `${rootPaths.saleRoot}/service-responses`,
   statistics_for_sale: `${rootPaths.saleRoot}/statistics`,
+
   // Errors paths
   404: `${rootPaths.errorRoot}/404`,
   unauthorized: `/unauthorized`,

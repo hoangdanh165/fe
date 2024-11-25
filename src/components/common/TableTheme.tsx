@@ -17,7 +17,7 @@ const theme = createTheme({
           },
         },
         columnHeaders: {
-          backgroundColor: '#ffffff',
+          backgroundColor: '#black',
         },
         footerContainer: {
           backgroundColor: '#ffffff', 
