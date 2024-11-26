@@ -208,7 +208,7 @@ const WorkoutHistory = () => {
 
     if (startTimeFilter) {
       filtered = filtered.filter(
-        (row) => formatTime(row.start_time) >= startDateFilter
+        (row) => formatTime(row.start_time) >= startTimeFilter
       );
     }
   
