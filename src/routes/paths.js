@@ -47,4 +47,5 @@ export default {
   unauthorized: `/unauthorized`,
   forbidden: `/forbidden`,
   banned: `/banned`,
+  not_for_customer: `/not-for-customer`,
 };

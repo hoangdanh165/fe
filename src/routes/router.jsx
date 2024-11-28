@@ -20,6 +20,7 @@ const NotFound = lazy(() => import("../pages/error/NotFound"));
 const Unauthorized = lazy(() => import("../pages/error/Unauthorized")); 
 const Banned = lazy(() => import("../pages/error/Banned"));
 const Forbidden = lazy(() => import("../pages/error/Forbidden"));
+const NoCustomer = lazy(() => import("../pages/error/NoCustomer"));
 
 // Admin pages
 const AccountManagement = lazy(() => import("../pages/admin/AccountManagement"));
@@ -331,6 +332,10 @@ const routes = [
   {
     path: paths.banned,
     element: <Banned />,
+  },
+  {
+    path: paths.not_for_customer,
+    element: <NoCustomer />,
   },
 ];
 
