@@ -22,7 +22,7 @@ const PTServices = (): ReactElement => {
         gap={3}
       >
         <Typography variant="h4" color="common.white">
-          Quản lý
+          Quản lý dịch vụ PT
         </Typography>
         <TextField
           variant="filled"

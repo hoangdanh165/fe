@@ -45,6 +45,7 @@ interface NonPTService {
   discount_end: string;
   number_of_month: string;
   cost_per_month: string;
+  details: string;
 }
 
 const NonPTServiceTable = ({
@@ -83,6 +84,7 @@ const NonPTServiceTable = ({
       discount_end: "",
       number_of_month: "0",
       cost_per_month: "0",
+      details: "",
     });
     setEditModalOpen(true);
   };
@@ -106,8 +108,13 @@ const NonPTServiceTable = ({
   };
 
   function validateFields(editingNonPTService) {
-    const { number_of_month, cost_per_month, discount } = editingNonPTService;
+    const { number_of_month, cost_per_month, discount, details } = editingNonPTService;
   
+    if (details === "") {
+      alert("Vui lòng nhập chi tiết gói tập!");
+      return false;
+    }
+
     if (isNaN(number_of_month) || number_of_month === "") {
       alert("Thời lượng mỗi buổi tập phải có giá trị số hợp lệ!");
       return false;
@@ -143,7 +150,6 @@ const NonPTServiceTable = ({
         : null,
     };
 
-    console.log(payload);
     try {
       const response = await axiosPrivate.put(
         `/api/v1/nonpt-services/${editingPTService.id}/`,
@@ -154,6 +160,7 @@ const NonPTServiceTable = ({
           name: payload.name,
           number_of_month: payload.number_of_month,
           cost_per_month: payload.cost_per_month,
+          details: payload.details,
         },
         {
           headers: {
@@ -199,6 +206,7 @@ const NonPTServiceTable = ({
           name: payload.name,
           number_of_month: payload.number_of_month,
           cost_per_month: payload.cost_per_month,
+          details: payload.details,
         },
         {
           headers: {
@@ -207,7 +215,6 @@ const NonPTServiceTable = ({
         }
       );
 
-      console.log("Đã thêm gói tập:", editingPTService);
       setReloadTrigger((prev) => prev + 1);
       handleCloseEditModal();
     } catch (error) {
@@ -577,6 +584,23 @@ const NonPTServiceTable = ({
                     }}
                   />
                 </Grid>
+              </Grid>
+              <Grid container spacing={2} xs={12} marginTop={2}>
+                <TextField
+                    fullWidth
+                    label="Chi tiết gói tập"
+                    name="details"
+                    value={editingPTService?.details || ''}
+                    onChange={(e) =>
+                      setEditingPTService({
+                        ...editingPTService,
+                        details: e.target.value,
+                      })
+                    }
+                    multiline
+                    minRows={5}
+                    placeholder="Thêm các quyền lợi, ưu đãi... của gói tập"
+                  />
               </Grid>
             </>
           )}

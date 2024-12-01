@@ -3,17 +3,12 @@ import { useCustomerData } from "../../data/customer-data";
 import IconifyIcon from "../base/IconifyIcon";
 import CustomPagination from "../../components/common/CustomPagination";
 import CustomNoResultsOverlay from "../../components/common/CustomNoResultsOverlay";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import {
   Stack,
   Avatar,
   Tooltip,
   Typography,
   CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
   Tabs,
   Tab,
@@ -22,7 +17,6 @@ import {
   Divider,
   Card,
   CardContent,
-  IconButton,
 } from "@mui/material";
 
 import { DataGrid, GridActionsCellItem, useGridApiRef } from "@mui/x-data-grid";

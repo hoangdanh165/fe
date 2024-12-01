@@ -22,7 +22,7 @@ const NonPTServices = (): ReactElement => {
         gap={3}
       >
         <Typography variant="h4" color="common.white">
-          Quản lý
+          Quản lý gói tháng
         </Typography>
         <TextField
           variant="filled"

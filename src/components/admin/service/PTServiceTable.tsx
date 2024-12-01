@@ -41,6 +41,7 @@ interface CustomerStatistic {
   session_duration: string;
   cost_per_session: string;
   validity_period: string;
+  details: string;
 }
 
 const PTServiceTable = ({
@@ -81,6 +82,7 @@ const PTServiceTable = ({
       session_duration: "0",
       cost_per_session: "0",
       validity_period: "0",
+      details: "",
     });
     setEditModalOpen(true);
   };
@@ -104,8 +106,13 @@ const PTServiceTable = ({
   };
 
   function validateFields(editingPTService) {
-    const { session_duration, cost_per_session, validity_period, discount } = editingPTService;
-  
+    const { session_duration, cost_per_session, validity_period, discount, details } = editingPTService;
+    
+    if (details === "") {
+      alert("Vui lòng nhập chi tiết gói tập!");
+      return false;
+    }
+
     if (isNaN(session_duration) || session_duration === "") {
       alert("Thời lượng mỗi buổi tập phải có giá trị số hợp lệ!");
       return false;
@@ -157,6 +164,7 @@ const PTServiceTable = ({
           session_duration: payload.session_duration,
           cost_per_session: payload.cost_per_session,
           validity_period: payload.validity_period,
+          details: payload.details,
         },
         {
           headers: {
@@ -203,6 +211,7 @@ const PTServiceTable = ({
           session_duration: payload.session_duration,
           cost_per_session: payload.cost_per_session,
           validity_period: payload.validity_period,
+          details: payload.details,
         },
         {
           headers: {
@@ -211,7 +220,6 @@ const PTServiceTable = ({
         }
       );
 
-      console.log("Đã thêm gói tập:", editingPTService);
       setReloadTrigger((prev) => prev + 1);
       handleCloseEditModal();
     } catch (error) {
@@ -244,7 +252,7 @@ const PTServiceTable = ({
         console.error("Error deleting ptservices:", error);
         alert(
           error.response?.data?.error ||
-            "An error occurred while deleting ptservices."
+            "Đã xảy ra lỗi khi xoá gói tập."
         );
       }
     }
@@ -604,6 +612,23 @@ const PTServiceTable = ({
                     }}
                   />
                 </Grid>
+              </Grid>
+              <Grid container spacing={2} xs={12} marginTop={2}>
+                <TextField
+                    fullWidth
+                    label="Chi tiết gói tập"
+                    name="details"
+                    value={editingPTService?.details || ''}
+                    onChange={(e) =>
+                      setEditingPTService({
+                        ...editingPTService,
+                        details: e.target.value,
+                      })
+                    }
+                    multiline
+                    minRows={5}
+                    placeholder="Thêm các quyền lợi, ưu đãi... của gói tập"
+                  />
               </Grid>
             </>
           )}

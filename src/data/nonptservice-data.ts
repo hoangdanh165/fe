@@ -32,6 +32,7 @@ export const useNonPTServicesData = (reloadTrigger: number) => {
           number_of_month: nonptservice.number_of_month, 
           cost_per_month: nonptservice.cost_per_month, 
           name: nonptservice.name, 
+          details: nonptservice.details,
         }));
 
         

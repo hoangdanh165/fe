@@ -33,6 +33,7 @@ export const usePTServicesData = (reloadTrigger: number) => {
           cost_per_session: ptservice.cost_per_session, 
           validity_period: ptservice.validity_period, 
           name: ptservice.name, 
+          details: ptservice.details,
         }));
 
         
