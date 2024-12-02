@@ -172,13 +172,13 @@ const SignUp = () => {
     } catch (err) {
       console.log(err?.response)
         if (!err?.response) {
-            setErrMsg('No Server Response');
+            setErrMsg('Không có phản hồi từ máy chủ!');
             return;
         } else if (err.response?.status === 400) {
             setErrMsg('Người dùng với email này đã tồn tại!');
             return;
         } else {
-            setErrMsg('Sign up Failed');
+            setErrMsg('Đăng ký thất bại!');
             return;
         }
       }
