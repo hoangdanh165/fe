@@ -168,6 +168,8 @@ const SignUp = () => {
             withCredentials: true
         }
       );
+
+      alert("Tạo tài khoản thành công!")
       
     } catch (err) {
       console.log(err?.response)
