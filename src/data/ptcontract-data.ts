@@ -18,21 +18,26 @@ export const usePTContractData = (reloadTrigger: number) => {
             withCredentials: true,
           }
         ); 
-
+        // console.log("getAllContractsPT_ForFE:")
+        // console.log(response)
         // Nếu backend có pagination thì response.data.results
         const formattedRows = response.data.map((contract) => ({
-          id: contract.id,
-          start_date: contract.start_date,
-          expire_date: contract.expire_date,
-          ptservice_id: contract.ptservice_id,
-          coach_name: contract.coach.first_name + " " + contract.coach.last_name,
-          customer_name: contract.customer.first_name + " " + contract.customer.last_name,
-          ptservice_name: contract.ptService.name,
-          used_session: contract.used_sessions + "/" + contract.number_of_session,
-          number_of_session: contract.number_of_session,
-          is_purchased: contract.is_purchased,
-          coach_id: contract.coach.id,
-          customer_id: contract.customer.id,
+          id: contract?.id,
+          start_date: contract?.start_date,
+          expire_date: contract?.expire_date,
+          ptservice_id: contract?.ptservice_id,
+          coach_name: contract?.coach?.first_name + " " + contract?.coach?.last_name,
+          customer_name: contract?.customer?.first_name + " " + contract?.customer?.last_name,
+          ptservice_name: contract?.ptService?.name,
+          used_session: contract?.used_sessions + "/" + contract?.number_of_session,
+          number_of_session: contract?.number_of_session,
+          is_purchased: contract?.is_purchased,
+          coach_id: contract?.coach?.id,
+          customer_id: contract?.customer?.id,
+
+          coach: contract?.coach,
+          customer: contract?.customer,
+          pt_service: contract?.ptService,
         }));
         
         setRows(formattedRows);

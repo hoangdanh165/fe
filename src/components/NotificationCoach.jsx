@@ -76,12 +76,12 @@ const Notification = () => {
     if (!confirmAccept) return;
 
     const customerContracts = selectedNotification.customer_contracts_pt;
-    if (customerContracts.length === 0) {
+    if (customerContracts?.length === 0) {
       console.error("Không có thông tin hợp đồng cho khách hàng.");
       return;
     }
 
-    const contractToUpdate = customerContracts[0];
+    const contractToUpdate = customerContracts?.[0];
 
     try {
       const response = await axiosPrivate.patch(
@@ -107,13 +107,14 @@ const Notification = () => {
           null,
           `admin,sale`
         );
-
-        await axiosPrivate.patch(
-          `/api/v1/service-responses/${selectedNotification.selectedResponseId}/`,
-          {
-            responded: true,
-          }
-        );
+        if(selectedNotification?.selectedResponseId){
+          await axiosPrivate.patch(
+            `/api/v1/service-responses/${selectedNotification.selectedResponseId}/`,
+            {
+              responded: true,
+            }
+          );
+        }
       }
 
       handleMarkAsRead(selectedNotificationId);

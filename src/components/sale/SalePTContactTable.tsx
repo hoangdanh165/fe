@@ -51,6 +51,7 @@ interface PTContractData {
   coach_id: string;
   customer_id: string;
   real_customer_id: string;
+  real_coach_id;
 }
 
 const SalePTContractTable = ({ searchText }: { searchText: string }): ReactElement => {
@@ -63,7 +64,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
   const [emailError, setEmailError] = useState('');
   const axiosPrivate = useAxiosPrivate();
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
-  const [coachNames, setCoachNames] = useState<{ id: string, name: string }[]>([]);
+  const [coachNames, setCoachNames] = useState<{ id: string, name: string, coach_id: string }[]>([]);
   const [customerNames, setCustomerNames] = useState<{ id: string, name: string, customer_id: string }[]>([]);
   const [ptServices, setPtServices] = useState<{ id: string, name: string }[]>([]);
 
@@ -71,7 +72,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
     const fetchCoachNames = async () => {
       try {
         const response = await axiosPrivate.get('nodejs/chat/getAllCoachProfiles');
-        setCoachNames(response.data.map((coach: any) => ({ id: coach.id, name: `${coach.first_name} ${coach.last_name}` })));
+        setCoachNames(response.data.map((coach: any) => ({ id: coach.id, name: `${coach.first_name} ${coach.last_name}`, coach_id: coach.coach_id })));
       } catch (error) {
         console.error('Error fetching coach names:', error);
       }
@@ -184,7 +185,8 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
         {
           startDate: editingPTContract.start_date,
           expireDate: editingPTContract.expire_date,
-          coachId: editingPTContract.coach_id,
+          //coachId: editingPTContract.coach_id,
+          coachId: null,
           customerId: editingPTContract.customer_id,
           ptServiceId: editingPTContract.ptservice_id,
           isPurchased: editingPTContract.is_purchased,
@@ -198,20 +200,48 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
       );
       
       if (response.status >= 200 && response.status < 300) {
+        // await NotificationService.createNotification(
+        //   axiosPrivate,
+        //   editingPTContract.real_customer_id,
+        //   `Một hợp đồng mới đã được tạo dành cho bạn. Hãy vào danh sách hợp đồng để kiểm tra.
+        //   Tên coach: ${editingPTContract.coach_name}, Tên khách: ${editingPTContract.customer_name},
+        //   Tên gói: ${editingPTContract.ptservice_name}`,
+        // );
+
+        const customerData = {
+
+          ...response?.data?.customer,
+          ...response?.data?.customer?.customer,
+          customer_user_id: response?.data?.customer?.customer_id,
+          coachId: editingPTContract?.coach_id, //column id in coach_profile
+          customer_contracts_pt: [{
+            ...response?.data,
+            ptservice: response?.data?.ptService,
+            coachId: editingPTContract?.coach_id //column id in coach_profile
+          }],
+          workout_goal: response?.data?.customer?.workout_goal,
+          id: response?.data?.customer?.id,
+
+        };
+
         await NotificationService.createNotification(
           axiosPrivate,
-          editingPTContract.real_customer_id,
-          `Một hợp đồng mới đã được tạo dành cho bạn. Hãy vào danh sách hợp đồng để kiểm tra.
-          Tên coach: ${editingPTContract.coach_name}, Tên khách: ${editingPTContract.customer_name},
-          Tên gói: ${editingPTContract.ptservice_name}`,
+          editingPTContract?.real_coach_id, //column coach_id in coach_profile
+          `Lễ tân đã giao cho bạn hợp đồng với (${editingPTContract?.customer_name}). 
+            Hãy kiểm tra lịch dạy để phản hồi sớm!`,
+          customerData
         );
       }
-
+      
       setReloadTrigger(prev => prev + 1);
       handleCloseEditModal();
     } catch (error) {
       if (error) {
-        setEmailError('An error occurred while adding the contract!');
+        if(error?.response?.data?.error){
+          setEmailError(error?.response?.data?.error);
+        }else{
+          setEmailError('An error occurred while adding the contract!');
+        } 
         return;
       }
     }
@@ -266,6 +296,13 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
       minWidth: 150,
       headerAlign: 'center',
       align: 'center',
+      renderCell: (params) => {
+        const value = params?.value;
+        const displayText = 'Chờ phản hồi 🕒⏳';
+        const displayValue = (value === undefined || value === "undefined undefined") ?  displayText : value;
+        const style = (displayValue === displayText) ? { color: 'lime' } : {};
+        return <span style={style}>{displayValue}</span>;
+      },
     },
     {
       field: 'customer_name',
@@ -469,7 +506,8 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
                     setEditingPTContract({ 
                       ...editingPTContract, 
                       coach_name: e.target.value,
-                      coach_id: selectedCoach ? selectedCoach.id : ''
+                      coach_id: selectedCoach ? selectedCoach.id : '',
+                      real_coach_id: selectedCoach ? selectedCoach?.coach_id : '',
                     });
                   }}
                 >
@@ -574,7 +612,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
               height: '50px', 
               fontSize: '16px', 
               padding: '10px 20px', 
-            }}>Cancel</Button>
+            }}>Hủy</Button>
           
           <Button onClick={handleSave}
             sx={{ 
@@ -588,7 +626,7 @@ const SalePTContractTable = ({ searchText }: { searchText: string }): ReactEleme
                     backgroundColor: '#388e3c',
                   },
             }}>        
-            {isEditMode ? 'Save' : 'Add'}
+            {isEditMode ? 'Lưu' : 'Thêm'}
           </Button>
         </DialogActions>
       </Dialog>

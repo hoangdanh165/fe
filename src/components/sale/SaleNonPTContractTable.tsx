@@ -180,7 +180,11 @@ const SaleNonPTContractTable = ({ searchText }: { searchText: string }): ReactEl
       handleCloseEditModal();
     } catch (error) {
       if (error) {
-        setEmailError('An error occurred while adding the contract!');
+        if(error?.response?.data?.error){
+          setEmailError(error?.response?.data?.error);
+        }else{
+          setEmailError('An error occurred while adding the contract!');
+        } 
         return;
       }
     }
