@@ -487,7 +487,7 @@ const SaleNonPTContractTable = ({ searchText }: { searchText: string }): ReactEl
               height: '50px', 
               fontSize: '16px', 
               padding: '10px 20px', 
-            }}>Cancel</Button>
+            }}>Hủy</Button>
           
           <Button onClick={handleSave}
             sx={{ 
@@ -501,7 +501,7 @@ const SaleNonPTContractTable = ({ searchText }: { searchText: string }): ReactEl
                     backgroundColor: '#388e3c',
                   },
             }}>        
-            {isEditMode ? 'Save' : 'Add'}
+            {isEditMode ? 'Lưu' : 'Thêm'}
           </Button>
         </DialogActions>
       </Dialog>

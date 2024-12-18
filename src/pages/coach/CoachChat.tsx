@@ -102,7 +102,8 @@ const CoachChat: React.FC = () => {
   };
 
   const handleSend = async (message) => {
-    if (message) {
+    const trimmedMessage = message.replace(/&nbsp;|<br>/g, '').trim();
+    if (trimmedMessage.length > 0) {
       const newMessage = {
         coach_id_id: coachProfile.id,
         customer_id_id: selectedConversation.customer_id_id,
@@ -111,7 +112,7 @@ const CoachChat: React.FC = () => {
           send_by: "coach",
         },
       };
-
+  
       try {
         await axiosPrivate.post('/nodejs/chat/sendMessage', newMessage);
         setMessages((prevMessages) => [
@@ -128,7 +129,7 @@ const CoachChat: React.FC = () => {
           },
         ]);
         setTyping(false); // Reset typing state after sending the message
-
+  
       } catch (error) {
         console.error("Error sending message:", error);
       }
